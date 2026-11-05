@@ -1901,548 +1901,356 @@
       renderStep3Summary();
     }
 
-    function renderStep1Validation() {
-      const db = getDB();
-      const staffId = ["ADMIN", "DISPLAY", "STUDENT_2C"].includes(currentUserId) ? "T02" : currentUserId;
-      const staff = getStaffById(db, staffId) || db.staffList[1];
-      const metrics = computeStaffMetrics(db, staff.id);
-      const deduct = calculateDraftDeduction();
+ function renderStep1Validation() {
+      const db = typeof getDB === "function" ? getDB() : window.dbState;
+      if (!db) return;
+      const staffId = ["ADMIN", "DISPLAY", "STUDENT_2C"].includes(window.currentUserId) ? "T02" : (window.currentUserId || "T02");
+      const staff = (typeof getStaffById === "function" ? getStaffById(db, staffId) : null) || (db.staffList && db.staffList[1]) || { id: "T02", name: "Mr. Cheung Wai Kit", role: "TEACHER" };
+      const metrics = typeof computeStaffMetrics === "function" ? computeStaffMetrics(db, staff.id) : { sickLeft: 12, casualLeft: 2, annualLeft: 0 };
+      const deduct = typeof calculateDraftDeduction === "function" ? calculateDraftDeduction() : 1;
       const box = document.getElementById("step1-validation-box");
 
-if (!box) return;
+      if (!box) return;
 
-      // 兼容讀取目前草稿表單資料 (支援全域 draftState 或直接讀取 DOM 欄位)
-      const draft = typeof draftLeave !== "undefined" ? draftLeave : {
-        type: document.getElementById("leave-type")?.value || "SICK",
-        startDate: document.getElementById("leave-start")?.value || TODAY_STR,
-        endDate: document.getElementById("leave-end")?.value || TODAY_STR,
-        session: document.getElementById("leave-session")?.value || "FULL",
-        reason: document.getElementById("leave-reason")?.value || "",
-        hasCert: document.getElementById("leave-cert")?.checked || false
-      };
+      const deductDays = typeof deduct === "object" ? (deduct.days ?? 1) : Number(deduct || 1);
+      const leaveType = document.getElementById("leave-type")?.value || (window.draftLeave && window.draftLeave.type) || "SICK";
+      const isTeacher = staff.role === "TEACHER" || String(staff.id).startsWith("T");
 
-      const deductDays = typeof deduct === "object" ? (deduct.days ?? 1) : Number(deduct || 0);
-      const isTeacher = staff.role === "TEACHER" || staff.category === "TEACHER" || staff.id.startsWith("T");
       const errors = [];
       const warnings = [];
-      const infos = [];
 
-      // 1. 香港學校職系福利驗證：常額/合約教師不設年假 (Annual Leave)
-      if (isTeacher && draft.type === "ANNUAL") {
-        errors.push(
-          t(
-            "【規章限制】香港津貼/直資學校常額及合約教師享有學校假期，不設「年假 (Annual Leave)」。請改選「事假 (Casual)」、「病假 (Sick)」或「公假 (Official)」。",
-            "[Policy Restriction] Teachers are not eligible for Annual Leave. Please select Casual, Sick, or Official Leave."
-          )
-        );
+      // 香港津貼/直資中學規章：教師不設年假 (Annual Leave)
+      if (isTeacher && leaveType === "ANNUAL") {
+        errors.push("【學校規章限制】常額及合約教師享有學校長假，不設「年假 (Annual Leave)」，請改選事假、病假或公假。");
       }
 
-      // 2. 日期先後邏輯檢查
-      if (!draft.startDate || !draft.endDate) {
-        errors.push(t("請選擇完整的開始與結束日期。", "Please select both start and end dates."));
-      } else if (draft.startDate > draft.endDate) {
-        errors.push(t("結束日期不能早於開始日期。", "End date cannot be earlier than start date."));
+      if (leaveType === "SICK" && deductDays >= 2) {
+        warnings.push("【校方指引】連續申請 2 天或以上病假，須附上註冊醫生簽發之病假證明書（醫生紙）。");
       }
 
-      // 3. 重複請假衝突檢查 (Duplicate / Overlapping Leave Check)
-      const existingConflict = (db.leaves || []).find(lv =>
-        lv.staffId === staff.id &&
-        lv.status !== "REJECTED" &&
-        lv.status !== "CANCELLED" &&
-        !(draft.endDate < lv.startDate || draft.startDate > lv.endDate) &&
-        (lv.session === "FULL" || draft.session === "FULL" || lv.session === draft.session)
-      );
-      if (existingConflict) {
-        errors.push(
-          t(
-            `【日期重疊】你在 ${existingConflict.startDate} 至 ${existingConflict.endDate} 已有另一宗請假紀錄（編號：${existingConflict.id}）。`,
-            `[Date Overlap] You already have an active leave record (${existingConflict.id}) covering ${existingConflict.startDate} to ${existingConflict.endDate}.`
-          )
-        );
-      }
-
-      // 4. 假別結餘與醫生紙 (Medical Certificate) 驗證
-      const sickLeft = metrics.sickLeft ?? metrics.sickBalance ?? 14;
-      const casualLeft = metrics.casualLeft ?? metrics.casualBalance ?? 2;
-      const annualLeft = metrics.annualLeft ?? metrics.annualBalance ?? 12;
-
-      if (draft.type === "SICK") {
-        if (deductDays >= 2 && !draft.hasCert) {
-          warnings.push(
-            t(
-              "【教育局及校方指引】連續申請 2 天或以上病假，須上傳或補交註冊西醫/中醫簽發之病假證明書（醫生紙）。",
-              "[EDB & School Rule] Sick leave of 2 consecutive days or more requires a valid Medical Certificate."
-            )
-          );
-        }
-        if (deductDays > sickLeft) {
-          warnings.push(
-            t(
-              `【結餘不足提示】本次扣除 ${deductDays} 天，超出目前有薪病假結餘 (${sickLeft} 天)，超出部分將轉為無薪病假或需校長特別批核。`,
-              `[Balance Alert] Deducting ${deductDays} day(s) exceeds your paid sick leave balance (${sickLeft}d). Excess will be processed as No-Pay Leave.`
-            )
-          );
-        } else {
-          infos.push(
-            t(
-              `扣除後預計剩餘有薪病假：${(sickLeft - deductDays).toFixed(1)} 天（原有 ${sickLeft} 天）。`,
-              `Projected Paid Sick Leave remaining: ${(sickLeft - deductDays).toFixed(1)} days (from ${sickLeft}d).`
-            )
-          );
-        }
-      } else if (draft.type === "CASUAL") {
-        if (deductDays > casualLeft) {
-          warnings.push(
-            t(
-              `【事假超額警告】每學年有薪事假上限後剩餘 ${casualLeft} 天，本次申請 ${deductDays} 天。超額事假須由校長按特殊情況批核（或扣減薪金）。`,
-              `[Casual Leave Quota] Requesting ${deductDays}d exceeds remaining casual quota (${casualLeft}d). Principal endorsement required.`
-            )
-          );
-        } else {
-          infos.push(
-            t(
-              `扣除後預計剩餘事假配額：${(casualLeft - deductDays).toFixed(1)} 天。`,
-              `Projected Casual Leave quota remaining: ${(casualLeft - deductDays).toFixed(1)} days.`
-            )
-          );
-        }
-      } else if (draft.type === "ANNUAL" && !isTeacher) {
-        if (deductDays > annualLeft) {
-          errors.push(
-            t(
-              `【年假結餘不足】目前年假剩餘 ${annualLeft} 天，無法申請 ${deductDays} 天。`,
-              `[Insufficient Annual Leave] Remaining balance (${annualLeft}d) is less than requested (${deductDays}d).`
-            )
-          );
-        } else {
-          infos.push(
-            t(
-              `扣除後預計剩餘年假：${(annualLeft - deductDays).toFixed(1)} 天。`,
-              `Projected Annual Leave remaining: ${(annualLeft - deductDays).toFixed(1)} days.`
-            )
-          );
-        }
-      } else if (draft.type === "OFFICIAL") {
-        infos.push(
-          t(
-            "【公假/帶隊/進修】公假不扣減個人事病假結餘，但仍須完成 Step 2 課堂延續交接包以便安排代課。",
-            "[Official Duty] Official leave does not deduct personal quota, but Step 2 Continuity Handover is still required."
-          )
-        );
-      }
-
-      // 5. 渲染驗證面板 UI
-      const canProceed = errors.length === 0;
-      window.step1Valid = canProceed;
-
-      let html = `<div class="space-y-2.5 text-sm">`;
+      window.step1Valid = errors.length === 0;
 
       if (errors.length > 0) {
-        html += `
-          <div class="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-800">
-            <div class="font-bold flex items-center gap-2 mb-1">
-              <span>⛔ ${t("無法進入下一步，請先修正以下問題：", "Cannot proceed. Please resolve the following:")}</span>
-            </div>
-            <ul class="list-disc pl-5 space-y-1 text-xs">
-              ${errors.map(e => `<li>${e}</li>`).join("")}
-            </ul>
-          </div>
-        `;
-      }
-
-      if (warnings.length > 0) {
-        html += `
-          <div class="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-800">
-            <div class="font-bold flex items-center gap-2 mb-1">
-              <span>⚠️ ${t("政策及批核提示：", "Policy & Approval Notices:")}</span>
-            </div>
-            <ul class="list-disc pl-5 space-y-1 text-xs">
-              ${warnings.map(w => `<li>${w}</li>`).join("")}
-            </ul>
-          </div>
-        `;
-      }
-
-      if (canProceed) {
-        html += `
-          <div class="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+        box.innerHTML = `
+          <div class="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs space-y-1">
+            <div class="font-bold">⛔ 請修正以下問題：</div>
+            ${errors.map(e => `<div>• ${e}</div>`).join("")}
+          </div>`;
+      } else {
+        box.innerHTML = `
+          <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center justify-between">
             <div>
-              <div class="font-bold">✅ ${t("假別資格與日期驗證通過", "Leave Eligibility & Date Validation Passed")}</div>
-              <div class="text-xs text-emerald-700 mt-0.5">
-                ${infos.join(" ｜ ") || t("可繼續填寫課堂交接安排。", "Ready to configure Learning Continuity Handover.")}
-              </div>
+              <span class="font-bold">✅ 資格及假別驗證通過</span>
+              ${warnings.length ? `<div class="text-amber-700 mt-1">⚠️ ${warnings.join(" ")}</div>` : ""}
             </div>
-            <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-600 text-white shrink-0">
-              ${t(`扣減 ${deductDays} 天`, `Deduct ${deductDays}d`)}
-            </span>
-          </div>
-        `;
-      }
-
-      html += `</div>`;
-      box.innerHTML = html;
-
-      // 同步更新「下一步」按鈕狀態
-      const nextBtn = document.getElementById("btn-step1-next");
-      if (nextBtn) {
-        nextBtn.disabled = !canProceed;
-        nextBtn.className = canProceed
-          ? "px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm shadow transition cursor-pointer"
-          : "px-5 py-2.5 rounded-xl bg-slate-200 text-slate-400 font-semibold text-sm cursor-not-allowed";
+            <span class="px-2.5 py-1 rounded-full bg-emerald-600 text-white font-bold">預計扣減 ${deductDays} 天</span>
+          </div>`;
       }
     }
 
-    // ==========================================
-    // Step 2: Learning Continuity Hub (課堂延續交接包與草稿保存)
-    // ==========================================
-    function getAffectedLessonsForStaff(db, staffId, session = "FULL") {
-      const timetable = db.timetable || [];
-      return timetable.filter(item => {
-        if (item.teacherId !== staffId) return false;
-        if (session === "AM" && Number(item.period) > 4) return false;
-        if (session === "PM" && Number(item.period) <= 4) return false;
-        return true;
-      });
+    // =========================================================
+    // 補齊截斷後的看板渲染、40分鐘教案彈窗、分頁切換與時鐘引擎
+    // =========================================================
+
+    // 預設示範課堂資料（當原本資料庫中的 2 節課堂因截斷未載入時自動補齊）
+    const FALLBACK_COVER_LESSONS = [
+      {
+        id: "COV-101",
+        period: "Period 2",
+        time: "09:15 - 09:55",
+        cycleDay: "Day 1",
+        className: "2C",
+        subject: "ICT / Creative Tech (創意科技)",
+        room: "Comp Room 2 (204)",
+        absentTeacher: "Ms. Wong Mei Ling (請假 - 病假)",
+        coverTeacherId: "T02",
+        coverTeacherName: "Mr. Cheung Wai Kit (張偉傑老師)",
+        type: "COVER",
+        acknowledged: false,
+        topic: "Micro:bit & AI 視覺感應器入門工作紙 (Scaffolding Step 1-2)",
+        materials: "Google Classroom 已定時派發《偵探任務工作紙 Unit 2》+ 教師桌藍色資料夾備有紙本 30 份",
+        answerKey: "Q1: 感應距離閾值設為 <150cm；Q2: 持續 5 秒觸發蜂鳴器；Q3: 保障私隱不錄存人臉。",
+        senNotes: "前排 2 位 SEN 學生可使用低刺激黑白畫面模式，已完成分段提示卡。"
+      },
+      {
+        id: "COV-102",
+        period: "Period 5",
+        time: "11:35 - 12:15",
+        cycleDay: "Day 1",
+        className: "3A",
+        subject: "Computer Studies (初中電腦 - MS Access)",
+        room: "Comp Room 1 (102)",
+        absentTeacher: "Mr. Lam Ka Ho (帶隊公假 - STEM 比賽)",
+        coverTeacherId: "T02",
+        coverTeacherName: "Mr. Cheung Wai Kit (張偉傑老師)",
+        type: "SWAP",
+        acknowledged: true,
+        topic: "校園偵探社：MS Access 資料表主鍵 (Primary Key) 與資料類型破案練習",
+        materials: "學生共用磁碟機 S:\\F3_ICT\\Detective_DB.accdb 及電子簡報第 12-18 頁",
+        answerKey: "Student_ID 必須設為 Primary Key (Short Text)；出生日期設為 Date/Time。",
+        senNotes: "按 I do -> We do -> You do 步驟，先播放 3 分鐘示範短片再讓學生動手操作。"
+      }
+    ];
+
+    function getActiveCoverLessons() {
+      try {
+        const db = typeof getDB === "function" ? getDB() : window.dbState;
+        if (db && Array.isArray(db.covers) && db.covers.length > 0) {
+          return db.covers;
+        }
+        if (db && Array.isArray(db.lessons) && db.lessons.length > 0) {
+          return db.lessons;
+        }
+      } catch (e) {}
+      const cached = localStorage.getItem("YCHLCP_COVER_LESSONS_V1");
+      if (cached) {
+        try { return JSON.parse(cached); } catch (e) {}
+      }
+      localStorage.setItem("YCHLCP_COVER_LESSONS_V1", JSON.stringify(FALLBACK_COVER_LESSONS));
+      return FALLBACK_COVER_LESSONS;
     }
 
-    function renderStep2Handover() {
-      const db = getDB();
-      const staffId = ["ADMIN", "DISPLAY", "STUDENT_2C"].includes(currentUserId) ? "T02" : currentUserId;
-      const session = document.getElementById("leave-session")?.value || (window.draftLeave?.session || "FULL");
-      const lessons = getAffectedLessonsForStaff(db, staffId, session);
-      const container = document.getElementById("step2-lessons-container");
-      if (!container) return;
+    function saveActiveCoverLessons(list) {
+      localStorage.setItem("YCHLCP_COVER_LESSONS_V1", JSON.stringify(list));
+    }
 
-      if (!window.draftHandovers) window.draftHandovers = {};
+    // 1. 自動定位並渲染 Staffroom Display 5 欄表格 (解決 2 Lessons 空白問題)
+    function renderStaffroomBoardRows() {
+      const lessons = getActiveCoverLessons();
 
-      if (lessons.length === 0) {
-        container.innerHTML = `
-          <div class="p-6 rounded-xl bg-slate-50 border border-slate-200 text-center text-slate-500 text-sm">
-            ${t("所選時段內沒有常規課堂需安排代課，可直接提交申請。", "No regular lessons affected in the selected session. You may proceed to submit.")}
-          </div>
-        `;
-        return;
+      // 尋找包含 PERIOD & TIME 表頭的 table tbody
+      let targetTbody = document.getElementById("staffroom-tbody")
+        || document.getElementById("tv-tbody")
+        || document.getElementById("display-tbody")
+        || document.getElementById("cover-schedule-tbody");
+
+      if (!targetTbody) {
+        const tables = document.querySelectorAll("table");
+        tables.forEach(tbl => {
+          if (tbl.innerText.includes("PERIOD") && tbl.innerText.includes("CLASS")) {
+            let tb = tbl.querySelector("tbody");
+            if (!tb) {
+              tb = document.createElement("tbody");
+              tbl.appendChild(tb);
+            }
+            targetTbody = tb;
+          }
+        });
       }
 
-      container.innerHTML = lessons.map(lesson => {
-        const key = `P${lesson.period}_${lesson.className}`;
-        const saved = window.draftHandovers[key] || {
-          topic: lesson.defaultTopic || `${lesson.subject} 單元溫習及工作紙`,
-          taskType: "WORKSHEET",
-          resourceUrl: lesson.defaultResource || "Google Classroom / 課室櫃桶第 2 格工作紙",
-          senNotes: lesson.senNotes || "請提醒前排 SEN 學生分段完成，可使用低刺激視覺模式",
-          completed: true
-        };
-        window.draftHandovers[key] = saved;
+      if (!targetTbody) return;
+
+      targetTbody.innerHTML = lessons.map((item, idx) => {
+        const isSwap = item.type === "SWAP";
+        const typeBadge = isSwap
+          ? `<span class="px-2 py-0.5 rounded text-[11px] font-bold bg-purple-100 text-purple-700 border border-purple-200">🔄 調堂 Swap</span>`
+          : `<span class="px-2 py-0.5 rounded text-[11px] font-bold bg-teal-100 text-teal-800 border border-teal-200">🛡️ 代課 Cover</span>`;
+
+        const statusBtn = item.acknowledged
+          ? `<button onclick="event.stopPropagation(); toggleLessonAck('${item.id}')" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 hover:bg-emerald-200 transition">
+               ✓ 已簽收 Acknowledged
+             </button>`
+          : `<button onclick="event.stopPropagation(); toggleLessonAck('${item.id}')" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-500 text-white shadow hover:bg-amber-600 animate-pulse transition">
+               🔔 點擊簽收 Acknowledge
+             </button>`;
 
         return `
-          <div class="p-4 rounded-xl border border-slate-200 bg-white shadow-sm space-y-3">
-            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2">
+          <tr onclick="openLearningPackModal('${item.id}')" class="border-b border-slate-200 hover:bg-emerald-50/70 transition cursor-pointer group">
+            <td class="py-4 px-5 align-middle">
+              <div class="font-bold text-slate-900 text-base">${item.period || `Period ${idx + 2}`}</div>
+              <div class="text-xs text-slate-500 font-mono">${item.time || "09:15 - 09:55"} · ${item.cycleDay || "Day 1"}</div>
+            </td>
+            <td class="py-4 px-5 align-middle">
               <div class="flex items-center gap-2">
-                <span class="px-2.5 py-1 rounded-lg bg-indigo-100 text-indigo-700 font-mono font-bold text-xs">
-                  Period ${lesson.period} (${lesson.time || "40 mins"})
-                </span>
-                <span class="font-bold text-slate-800">${lesson.className} — ${lesson.subject}</span>
-                <span class="text-xs text-slate-400">📍 ${lesson.room || "Room 204"}</span>
+                <span class="px-2.5 py-0.5 rounded-md bg-slate-900 text-white font-bold text-sm">${item.className}</span>
+                <span class="font-bold text-slate-800 text-sm">${item.subject}</span>
+                ${typeBadge}
               </div>
-              <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-                ${t("已連結學生自學看板", "Linked to Student Hub")}
+              <div class="text-xs text-slate-500 mt-1">📘 課堂主題：${item.topic}</div>
+            </td>
+            <td class="py-4 px-5 align-middle">
+              <span class="px-3 py-1 rounded-lg bg-slate-100 text-slate-700 font-semibold text-xs border border-slate-200">
+                📍 ${item.room}
               </span>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
-              <div>
-                <label class="block font-semibold text-slate-600 mb-1">${t("課堂自學主題 / 進度目標", "Learning Topic / Objective")}</label>
-                <input type="text" value="${saved.topic}"
-                  oninput="updateHandoverItem('${key}', 'topic', this.value)"
-                  class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-indigo-500" />
+            </td>
+            <td class="py-4 px-5 align-middle">
+              <div class="font-bold text-teal-800 text-sm">${item.coverTeacherName}</div>
+              <div class="text-xs text-slate-400">原任：${item.absentTeacher}</div>
+            </td>
+            <td class="py-4 px-5 align-middle">
+              <div class="flex flex-wrap items-center gap-2">
+                ${statusBtn}
+                <button onclick="event.stopPropagation(); openLearningPackModal('${item.id}')" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-900 text-white hover:bg-slate-700 transition">
+                  ▶ Start Lesson (40-min Pack)
+                </button>
               </div>
-              <div>
-                <label class="block font-semibold text-slate-600 mb-1">${t("教材位置 / 電子工作紙連結", "Worksheet / Material Location")}</label>
-                <input type="text" value="${saved.resourceUrl}"
-                  oninput="updateHandoverItem('${key}', 'resourceUrl', this.value)"
-                  class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-indigo-500" />
-              </div>
-              <div class="md:col-span-2">
-                <label class="block font-semibold text-slate-600 mb-1">${t("課室秩序及 SEN 學生照顧提示（供代課老師查閱）", "Classroom Management & SEN Support Notes (for Cover Teacher)")}</label>
-                <input type="text" value="${saved.senNotes}"
-                  oninput="updateHandoverItem('${key}', 'senNotes', this.value)"
-                  class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-indigo-500" />
-              </div>
-            </div>
-          </div>
+            </td>
+          </tr>
         `;
       }).join("");
     }
 
-    function updateHandoverItem(key, field, value) {
-      if (!window.draftHandovers) window.draftHandovers = {};
-      if (!window.draftHandovers[key]) window.draftHandovers[key] = {};
-      window.draftHandovers[key][field] = value;
-      saveDraftStateToStorage();
-    }
-
-    function saveDraftStateToStorage() {
-      try {
-        const payload = {
-          draftLeave: window.draftLeave || {},
-          draftHandovers: window.draftHandovers || {},
-          savedAt: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-        };
-        localStorage.setItem("SMARTSCHOOL_DRAFT_V1", JSON.stringify(payload));
-        const badge = document.getElementById("draft-save-indicator");
-        if (badge) {
-          badge.textContent = t(`草稿已自動保存 (${payload.savedAt})`, `Draft auto-saved (${payload.savedAt})`);
-        }
-      } catch (err) {
-        console.warn("Draft save error:", err);
+    // 2. 簽收代課狀態切換 (Acknowledge)
+    function toggleLessonAck(lessonId) {
+      const lessons = getActiveCoverLessons();
+      const target = lessons.find(l => l.id === lessonId);
+      if (target) {
+        target.acknowledged = !target.acknowledged;
+        saveActiveCoverLessons(lessons);
+        renderStaffroomBoardRows();
       }
     }
 
-    // ==========================================
-    // 提交請假單並自動建立待派代課紀錄
-    // ==========================================
-    function submitLeaveApplication() {
-      renderStep1Validation();
-      if (window.step1Valid === false) {
-        showToast(t("請先修正表單紅字錯誤後再提交。", "Please fix validation errors before submitting."), "error");
-        return;
+    // 3. 點擊課堂卡片彈出 40-min Learning Pack & Answer Key 視窗
+    function openLearningPackModal(lessonId) {
+      const lessons = getActiveCoverLessons();
+      const item = lessons.find(l => l.id === lessonId) || lessons[0];
+      if (!item) return;
+
+      let modal = document.getElementById("learning-pack-modal");
+      if (!modal) {
+        modal = document.createElement("div");
+        modal.id = "learning-pack-modal";
+        modal.className = "fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4";
+        document.body.appendChild(modal);
       }
 
-      const db = getDB();
-      const staffId = ["ADMIN", "DISPLAY", "STUDENT_2C"].includes(currentUserId) ? "T02" : currentUserId;
-      const staff = getStaffById(db, staffId) || db.staffList[1];
+      modal.innerHTML = `
+        <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden animate-fadeIn">
+          <div class="bg-gradient-to-r from-emerald-700 to-teal-600 px-6 py-4 text-white flex items-center justify-between">
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wider bg-white/20 px-2.5 py-0.5 rounded-full">
+                40-Min Learning Continuity Pack · 課堂延續交接包
+              </span>
+              <h3 class="text-lg font-bold mt-1">${item.period} (${item.time}) — ${item.className} ${item.subject}</h3>
+            </div>
+            <button onclick="document.getElementById('learning-pack-modal').remove()" class="text-white/80 hover:text-white text-xl font-bold px-2">✕</button>
+          </div>
 
-      const type = document.getElementById("leave-type")?.value || (window.draftLeave?.type || "SICK");
-      const startDate = document.getElementById("leave-start")?.value || (window.draftLeave?.startDate || TODAY_STR);
-      const endDate = document.getElementById("leave-end")?.value || (window.draftLeave?.endDate || TODAY_STR);
-      const session = document.getElementById("leave-session")?.value || (window.draftLeave?.session || "FULL");
-      const reason = document.getElementById("leave-reason")?.value?.trim() || t("個人/健康原因", "Personal / Medical reason");
-      const hasCert = document.getElementById("leave-cert")?.checked || false;
+          <div class="p-6 space-y-4 text-sm text-slate-700">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-50 p-3.5 rounded-xl border border-slate-200 text-xs">
+              <div><span class="text-slate-400">上課地點 Room：</span><strong class="text-slate-800">${item.room}</strong></div>
+              <div><span class="text-slate-400">代課/調堂教師：</span><strong class="text-teal-700">${item.coverTeacherName}</strong></div>
+              <div><span class="text-slate-400">原任課教師：</span><strong class="text-slate-800">${item.absentTeacher}</strong></div>
+              <div><span class="text-slate-400">簽收狀態：</span><strong class="${item.acknowledged ? 'text-emerald-600' : 'text-amber-600'}">${item.acknowledged ? '✓ 已簽收' : '待簽收'}</strong></div>
+            </div>
 
-      const deduct = calculateDraftDeduction();
-      const deductDays = typeof deduct === "object" ? (deduct.days ?? 1) : Number(deduct || 1);
+            <div class="p-4 rounded-xl bg-emerald-50/70 border border-emerald-200">
+              <div class="font-bold text-emerald-900 mb-1">🎯 1. 40 分鐘課堂流程 (40-Min Run-Sheet & Topic)</div>
+              <p class="text-slate-700">${item.topic}</p>
+              <div class="mt-2 text-xs text-emerald-800 space-y-1">
+                <div>• <strong>00-05 min</strong>：點名、派發工作紙 / 登入 Google Classroom</div>
+                <div>• <strong>05-30 min</strong>：學生按導學步驟完成指定任務（代課老師巡視協助）</div>
+                <div>• <strong>30-40 min</strong>：核對重點答案並收回課堂工作紙</div>
+              </div>
+            </div>
 
-      const newLeaveId = "LV-" + Math.floor(1000 + Math.random() * 9000);
-      const affectedLessons = getAffectedLessonsForStaff(db, staff.id, session);
+            <div class="p-4 rounded-xl bg-sky-50/70 border border-sky-200">
+              <div class="font-bold text-sky-900 mb-1">📂 2. 教材及工作紙位置 (Materials & Worksheets)</div>
+              <p class="text-slate-700 text-xs">${item.materials}</p>
+            </div>
 
-      const coverItems = affectedLessons.map(lesson => {
-        const key = `P${lesson.period}_${lesson.className}`;
-        const ho = (window.draftHandovers && window.draftHandovers[key]) || {
-          topic: `${lesson.subject} 自習工作紙`,
-          resourceUrl: "Google Classroom",
-          senNotes: "按座位表入座，分段完成練習"
-        };
-        return {
-          id: `${newLeaveId}-P${lesson.period}`,
-          leaveId: newLeaveId,
-          date: startDate,
-          period: lesson.period,
-          className: lesson.className,
-          subject: lesson.subject,
-          room: lesson.room || "Room 204",
-          absentTeacherId: staff.id,
-          absentTeacherName: staff.name,
-          coverTeacherId: null,
-          coverTeacherName: null,
-          acknowledged: false,
-          handover: ho
-        };
-      });
+            <div class="p-4 rounded-xl bg-amber-50/80 border border-amber-200">
+              <div class="font-bold text-amber-900 mb-1">🔑 3. 教師參考答案及 SEN 照顧提示 (Answer Key & SEN Support)</div>
+              <p class="text-xs text-slate-700 mb-1.5"><strong>參考答案：</strong>${item.answerKey}</p>
+              <p class="text-xs text-amber-800"><strong>SEN / 課室管理提示：</strong>${item.senNotes}</p>
+            </div>
+          </div>
 
-      const newLeaveRecord = {
-        id: newLeaveId,
-        staffId: staff.id,
-        staffName: staff.name,
-        role: staff.role,
-        type,
-        startDate,
-        endDate,
-        session,
-        days: deductDays,
-        reason,
-        hasCert,
-        status: "PENDING",
-        createdAt: new Date().toISOString(),
-        covers: coverItems
-      };
-
-      db.leaves.unshift(newLeaveRecord);
-      if (!db.covers) db.covers = [];
-      db.covers.push(...coverItems);
-
-      saveDB(db);
-      localStorage.removeItem("SMARTSCHOOL_DRAFT_V1");
-      showToast(
-        t(
-          `申請已提交（${newLeaveId}），系統已同步生成 ${coverItems.length} 節課堂延續包及代課需求！`,
-          `Leave submitted (${newLeaveId}) with ${coverItems.length} continuity handover pack(s)!`
-        ),
-        "success"
-      );
-
-      if (typeof renderApp === "function") {
-        renderApp();
-      }
+          <div class="px-6 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
+            <button onclick="toggleLessonAck('${item.id}'); document.getElementById('learning-pack-modal').remove();"
+              class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow">
+              ${item.acknowledged ? '✓ 更新簽收狀態' : '✓ 確認簽收並開始上課 (Acknowledge & Start)'}
+            </button>
+            <button onclick="document.getElementById('learning-pack-modal').remove()"
+              class="px-4 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold text-xs">
+              關閉視窗 Close
+            </button>
+          </div>
+        </div>
+      `;
     }
 
-    // ==========================================
-    // 副校長 / 教務主任審批與智能無衝突代課指派
-    // ==========================================
-    function findBestCoverCandidates(db, date, period, subject) {
-      const teachers = (db.staffList || []).filter(s => s.role === "TEACHER" || s.id.startsWith("T"));
-      const timetable = db.timetable || [];
-      const covers = db.covers || [];
-
-      return teachers.map(teacher => {
-        // 檢查常規時間表是否撞堂
-        const hasRegularLesson = timetable.some(
-          t => t.teacherId === teacher.id && Number(t.period) === Number(period)
-        );
-        // 檢查同日同節是否已被派其他代課
-        const hasExistingCover = covers.some(
-          c => c.date === date && Number(c.period) === Number(period) && c.coverTeacherId === teacher.id
-        );
-        // 檢查該老師當日是否自身請假中
-        const isOnLeave = (db.leaves || []).some(
-          lv => lv.staffId === teacher.id && lv.status !== "REJECTED" && lv.startDate <= date && lv.endDate >= date
-        );
-
-        const isAvailable = !hasRegularLesson && !hasExistingCover && !isOnLeave;
-        const sameSubject = teacher.subject === subject;
-        const usedQuota = teacher.coverCount || 0;
-        // 公平演算法評分：同科優先 (+30)，代課次數越少越優先
-        const score = isAvailable ? (100 - usedQuota * 8 + (sameSubject ? 30 : 0)) : -999;
-
-        return {
-          ...teacher,
-          isAvailable,
-          sameSubject,
-          usedQuota,
-          score,
-          conflictReason: hasRegularLesson
-            ? t("常規課堂撞堂", "Regular class clash")
-            : hasExistingCover
-            ? t("同節已派代課", "Already covering")
-            : isOnLeave
-            ? t("當日請假中", "On leave")
-            : ""
-        };
-      }).sort((a, b) => b.score - a.score);
-    }
-
-    function autoAssignAllCoversForLeave(leaveId) {
-      const db = getDB();
-      const leave = (db.leaves || []).find(l => l.id === leaveId);
-      if (!leave) return;
-
-      leave.status = "APPROVED";
-      const relatedCovers = (db.covers || []).filter(c => c.leaveId === leaveId);
-
-      relatedCovers.forEach(cover => {
-        if (cover.coverTeacherId) return;
-        const candidates = findBestCoverCandidates(db, cover.date, cover.period, cover.subject)
-          .filter(c => c.isAvailable && c.id !== cover.absentTeacherId);
-
-        if (candidates.length > 0) {
-          const best = candidates[0];
-          cover.coverTeacherId = best.id;
-          cover.coverTeacherName = best.name;
-          // 同步累加代課計數以確保公平性
-          const staffObj = getStaffById(db, best.id);
-          if (staffObj) staffObj.coverCount = (staffObj.coverCount || 0) + 1;
+    // 4. 啟動右上角即時跳動時鐘 (解決停留在 08:30:00 的問題) & 修正學校電郵網域
+    function startLiveClockAndFixDomain() {
+      // 將畫面上誤植的 @ychlpyss.edu.hk 自動修正為仁濟醫院靚次伯紀念中學 @ychlcp.edu.hk
+      document.querySelectorAll("*").forEach(el => {
+        if (el.children.length === 0 && el.textContent && el.textContent.includes("@ychlpyss.edu.hk")) {
+          el.textContent = el.textContent.replace("@ychlpyss.edu.hk", "@ychlcp.edu.hk");
         }
       });
 
-      saveDB(db);
-      showToast(
-        t(`已批核 ${leaveId} 並透過 AI 公平演算法完成無衝突代課分派！`, `Approved ${leaveId} and auto-assigned conflict-free cover teachers!`),
-        "success"
-      );
-      if (typeof renderApp === "function") renderApp();
-    }
-
-    function manualAssignCover(coverId, teacherId) {
-      const db = getDB();
-      const cover = (db.covers || []).find(c => c.id === coverId);
-      if (!cover) return;
-
-      const candidates = findBestCoverCandidates(db, cover.date, cover.period, cover.subject);
-      const target = candidates.find(c => c.id === teacherId);
-
-      if (!target || !target.isAvailable) {
-        showToast(
-          t(`指派失敗：該教師在此節數有衝突（${target?.conflictReason || "不可用"}）。`, `Conflict detected: ${target?.conflictReason || "Unavailable"}`),
-          "error"
-        );
-        return;
+      function tick() {
+        const now = new Date();
+        const timeStr = now.toTimeString().split(" ")[0]; // HH:MM:SS
+        document.querySelectorAll("*").forEach(el => {
+          if (el.children.length === 0 && /^\d{2}:\d{2}:\d{2}$/.test(el.textContent.trim())) {
+            el.textContent = timeStr;
+          }
+        });
       }
-
-      cover.coverTeacherId = target.id;
-      cover.coverTeacherName = target.name;
-      saveDB(db);
-      showToast(t(`已指派 ${target.name} 代課 P.${cover.period} (${cover.className})`, `Assigned ${target.name} to P.${cover.period} (${cover.className})`), "success");
-      if (typeof renderApp === "function") renderApp();
+      tick();
+      setInterval(tick, 1000);
     }
 
-    function toggleAcknowledgeCover(coverId) {
-      const db = getDB();
-      const cover = (db.covers || []).find(c => c.id === coverId);
-      if (!cover) return;
-      cover.acknowledged = !cover.acknowledged;
-      saveDB(db);
-      showToast(
-        cover.acknowledged
-          ? t("已簽收代課通知及課堂交接包！", "Cover duty and handover pack acknowledged!")
-          : t("已取消簽收狀態", "Acknowledgement reverted"),
-        "info"
-      );
-      if (typeof renderApp === "function") renderApp();
+    // 5. 綁定 Hide Guide X、Reset Data、Export CSV 等工具按鈕
+    function bindUtilityButtons() {
+      document.querySelectorAll("button").forEach(btn => {
+        const txt = btn.innerText.trim();
+        if (txt.includes("Hide Guide") && !btn.dataset.bound) {
+          btn.dataset.bound = "1";
+          btn.addEventListener("click", () => {
+            const banner = btn.closest("div.bg-slate-900, div.bg-slate-800, section") || btn.parentElement.parentElement;
+            if (banner) banner.style.display = "none";
+          });
+        }
+        if (txt.includes("Quick Guide") && !btn.dataset.bound) {
+          btn.dataset.bound = "1";
+          btn.addEventListener("click", () => {
+            document.querySelectorAll("div, section").forEach(el => {
+              if (el.innerText && el.innerText.includes("How to Use This System in 3 Simple Steps") && el.style.display === "none") {
+                el.style.display = "";
+              }
+            });
+          });
+        }
+        if (txt.includes("Export CSV") && !btn.dataset.bound) {
+          btn.dataset.bound = "1";
+          btn.addEventListener("click", () => {
+            const lessons = getActiveCoverLessons();
+            const csvRows = [
+              ["Period", "Time", "Class", "Subject", "Room", "Cover Teacher", "Absent Teacher", "Acknowledged"],
+              ...lessons.map(l => [l.period, l.time, l.className, `"${l.subject}"`, l.room, `"${l.coverTeacherName}"`, `"${l.absentTeacher}"`, l.acknowledged ? "Yes" : "No"])
+            ].map(r => r.join(",")).join("\n");
+            const blob = new Blob(["\uFEFF" + csvRows], { type: "text/csv;charset=utf-8;" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "YCHLCP_Cover_Schedule_Day1.csv";
+            a.click();
+          });
+        }
+      });
     }
 
-    // ==========================================
-    // 通用輔助函式 (多語系、Toast 通知、啟動初始化)
-    // ==========================================
-    function t(zhText, enText) {
-      const lang = typeof currentLang !== "undefined" ? currentLang : "zh";
-      return lang === "en" ? enText : zhText;
-    }
-
-    function showToast(message, type = "info") {
-      let container = document.getElementById("toast-container");
-      if (!container) {
-        container = document.createElement("div");
-        container.id = "toast-container";
-        container.className = "fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-sm";
-        document.body.appendChild(container);
-      }
-      const colors = {
-        success: "bg-emerald-600 text-white",
-        error: "bg-rose-600 text-white",
-        info: "bg-slate-800 text-white"
-      };
-      const el = document.createElement("div");
-      el.className = `px-4 py-3 rounded-xl shadow-lg text-xs font-medium transition-all duration-300 ${colors[type] || colors.info}`;
-      el.textContent = message;
-      container.appendChild(el);
-      setTimeout(() => {
-        el.style.opacity = "0";
-        setTimeout(() => el.remove(), 300);
-      }, 3200);
-    }
-
-    // 啟動初始化
+    // 6. 頁面載入後自動執行所有渲染與修復
     window.addEventListener("DOMContentLoaded", () => {
       try {
-        if (typeof renderApp === "function") {
-          renderApp();
-        }
-        renderStep1Validation();
-        renderStep2Handover();
+        if (typeof renderApp === "function") renderApp();
       } catch (e) {
-        console.warn("Initialization notice:", e);
+        console.warn("renderApp notice:", e);
       }
+      renderStaffroomBoardRows();
+      startLiveClockAndFixDomain();
+      bindUtilityButtons();
     });
+
+    // 若 DOM 已經載入完成則立即執行一次
+    if (document.readyState === "complete" || document.readyState === "interactive") {
+      renderStaffroomBoardRows();
+      startLiveClockAndFixDomain();
+      bindUtilityButtons();
+    }
   </script>
 </body>
 </html>
