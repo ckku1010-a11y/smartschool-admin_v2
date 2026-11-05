@@ -1,2097 +1,1053 @@
 <!DOCTYPE html>
-<html lang="en-HK">
+<html lang="zh-HK">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>YCHLPYSS — Staff Leave, Cover & Learning Continuity System</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>仁濟醫院靚次伯紀念中學 — 智能代課與學習延續系統</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+HK:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: 'Inter', 'Noto Sans HK', sans-serif;
-      background-color: #f4f7f6;
-      color: #1e293b;
+      font-family: 'Inter', 'Noto Sans TC', sans-serif;
+      background-color: #f4f7f4;
+      color: #0f172a;
+      -webkit-tap-highlight-color: transparent;
     }
-    .school-header-gradient {
-      background: linear-gradient(90deg, #b8e67e 0%, #d8f2b4 55%, #f2fae9 100%);
+    .touch-btn {
+      transition: all 0.15s ease;
+      user-select: none;
     }
-    .school-banner-blue {
-      background: linear-gradient(135deg, #b8e1f5 0%, #dcf1fc 100%);
-    }
-    .header-gold { background-color: #dec016; color: #ffffff; }
-    .header-teal { background-color: #3cc2b8; color: #ffffff; }
-    .touch-target { min-height: 42px; }
-    .menu-card {
-      transition: all 0.18s ease;
-    }
-    .menu-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 20px -5px rgba(15, 94, 89, 0.12);
-    }
-    @keyframes marquee {
-      0% { transform: translateX(100%); }
-      100% { transform: translateX(-100%); }
-    }
-    .animate-marquee {
-      display: inline-block;
-      white-space: nowrap;
-      animation: marquee 28s linear infinite;
-    }
-    @media print {
-      #demo-control-bar, #top-breadcrumb-bar, .no-print { display: none !important; }
-      body { background: #ffffff; }
+    .touch-btn:active {
+      transform: scale(0.97);
     }
   </style>
 </head>
 <body class="min-h-screen flex flex-col">
 
-  <!-- ==================== COMPETITION SANDBOX BAR ==================== -->
-  <div id="demo-control-bar" class="bg-slate-900 text-slate-100 px-4 py-1.5 text-xs border-b border-slate-700 flex flex-wrap items-center justify-between gap-2">
-    <div class="flex items-center gap-2">
-      <span class="bg-amber-400 text-slate-950 font-black px-2 py-0.5 rounded uppercase tracking-wider text-[10px]">
-        Competition Demo Sandbox
-      </span>
-      <span class="text-slate-300 hidden md:inline">
-        Menu-Driven UX + Compact Staffroom Display · Switch accounts to test Teacher, New Staff, Admin & Student workflows.
-      </span>
-    </div>
-
-    <div class="flex flex-wrap items-center gap-2">
-      <label for="demo-user-select" class="font-bold text-amber-300">Simulate Account:</label>
-      <select id="demo-user-select" onchange="switchSimulatedUser(this.value)" class="bg-slate-800 border border-slate-600 rounded px-2 py-1 text-xs font-bold text-white focus:outline-none focus:border-amber-400">
-        <option value="T02">Mr. Lau Ka Ho [LKH] (Teacher - CT/Physics)</option>
-        <option value="T03">Mr. Cheung Wai Kit [CWK] (Cover Duty Today)</option>
-        <option value="T01">Mr. Chan Tai Man [CTM] (Absent Teacher)</option>
-        <option value="TA01">Ms. Lam Mei Ki [LMK] (Teaching Assistant)</option>
-        <option value="ADMIN">VP Lee (Vice-Principal / Admin Approval)</option>
-        <option value="STUDENT_2C">Student 2C-14 (Student Learning Portal)</option>
-        <option value="DISPLAY">Staffroom TV Display (Compact Read-Only)</option>
-      </select>
-
-      <button onclick="openStandaloneDisplay()" class="bg-teal-700 hover:bg-teal-600 text-white font-bold px-2.5 py-1 rounded transition">
-        ↗ Pop-out TV
-      </button>
-      <button onclick="resetSyntheticData()" class="bg-rose-800 hover:bg-rose-700 text-white font-bold px-2.5 py-1 rounded transition">
-        ↺ Reset Data
-      </button>
-    </div>
-  </div>
-
-  <!-- ==================== SCHOOL OFFICIAL HEADER ==================== -->
-  <header class="school-header-gradient border-b-2 border-[#9ed45b] shadow-sm sticky top-0 z-40">
-    <div class="max-w-7xl mx-auto px-4 py-2.5 flex flex-wrap items-center justify-between gap-3">
-      <!-- Crest & Title (Clicking returns to Main Menu) -->
-      <div onclick="openModule('menu')" class="flex items-center gap-3 cursor-pointer group">
-        <div class="w-11 h-11 rounded-full bg-white border-2 border-[#8c1d40] flex flex-col items-center justify-center shadow-sm shrink-0 group-hover:scale-105 transition">
-          <span class="text-[8px] font-black text-[#1d4ed8] tracking-tighter leading-none">YAN CHAI</span>
+  <!-- ==================== SCHOOL HEADER BANNER ==================== -->
+  <header class="bg-[#b7e378] border-b-2 border-[#0f5e59] px-4 lg:px-6 py-3 shadow-sm sticky top-0 z-40">
+    <div class="max-w-[1440px] mx-auto flex flex-wrap items-center justify-between gap-3">
+      
+      <!-- School Crest & System Name -->
+      <div class="flex items-center gap-3">
+        <div class="w-11 h-11 rounded-full bg-white border-2 border-[#8c1d40] flex flex-col items-center justify-center shadow-sm shrink-0">
+          <span class="text-[7px] font-black text-[#1d4ed8] leading-none">YAN CHAI</span>
           <span class="text-xs font-black text-[#8c1d40] leading-tight">仁濟</span>
         </div>
         <div>
-          <h1 id="ui-school-name" class="text-sm sm:text-lg font-black text-slate-900 tracking-tight">
+          <h1 class="text-sm sm:text-lg font-black text-slate-900 tracking-tight">
             Yan Chai Hospital Lan Chi Pat Memorial Secondary School
           </h1>
-          <p id="ui-system-subtitle" class="text-[11px] sm:text-xs font-bold text-slate-700">
-            仁濟醫院靚次伯紀念中學 · Staff Leave, Cover & Learning Continuity System
+          <p class="text-xs font-bold text-slate-700">
+            仁濟醫院靚次伯紀念中學 · Smart Cover & Learning Continuity System (智能代課與學習延續系統)
           </p>
         </div>
       </div>
 
-      <!-- User Status & Quick Utilities -->
-      <div class="flex flex-wrap items-center gap-2">
-        <div class="bg-white/95 px-3 py-1.5 rounded-xl border border-[#a3d962] shadow-sm flex items-center gap-2.5">
-          <div class="text-right">
-            <div class="flex items-center justify-end gap-1.5">
-              <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-              <span id="auth-email-display" class="text-xs font-bold text-slate-800">lau.kh@ychlpyss.edu.hk</span>
-              <span id="auth-role-badge" class="text-[10px] font-black px-1.5 py-0.5 rounded bg-[#3cc2b8] text-white">TEACHER</span>
-            </div>
-            <div class="text-[10px] text-slate-500 font-semibold">
-              <span id="ui-cycle-label">2026-11-05 (Day A) · Now: Period 2</span> ·
-              <span id="sync-status-pill" class="text-emerald-700 font-bold">✓ Synced</span>
-            </div>
-          </div>
-          <button onclick="toggleNewStaffGuide()" class="bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 px-2.5 py-1.5 rounded-lg text-xs font-black transition" title="First time here? Open New Staff Guide">
-            🧭 New Staff Help
-          </button>
-          <button onclick="toggleLanguage()" class="bg-[#0f5e59] hover:bg-teal-900 text-white px-3 py-1.5 rounded-lg text-xs font-black transition">
-            中 / EN
-          </button>
+      <!-- Right System Status & Controls -->
+      <div class="flex items-center gap-2">
+        <div class="hidden sm:flex items-center gap-2 bg-white/90 border border-[#a3d962] px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          <span>2026-11-05 (Day A)</span>
+          <span class="text-slate-300">|</span>
+          <span id="live-clock" class="font-mono font-black text-slate-900">09:20:00</span>
         </div>
+
+        <button onclick="openExcelModal()" class="touch-btn bg-[#0f5e59] hover:bg-teal-900 text-white font-black px-3.5 py-1.5 rounded-xl text-xs shadow-sm flex items-center gap-1.5">
+          <span>📥</span> <span>Excel Data (匯入時間表及紀錄)</span>
+        </button>
+
+        <button onclick="resetSystemData()" class="touch-btn bg-white hover:bg-rose-50 text-rose-700 border border-rose-200 font-black px-3 py-1.5 rounded-xl text-xs shadow-sm">
+          ↺ Reset
+        </button>
       </div>
     </div>
 
-    <!-- Breadcrumb & Quick-Jump Bar (Replaces cluttered multi-row tabs) -->
-    <div id="top-breadcrumb-bar" class="bg-white/95 border-t border-[#cdeaa3] px-4 py-1.5">
-      <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
-        <div class="flex items-center gap-2">
-          <button onclick="openModule('menu')" id="btn-home-menu" class="bg-[#0f5e59] hover:bg-teal-900 text-white font-black px-3 py-1.5 rounded-lg text-xs flex items-center gap-1.5 shadow-sm transition">
-            <span>🏠</span> <span id="ui-menu-home-btn">Main Menu (功能主頁)</span>
-          </button>
-          <span class="text-slate-400 font-bold">/</span>
-          <span id="current-module-title" class="text-xs sm:text-sm font-black text-[#0f5e59]">
-            Select a Function to Begin
-          </span>
+    <!-- ==================== 4-MODULE NAVIGATION BAR ==================== -->
+    <div class="max-w-[1440px] mx-auto mt-3 grid grid-cols-2 lg:grid-cols-4 gap-2">
+      <button id="tab-leave" onclick="switchModule('leave')" class="nav-tab rounded-xl px-3.5 py-2.5 text-left flex items-center justify-between border-2 border-[#0f5e59] bg-[#0f5e59] text-white shadow-sm">
+        <div>
+          <div class="text-xs font-black">1. Teacher Leave & AI Pack</div>
+          <div class="text-[11px] opacity-85 font-bold">教師請假及 AI 教學包</div>
         </div>
+        <span class="text-base">📝</span>
+      </button>
 
-        <!-- Quick Switcher Dropdown + Judges Evidence Buttons -->
-        <div class="flex items-center gap-2 no-print">
-          <select id="quick-jump-select" onchange="openModule(this.value)" class="bg-slate-100 border border-slate-300 rounded-lg px-2.5 py-1 text-xs font-bold text-slate-700">
-            <option value="menu">⚡ Quick Jump to Module...</option>
-            <option value="schedule">1. Today's Schedule & Cover Ack</option>
-            <option value="apply">2. Apply for Leave / Lesson Swap</option>
-            <option value="continuity">3. Classroom Supervision & Student Portal</option>
-            <option value="records">4. My Leave Balance & Learning Reports</option>
-            <option value="guide">5. New Staff Guide & Room Directory</option>
-            <option value="management">6. Admin Approval & Roster (VP)</option>
-            <option value="display">7. Staffroom Compact TV Display</option>
-          </select>
-          <button onclick="toggleMetricsModal()" class="text-xs font-bold text-blue-800 bg-blue-50 hover:bg-blue-100 border border-blue-200 px-2.5 py-1 rounded-lg">
-            📊 Impact Metrics
-          </button>
-          <button onclick="exportAuditCSV()" class="text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-300 px-2.5 py-1 rounded-lg">
-            📥 CSV
-          </button>
+      <button id="tab-dispatch" onclick="switchModule('dispatch')" class="nav-tab rounded-xl px-3.5 py-2.5 text-left flex items-center justify-between border-2 border-white/80 bg-white/90 text-slate-800 hover:bg-white">
+        <div>
+          <div class="text-xs font-black">2. AI Cover Dispatch</div>
+          <div class="text-[11px] text-slate-500 font-bold">校務處 AI 智能排代課</div>
         </div>
-      </div>
+        <span id="badge-pending" class="bg-amber-400 text-slate-950 font-black text-xs px-2 py-0.5 rounded-full">1</span>
+      </button>
+
+      <button id="tab-classroom" onclick="switchModule('classroom')" class="nav-tab rounded-xl px-3.5 py-2.5 text-left flex items-center justify-between border-2 border-white/80 bg-white/90 text-slate-800 hover:bg-white">
+        <div>
+          <div class="text-xs font-black">3. Classroom & Quiz Hub</div>
+          <div class="text-[11px] text-slate-500 font-bold">代課老師監堂及學生測驗</div>
+        </div>
+        <span class="text-base">🏫</span>
+      </button>
+
+      <button id="tab-tv" onclick="switchModule('tv')" class="nav-tab rounded-xl px-3.5 py-2.5 text-left flex items-center justify-between border-2 border-white/80 bg-white/90 text-slate-800 hover:bg-white">
+        <div>
+          <div class="text-xs font-black">4. Staffroom TV Board</div>
+          <div class="text-[11px] text-slate-500 font-bold">教員室大電視即時公告</div>
+        </div>
+        <span class="text-base">📺</span>
+      </button>
     </div>
   </header>
 
-  <!-- ==================== GLOBAL TOAST ==================== -->
-  <div id="toast-banner" class="hidden fixed bottom-5 right-5 z-50 max-w-md bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl border border-slate-700 flex items-center justify-between gap-3">
-    <div id="toast-message" class="text-xs sm:text-sm font-bold">Action completed.</div>
-    <button onclick="hideToast()" class="text-slate-400 hover:text-white text-xs font-bold">✕</button>
-  </div>
+  <!-- ==================== MAIN WORKSPACE ==================== -->
+  <main class="max-w-[1440px] w-full mx-auto px-4 lg:px-6 py-5 flex-1">
 
-  <!-- ==================== PILOT METRICS MODAL ==================== -->
-  <div id="metrics-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-3xl w-full shadow-2xl border border-slate-200 overflow-hidden">
-      <div class="header-teal px-6 py-4 flex items-center justify-between">
-        <div>
-          <h3 class="text-lg font-black">Competition Evaluation & Live Pilot Metrics</h3>
-          <p class="text-xs text-white/90">Live evidence calculated from transaction & student learning logs</p>
-        </div>
-        <button onclick="toggleMetricsModal()" class="bg-white/20 hover:bg-white/30 text-white font-black px-3 py-1 rounded-lg text-sm">✕</button>
-      </div>
-      <div class="p-6 flex flex-col gap-4">
-        <div id="metrics-modal-body" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ==================== MODULE 0: ROLE-AWARE HOME LAUNCHER MENU (DEFAULT VIEW) ==================== -->
-  <main id="mod-menu" class="flex-1 max-w-6xl w-full mx-auto p-4 sm:p-6 flex flex-col gap-5">
-    
-    <!-- Personal Welcome & Immediate Alert Strip -->
-    <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm flex flex-wrap items-center justify-between gap-4">
-      <div>
-        <div class="flex items-center gap-2">
-          <span id="welcome-greeting" class="text-lg sm:text-xl font-black text-slate-900">Good Morning, Mr. Lau Ka Ho (劉家豪老師)</span>
-          <span id="welcome-code-pill" class="bg-[#e0f7f5] text-[#0f5e59] font-black px-2.5 py-0.5 rounded-full text-xs">Code: LKH</span>
-        </div>
-        <p id="welcome-subtext" class="text-xs sm:text-sm text-slate-600 mt-1">
-          Choose one task below. New to the school? Click <b>"1-Click Morning Sick Leave"</b> or <b>"New Staff Guide"</b> for step-by-step help.
-        </p>
-      </div>
-
-      <!-- Quick Express Button for Teachers in a Rush -->
-      <div class="flex flex-wrap items-center gap-2">
-        <button onclick="triggerExpressSickLeave()" class="touch-target bg-rose-600 hover:bg-rose-700 text-white font-black px-4 py-2 rounded-xl text-xs shadow-sm flex items-center gap-1.5">
-          ⚡ 1-Click Morning Sick Leave (今日病假捷徑)
-        </button>
-      </div>
-    </div>
-
-    <!-- Urgent Notification Banner (Only shown if user has unacknowledged cover or swap consent) -->
-    <div id="menu-urgent-strip" class="hidden bg-amber-50 border-2 border-amber-400 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3">
-      <div class="flex items-center gap-3">
-        <span class="text-2xl">🔔</span>
-        <div>
-          <div id="menu-urgent-text" class="text-sm font-black text-amber-950">You have 1 unacknowledged cover duty or swap request today.</div>
-          <div class="text-xs text-amber-800">Please review and click "Acknowledge" so the General Office knows the classroom is covered.</div>
-        </div>
-      </div>
-      <button onclick="openModule('schedule')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black px-4 py-2 rounded-xl text-xs">
-        Open & Acknowledge Now ➔
-      </button>
-    </div>
-
-    <!-- Clean 6-Card Task Launcher Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <!-- ===================================================================== -->
+    <!-- MODULE 1: TEACHER LEAVE & AI LEARNING CONTINUITY PACK                 -->
+    <!-- ===================================================================== -->
+    <section id="mod-leave" class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
       
-      <!-- Card 1: Today's Schedule & Cover Ack -->
-      <div onclick="openModule('schedule')" class="menu-card cursor-pointer bg-white rounded-2xl border-2 border-slate-200 hover:border-[#3cc2b8] p-5 flex flex-col justify-between">
-        <div>
-          <div class="flex items-center justify-between mb-3">
-            <span class="w-10 h-10 rounded-xl bg-teal-50 text-[#0f5e59] flex items-center justify-center text-xl font-black">🗓️</span>
-            <span id="card-badge-schedule" class="text-xs font-black px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700">Today's Timetable</span>
-          </div>
-          <h3 id="card-title-schedule" class="text-base font-black text-slate-900">1. Today's Schedule & Cover Duties</h3>
-          <p id="card-desc-schedule" class="text-xs text-slate-600 mt-1 leading-relaxed">
-            Check your teaching timetable today, acknowledge assigned cover lessons, or confirm a colleague's swap request.
-          </p>
-        </div>
-        <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-black text-[#0f5e59]">
-          <span>Open Timetable & Duties</span>
-          <span>➔</span>
-        </div>
-      </div>
-
-      <!-- Card 2: Apply for Leave or Lesson Swap -->
-      <div onclick="openModule('apply')" class="menu-card cursor-pointer bg-white rounded-2xl border-2 border-slate-200 hover:border-[#3cc2b8] p-5 flex flex-col justify-between">
-        <div>
-          <div class="flex items-center justify-between mb-3">
-            <span class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center text-xl font-black">📝</span>
-            <span class="text-xs font-black px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800">3-Step Guided Wizard</span>
-          </div>
-          <h3 id="card-title-apply" class="text-base font-black text-slate-900">2. Apply for Leave or Lesson Swap</h3>
-          <p id="card-desc-apply" class="text-xs text-slate-600 mt-1 leading-relaxed">
-            Submit Sick Leave, Official Trip, or Reciprocal Lesson Swap. Automatically checks for clashes and attaches a 40-min Learning Pack.
-          </p>
-        </div>
-        <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-black text-emerald-700">
-          <span>Start New Request</span>
-          <span>➔</span>
-        </div>
-      </div>
-
-      <!-- Card 3: Classroom Supervision & Student Learning Continuity -->
-      <div onclick="openModule('continuity')" class="menu-card cursor-pointer bg-white rounded-2xl border-2 border-slate-200 hover:border-[#3cc2b8] p-5 flex flex-col justify-between">
-        <div>
-          <div class="flex items-center justify-between mb-3">
-            <span class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center text-xl font-black">🎓</span>
-            <span class="text-xs font-black px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-800">In-Class Console</span>
-          </div>
-          <h3 id="card-title-continuity" class="text-base font-black text-slate-900">3. Start Cover Lesson & Student Exit Check</h3>
-          <p id="card-desc-continuity" class="text-xs text-slate-600 mt-1 leading-relaxed">
-            Supervising a cover class right now? Launch the 40-minute timed run-sheet, answer key, SEN notes, and Student Exit Check.
-          </p>
-        </div>
-        <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-black text-indigo-700">
-          <span>Launch Classroom Console</span>
-          <span>➔</span>
-        </div>
-      </div>
-
-      <!-- Card 4: My Leave Balance & Post-Absence Student Evidence -->
-      <div onclick="openModule('records')" class="menu-card cursor-pointer bg-white rounded-2xl border-2 border-slate-200 hover:border-[#3cc2b8] p-5 flex flex-col justify-between">
-        <div>
-          <div class="flex items-center justify-between mb-3">
-            <span class="w-10 h-10 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center text-xl font-black">📊</span>
-            <span id="card-badge-records" class="text-xs font-black px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900">Balances & Evidence</span>
-          </div>
-          <h3 id="card-title-records" class="text-base font-black text-slate-900">4. Leave Balance & Student Work Reports</h3>
-          <p id="card-desc-records" class="text-xs text-slate-600 mt-1 leading-relaxed">
-            Check your remaining Sick/Special/Annual Leave, Net Cover workload balance, and how your students performed while you were away.
-          </p>
-        </div>
-        <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-black text-amber-800">
-          <span>View Records & Mastery</span>
-          <span>➔</span>
-        </div>
-      </div>
-
-      <!-- Card 5: New Staff Survival Guide & Campus Room Finder -->
-      <div onclick="openModule('guide')" class="menu-card cursor-pointer bg-white rounded-2xl border-2 border-slate-200 hover:border-[#3cc2b8] p-5 flex flex-col justify-between">
-        <div>
-          <div class="flex items-center justify-between mb-3">
-            <span class="w-10 h-10 rounded-xl bg-sky-50 text-sky-700 flex items-center justify-center text-xl font-black">🧭</span>
-            <span class="text-xs font-black px-2.5 py-0.5 rounded-full bg-sky-100 text-sky-800">New Teacher Friendly</span>
-          </div>
-          <h3 id="card-title-guide" class="text-base font-black text-slate-900">5. New Staff Guide, Bell Times & Room Map</h3>
-          <p id="card-desc-guide" class="text-xs text-slate-600 mt-1 leading-relaxed">
-            Quick guide for new teachers: Lab/Room floor directory, Bell schedule, Teacher short-codes, and General Office emergency contacts.
-          </p>
-        </div>
-        <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-black text-sky-700">
-          <span>Open Campus Guide</span>
-          <span>➔</span>
-        </div>
-      </div>
-
-      <!-- Card 6: Admin Approval & Compact Staffroom TV -->
-      <div class="bg-slate-50 rounded-2xl border-2 border-slate-200 p-5 flex flex-col justify-between">
-        <div>
-          <div class="flex items-center justify-between mb-3">
-            <span class="w-10 h-10 rounded-xl bg-rose-50 text-rose-700 flex items-center justify-center text-xl font-black">🏛️</span>
-            <span id="card-badge-admin" class="text-xs font-black px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-800">Office & Display</span>
-          </div>
-          <h3 class="text-base font-black text-slate-900">6. School Office & Staffroom TV</h3>
-          <p class="text-xs text-slate-600 mt-1 leading-relaxed">
-            Open the General Office / VP Approval console or view the high-density Staffroom TV Noticeboard.
-          </p>
-        </div>
-        <div class="mt-4 pt-3 border-t border-slate-200 grid grid-cols-2 gap-2">
-          <button onclick="openModule('management')" class="bg-white hover:bg-rose-50 text-rose-800 border border-rose-200 font-black py-2 px-2.5 rounded-xl text-xs transition">
-            🏛️ VP Approval (<span id="menu-pending-count">0</span>)
-          </button>
-          <button onclick="openModule('display')" class="bg-[#0f5e59] hover:bg-teal-900 text-white font-black py-2 px-2.5 rounded-xl text-xs transition">
-            🖥️ Staffroom TV
-          </button>
-        </div>
-      </div>
-
-    </div>
-  </main>
-
-  <!-- ==================== MODULE 1: TODAY'S SCHEDULE & COVER DUTIES ==================== -->
-  <main id="mod-schedule" class="hidden flex-1 max-w-5xl w-full mx-auto p-4 sm:p-6 flex flex-col gap-5">
-    <div class="flex items-center justify-between">
-      <div>
-        <h2 class="text-lg sm:text-xl font-black text-slate-900">🗓️ Today's Schedule & Assigned Cover Duties</h2>
-        <p class="text-xs text-slate-600">Acknowledge any assigned cover lessons below or click "Start Lesson" when entering the classroom.</p>
-      </div>
-      <button onclick="openModule('menu')" class="bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold px-3.5 py-2 rounded-xl text-xs">
-        ← Back to Main Menu
-      </button>
-    </div>
-
-    <!-- Urgent Actions Box -->
-    <section class="bg-white rounded-xl shadow-sm border-2 border-amber-400 overflow-hidden">
-      <div class="bg-amber-400 text-slate-950 px-5 py-2.5 flex items-center justify-between">
-        <span class="text-sm font-black">⚠️ Pending Cover Acknowledgements & Colleague Swap Confirmations</span>
-        <span id="urgent-count-pill" class="text-xs font-black bg-slate-950 text-amber-300 px-2.5 py-0.5 rounded-full">0 Actions</span>
-      </div>
-      <div id="urgent-actions-container" class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4"></div>
-    </section>
-
-    <!-- Full Daily Timetable -->
-    <section class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-      <div class="header-teal px-5 py-3 flex items-center justify-between">
-        <h3 class="text-sm sm:text-base font-black">My Teaching & Cover Timetable Today (2026-11-05 · Cycle Day A)</h3>
-        <span class="text-xs font-bold bg-white/20 px-2.5 py-0.5 rounded">Bell Schedule Synced</span>
-      </div>
-      <div id="my-daily-schedule-list" class="p-4 flex flex-col gap-3"></div>
-    </section>
-  </main>
-
-  <!-- ==================== MODULE 2: 3-STEP LEAVE & LESSON SWAP WIZARD ==================== -->
-  <main id="mod-apply" class="hidden flex-1 max-w-4xl w-full mx-auto p-4 sm:p-6 flex flex-col gap-5">
-    <div class="flex flex-wrap items-center justify-between gap-2">
-      <div>
-        <h2 class="text-lg sm:text-xl font-black text-slate-900">📝 New Leave / Lesson Swap Request</h2>
-        <p class="text-xs text-slate-600">Step-by-step guided form · Your progress is saved automatically</p>
-      </div>
-      <div class="flex items-center gap-2">
-        <button onclick="triggerExpressSickLeave()" class="bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-200 font-black px-3 py-2 rounded-xl text-xs">
-          ⚡ Auto-Fill Morning Sick Leave
-        </button>
-        <button onclick="openModule('menu')" class="bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold px-3.5 py-2 rounded-xl text-xs">
-          ← Back to Main Menu
-        </button>
-      </div>
-    </div>
-
-    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-      <!-- 3-Step Bar -->
-      <div class="bg-slate-50 border-b border-slate-200 px-6 py-3 grid grid-cols-3 gap-2">
-        <button onclick="setWizardStep(1)" id="step-btn-1" class="touch-target rounded-lg px-3 py-2 text-xs font-black flex items-center justify-center gap-1.5 transition">
-          <span>1. Leave Category & Date</span>
-        </button>
-        <button onclick="setWizardStep(2)" id="step-btn-2" class="touch-target rounded-lg px-3 py-2 text-xs font-bold flex items-center justify-center gap-1.5 transition">
-          <span>2. Affected Lessons & Pack</span>
-        </button>
-        <button onclick="setWizardStep(3)" id="step-btn-3" class="touch-target rounded-lg px-3 py-2 text-xs font-bold flex items-center justify-center gap-1.5 transition">
-          <span>3. Verify & Submit</span>
-        </button>
-      </div>
-
-      <div class="p-6">
-        <!-- STEP 1 -->
-        <div id="wizard-step-1" class="flex flex-col gap-4">
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-xs font-bold text-slate-700 mb-1">Leave / Arrangement Category</label>
-              <select id="draft-leave-type" onchange="updateDraftField('leaveType', this.value)" class="touch-target w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm font-bold text-slate-800"></select>
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-slate-700 mb-1">Time Scope</label>
-              <select id="draft-duration-mode" onchange="updateDraftField('durationMode', this.value)" class="touch-target w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm font-bold text-slate-800">
-                <option value="SPECIFIC_PERIODS">Specific Periods (0.5 Day / Hourly)</option>
-                <option value="FULL_DAY">Full School Day (08:15 – 16:30, 1.0 Day)</option>
-                <option value="HALF_DAY_AM">Morning Session AM (08:15 – 12:30, 0.5 Day)</option>
-                <option value="HALF_DAY_PM">Afternoon Session PM (13:15 – 16:30, 0.5 Day)</option>
-                <option value="NO_LESSONS">Non-Teaching Slot (No Lessons Affected)</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div>
-              <label class="block text-xs font-bold text-slate-700 mb-1">Start Date</label>
-              <input id="draft-start-date" type="date" value="2026-11-05" onchange="updateDraftField('startDate', this.value)" class="touch-target w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm font-bold text-slate-800" />
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-slate-700 mb-1">End Date</label>
-              <input id="draft-end-date" type="date" value="2026-11-05" onchange="updateDraftField('endDate', this.value)" class="touch-target w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm font-bold text-slate-800" />
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-slate-700 mb-1">Supporting Document</label>
-              <select id="draft-doc-status" onchange="updateDraftField('docStatus', this.value)" class="touch-target w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-800">
-                <option value="EDB / Competition Circular Attached">EDB / Competition Circular Attached</option>
-                <option value="Medical Certificate Attached">Medical Certificate Attached</option>
-                <option value="To Follow Upon Return">To Follow Upon Return</option>
-                <option value="Not Required">Not Required</option>
-              </select>
-            </div>
-          </div>
-
+      <!-- Left: Leave Form & AI Pack Generator -->
+      <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="bg-[#0f5e59] text-white px-5 py-3.5 flex flex-wrap items-center justify-between gap-2">
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Reason / Official Duty Note (Hidden from Public TV)</label>
-            <input id="draft-reason" type="text" oninput="updateDraftField('reason', this.value)" class="touch-target w-full bg-slate-50 border border-slate-300 rounded-lg px-3.5 py-2 text-sm text-slate-800" />
+            <h2 class="text-base sm:text-lg font-black">📝 Teacher Leave & Learning Continuity Form</h2>
+            <p class="text-xs text-teal-100 font-semibold">Applicant: Mr. Lau Ka Ho (劉家豪老師 · LKH) — Creative Tech & Physics</p>
+          </div>
+          <button onclick="quickFillMorningSick()" class="touch-btn bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-3 py-1.5 rounded-xl text-xs shadow-sm">
+            ⚡ Quick Fill Sick Leave (一鍵填寫病假)
+          </button>
+        </div>
+
+        <div class="p-5 flex flex-col gap-5">
+          <!-- Step 1: Leave Type -->
+          <div>
+            <label class="text-xs font-black text-slate-600 uppercase block mb-2">
+              1. Select Leave Category (選擇請假類別)
+            </label>
+            <div class="grid grid-cols-3 gap-2.5" id="leave-type-buttons">
+              <!-- Populated by JS -->
+            </div>
           </div>
 
-          <div id="step1-validation-box" class="bg-emerald-50 border border-emerald-200 rounded-xl p-3.5 text-xs text-emerald-900"></div>
+          <!-- Step 2: Affected Lessons & Auto-Attached Learning Pack -->
+          <div>
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+              <label class="text-xs font-black text-slate-600 uppercase">
+                2. Affected Timetable & AI Learning Pack (受影響課堂及 AI 教學包)
+              </label>
+              <button onclick="aiRegeneratePack()" class="touch-btn bg-indigo-600 hover:bg-indigo-700 text-white font-black px-3 py-1.5 rounded-lg text-xs flex items-center gap-1 shadow-sm">
+                <span>✨</span> <span>AI Generate Pack & Quiz (AI 生成代課練習)</span>
+              </button>
+            </div>
 
-          <div class="flex justify-end pt-2">
-            <button onclick="setWizardStep(2)" class="touch-target bg-[#3cc2b8] hover:bg-[#32a89f] text-white font-black px-6 py-2.5 rounded-xl text-sm shadow-sm">
-              Next: Select Affected Lessons ➔
+            <!-- Custom Topic Input for AI Generation -->
+            <div class="bg-indigo-50/80 border border-indigo-200 rounded-xl p-3 mb-3 flex flex-col sm:flex-row gap-2 items-center">
+              <input id="ai-topic-input" type="text" placeholder="輸入課堂主題 (例如：光的折射定律 / 超聲波距離感應) 由 AI 自動生成工作紙及測驗..." class="w-full text-xs font-bold bg-white border border-indigo-200 rounded-lg px-3 py-2 text-slate-800 focus:outline-none focus:border-indigo-500" />
+              <button onclick="aiRegeneratePack()" class="touch-btn shrink-0 bg-indigo-900 hover:bg-slate-900 text-white font-black px-3.5 py-2 rounded-lg text-xs">
+                🤖 按主題生成
+              </button>
+            </div>
+
+            <div id="leave-lessons-list" class="flex flex-col gap-3">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <button onclick="submitLeaveApplication()" class="touch-btn w-full bg-[#0f5e59] hover:bg-teal-900 text-white font-black py-3.5 rounded-xl text-sm shadow-md flex items-center justify-center gap-2">
+            <span>🚀 Submit Leave & Send Pack to Office (提交請假並傳送教學包至校務處)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Right: Active School Leave & Cover Records -->
+      <div class="lg:col-span-5 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="bg-slate-900 text-white px-5 py-3.5 flex items-center justify-between">
+          <div>
+            <h3 class="text-sm sm:text-base font-black">📋 Today's Leave & Cover Records</h3>
+            <p class="text-xs text-slate-300 font-bold">今日學校請假及代課批核紀錄</p>
+          </div>
+          <button onclick="openExcelModal()" class="touch-btn bg-white/15 hover:bg-white/25 text-white font-black px-3 py-1.5 rounded-lg text-xs">
+            + 新增/匯入紀錄
+          </button>
+        </div>
+        <div id="leave-history-list" class="p-4 flex flex-col gap-3">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- MODULE 2: AI SMART COVER DISPATCH & WORKLOAD EQUITY (ADMIN CONSOLE)   -->
+    <!-- ===================================================================== -->
+    <section id="mod-dispatch" class="hidden grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+      
+      <!-- Left: Pending Cover Dispatch Queue with AI Clash Filter -->
+      <div class="lg:col-span-8 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="bg-[#0f5e59] text-white px-5 py-3.5 flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h2 class="text-base sm:text-lg font-black">🏛️ AI Cover Dispatch Console (校務處 AI 智能排代課)</h2>
+            <p class="text-xs text-teal-100 font-semibold">AI scores every teacher by: ① No Clash (40%) + ② Lab Safety (30%) + ③ Fair Workload (30%)</p>
+          </div>
+          <span class="bg-amber-400 text-slate-950 font-black px-3 py-1 rounded-lg text-xs">
+            🤖 AI 3-Rule Scoring
+          </span>
+        </div>
+
+        <div id="dispatch-queue-container" class="p-5 flex flex-col gap-4">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Right: Live Teacher Workload Roster & Clash Status -->
+      <div class="lg:col-span-4 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="bg-amber-500 text-slate-950 px-5 py-3.5 flex items-center justify-between gap-2">
+          <div>
+            <h3 class="text-sm sm:text-base font-black">⚖️ Staff Timetable & Workload</h3>
+            <p class="text-xs font-bold opacity-85">教師空堂、實驗室資格及代課數</p>
+          </div>
+          <button onclick="openExcelModal()" class="touch-btn bg-slate-900 text-white font-black px-2.5 py-1.5 rounded-lg text-xs">
+            📥 Import Excel
+          </button>
+        </div>
+        <div id="dispatch-roster-list" class="p-4 flex flex-col gap-2.5">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- MODULE 3: CLASSROOM SUPERVISION & STUDENT EXIT-CHECK HUB              -->
+    <!-- ===================================================================== -->
+    <section id="mod-classroom" class="hidden grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+      
+      <!-- Left: Substitute Teacher Supervision Console -->
+      <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="bg-[#0f5e59] text-white px-5 py-3.5 flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h2 class="text-base sm:text-lg font-black">🏫 Substitute Teacher Classroom Hub (代課老師課室工作台)</h2>
+            <p class="text-xs text-teal-100 font-semibold">40-Min Lesson Guide, SEN Support Tips & Answer Key</p>
+          </div>
+          <div id="classroom-duty-tabs" class="flex gap-1.5">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <div id="classroom-detail-box" class="p-5 flex flex-col gap-4">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Right: Student 5-Min Exit Quiz & Live Mastery Tracker -->
+      <div class="lg:col-span-5 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="bg-indigo-900 text-white px-5 py-3.5 flex items-center justify-between">
+          <div>
+            <h3 class="text-sm sm:text-base font-black">🎯 Student 5-Min Exit-Check Quiz</h3>
+            <p class="text-xs text-indigo-200 font-bold">學生課堂結束前 5 分鐘知識檢核</p>
+          </div>
+          <span class="bg-indigo-700 text-amber-300 font-black px-2.5 py-1 rounded-lg text-xs">Live Assessment</span>
+        </div>
+
+        <div id="student-quiz-box" class="p-5 flex flex-col gap-4">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- MODULE 4: STAFFROOM TV LIVE DIGITAL SIGNAGE                           -->
+    <!-- ===================================================================== -->
+    <section id="mod-tv" class="hidden flex-col gap-5 bg-slate-950 text-white rounded-3xl p-6 border-2 border-slate-800 shadow-2xl">
+      <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span class="text-xs font-black text-emerald-400 uppercase tracking-widest">STAFFROOM DIGITAL SIGNAGE · 教員室即時代課公告</span>
+          </div>
+          <h2 class="text-xl sm:text-2xl font-black mt-1">仁濟醫院靚次伯紀念中學 — 今日代課及課室調動時間表</h2>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 px-4 py-2 rounded-2xl text-right">
+          <div class="text-xs text-slate-400 font-bold">2026-11-05 · DAY A</div>
+          <div class="text-lg font-mono font-black text-amber-400">LIVE SYNCED</div>
+        </div>
+      </div>
+
+      <div id="tv-duties-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Populated by JS -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================== EXCEL TIMETABLE & RECORD IMPORT MODAL ==================== -->
+  <div id="excel-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-3xl w-full shadow-2xl border border-slate-200 overflow-hidden max-h-[90vh] flex flex-col">
+      <div class="bg-[#0f5e59] text-white px-5 py-4 flex items-center justify-between shrink-0">
+        <div>
+          <h3 class="text-base sm:text-lg font-black">📥 Import School Timetable & Current Records (Excel / CSV)</h3>
+          <p class="text-xs text-teal-100 font-bold">匯入學校老師時間表及現有代課紀錄 (支援 WebSAMS / Excel .xlsx / .csv)</p>
+        </div>
+        <button onclick="closeExcelModal()" class="touch-btn bg-white/20 hover:bg-white/30 text-white font-black px-3 py-1 rounded-lg text-sm">✕</button>
+      </div>
+
+      <div class="p-5 flex flex-col gap-4 overflow-y-auto">
+        <!-- Sample Excel Preview Table -->
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+            <span class="text-xs font-black text-slate-700 uppercase">📄 Standard Excel Columns (學校 Excel 欄位格式):</span>
+            <button onclick="exportCurrentExcelCSV()" class="touch-btn text-xs font-black text-[#0f5e59] underline">
+              ⬇️ Download .CSV Template (下載範本)
+            </button>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr class="bg-slate-200 text-slate-800 font-black">
+                  <th class="p-2 border border-slate-300">Code</th>
+                  <th class="p-2 border border-slate-300">Name (姓名)</th>
+                  <th class="p-2 border border-slate-300">Dept (科組)</th>
+                  <th class="p-2 border border-slate-300">Lab (實驗室)</th>
+                  <th class="p-2 border border-slate-300">Busy Periods (有課節數)</th>
+                  <th class="p-2 border border-slate-300">Net Cover (累計代課)</th>
+                </tr>
+              </thead>
+              <tbody class="font-bold text-slate-700 bg-white">
+                <tr>
+                  <td class="p-2 border border-slate-200">CWK</td>
+                  <td class="p-2 border border-slate-200">Mr. Cheung (張偉傑)</td>
+                  <td class="p-2 border border-slate-200">Maths & ICT</td>
+                  <td class="p-2 border border-slate-200 text-emerald-700">YES</td>
+                  <td class="p-2 border border-slate-200">P4</td>
+                  <td class="p-2 border border-slate-200">0</td>
+                </tr>
+                <tr class="bg-emerald-50/70">
+                  <td class="p-2 border border-slate-200 font-black text-[#0f5e59]">WKM (New)</td>
+                  <td class="p-2 border border-slate-200 font-black text-[#0f5e59]">Mr. Wong (王家明)</td>
+                  <td class="p-2 border border-slate-200">Science & STEM</td>
+                  <td class="p-2 border border-slate-200 text-emerald-700">YES</td>
+                  <td class="p-2 border border-slate-200">P1, P2</td>
+                  <td class="p-2 border border-slate-200">-1</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 2 Ways to Import (1-Tap Demo Sync or Real CSV File Upload) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <button onclick="simulateExcelImport()" class="touch-btn bg-emerald-600 hover:bg-emerald-700 text-white font-black p-4 rounded-xl text-left shadow-md flex flex-col justify-between">
+            <div class="text-sm sm:text-base">⚡ 1-Tap Sync School Excel</div>
+            <div class="text-xs font-bold text-emerald-100 mt-1">一鍵載入最新老師時間表及歷史代課數 (新增王家明老師 WKM)</div>
+          </button>
+
+          <label class="touch-btn cursor-pointer bg-slate-100 hover:bg-slate-200 border-2 border-dashed border-slate-300 text-slate-800 font-black p-4 rounded-xl text-left flex flex-col justify-between">
+            <div class="text-sm sm:text-base">📂 Upload .CSV / Excel File</div>
+            <div class="text-xs font-bold text-slate-500 mt-1">從 iPad / 電腦選擇學校時間表或代課紀錄 CSV 檔案</div>
+            <input type="file" accept=".csv,.txt" onchange="handleCSVFileUpload(event)" class="hidden" />
+          </label>
+        </div>
+
+        <!-- Manual Quick Insert Teacher / Current Record Row -->
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5">
+          <div class="text-xs font-black text-slate-700 uppercase mb-2">
+            ➕ Quick Insert Teacher Timetable & Current Balance (手動新增老師時間表及現有代課紀錄):
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-6 gap-2 text-xs">
+            <input id="new-t-code" type="text" placeholder="Code (如 LSY)" class="border border-slate-300 rounded-lg px-2.5 py-2 font-bold" />
+            <input id="new-t-name" type="text" placeholder="姓名 (如 李思欣)" class="border border-slate-300 rounded-lg px-2.5 py-2 font-bold" />
+            <input id="new-t-dept" type="text" placeholder="科組 (如 Bio)" class="border border-slate-300 rounded-lg px-2.5 py-2 font-bold" />
+            <input id="new-t-busy" type="text" placeholder="有課節數 (如 1,3)" class="border border-slate-300 rounded-lg px-2.5 py-2 font-bold" />
+            <input id="new-t-net" type="number" placeholder="現有代課數 (-2)" class="border border-slate-300 rounded-lg px-2.5 py-2 font-bold" />
+            <button onclick="manualAddTeacherRecord()" class="touch-btn bg-[#0f5e59] text-white font-black rounded-lg px-3 py-2">
+              + 新增紀錄
             </button>
           </div>
         </div>
-
-        <!-- STEP 2 -->
-        <div id="wizard-step-2" class="hidden flex flex-col gap-4">
-          <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 flex flex-wrap items-center justify-between gap-2 text-xs">
-            <span class="font-bold text-slate-700">Tick the lessons that need cover or swap. Each lesson includes a ready-to-use 40-minute Department Learning Pack.</span>
-            <label class="inline-flex items-center gap-2 font-black text-[#0f5e59] cursor-pointer">
-              <input type="checkbox" id="draft-no-lessons-chk" onchange="toggleNoLessonsRoute(this.checked)" class="w-4 h-4 accent-[#3cc2b8]" />
-              No teaching lessons affected
-            </label>
-          </div>
-
-          <div id="wizard-lesson-cards" class="flex flex-col gap-4"></div>
-
-          <div id="wizard-ta-handover-box" class="hidden bg-slate-50 border border-slate-200 rounded-xl p-4">
-            <label class="block text-xs font-black text-slate-800 mb-1.5">📌 Administrative / SEN Support Handover Note</label>
-            <input id="draft-ta-handover" type="text" oninput="updateDraftField('taHandover', this.value)" class="touch-target w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-800" />
-          </div>
-
-          <div class="flex items-center justify-between pt-2 border-t border-slate-200">
-            <button onclick="setWizardStep(1)" class="touch-target bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-5 py-2 rounded-xl text-sm">← Back</button>
-            <button onclick="setWizardStep(3)" class="touch-target bg-[#3cc2b8] hover:bg-[#32a89f] text-white font-black px-6 py-2.5 rounded-xl text-sm shadow-sm">Next: Review Summary ➔</button>
-          </div>
-        </div>
-
-        <!-- STEP 3 -->
-        <div id="wizard-step-3" class="hidden flex flex-col gap-4">
-          <div id="wizard-plain-summary" class="school-banner-blue border-2 border-[#3cc2b8] rounded-xl p-5 text-sm text-slate-900"></div>
-          <div id="wizard-review-cards" class="flex flex-col gap-2.5"></div>
-          <div class="flex items-center justify-between pt-3 border-t border-slate-200">
-            <button onclick="setWizardStep(2)" class="touch-target bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-5 py-2 rounded-xl text-sm">← Modify Lessons</button>
-            <button onclick="submitValidatedRequest()" class="touch-target bg-[#c81e1e] hover:bg-red-800 text-white font-black px-6 py-2.5 rounded-xl text-sm shadow-md">✓ Confirm & Submit Request</button>
-          </div>
-        </div>
       </div>
     </div>
-  </main>
+  </div>
 
-  <!-- ==================== MODULE 3: CLASSROOM SUPERVISION & STUDENT EXIT CHECK ==================== -->
-  <main id="mod-continuity" class="hidden flex-1 max-w-6xl w-full mx-auto p-4 sm:p-6 flex flex-col gap-5">
-    <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm flex flex-wrap items-center justify-between gap-4">
-      <div>
-        <h2 class="text-lg font-black text-slate-900">🎓 Classroom Supervision & Student Learning Continuity</h2>
-        <p class="text-xs text-slate-600">Switch between the Cover Teacher Run-Sheet and the Student Exit-Check Portal</p>
-      </div>
-      <div class="flex flex-wrap items-center gap-2">
-        <button onclick="setContinuitySubTab('cover_console')" id="cont-tab-cover_console" class="px-3.5 py-2 rounded-lg text-xs font-black bg-[#3cc2b8] text-white">
-          1. Cover Teacher Run-Sheet
-        </button>
-        <button onclick="setContinuitySubTab('student_portal')" id="cont-tab-student_portal" class="px-3.5 py-2 rounded-lg text-xs font-bold bg-slate-100 text-slate-700">
-          2. Student Exit-Check Portal
-        </button>
-        <button onclick="openModule('menu')" class="bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold px-3 py-2 rounded-lg text-xs">
-          ← Menu
-        </button>
-      </div>
-    </div>
+  <!-- ==================== GLOBAL TOAST NOTIFICATION ==================== -->
+  <div id="toast" class="hidden fixed top-20 right-5 z-50 bg-slate-900 text-white font-black px-5 py-3.5 rounded-2xl shadow-2xl border-2 border-emerald-400 text-xs sm:text-sm max-w-md">
+    Action Completed
+  </div>
 
-    <section id="cont-panel-cover_console" class="grid grid-cols-12 gap-5">
-      <div class="col-span-12 lg:col-span-4">
-        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-          <div class="header-gold px-4 py-2.5"><h3 class="text-xs font-black uppercase">Select Cover Lesson</h3></div>
-          <div class="p-3 flex flex-col gap-2.5" id="cover-console-selector-list"></div>
-        </div>
-      </div>
-      <div class="col-span-12 lg:col-span-8" id="cover-console-main"></div>
-    </section>
-
-    <section id="cont-panel-student_portal" class="hidden grid grid-cols-12 gap-5">
-      <div class="col-span-12 lg:col-span-8" id="student-learning-workspace"></div>
-      <div class="col-span-12 lg:col-span-4">
-        <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
-          <h3 class="text-sm font-black text-slate-900 mb-2">🖨️ Printable Fallback Worksheet</h3>
-          <p class="text-xs text-slate-600 mb-3">If any student does not have a tablet/iPad today, click below to print the 40-minute offline worksheet pack.</p>
-          <button onclick="window.print()" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-2.5 px-4 rounded-xl text-xs">Print Worksheet Pack</button>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <!-- ==================== MODULE 4: MY LEAVE BALANCE & POST-ABSENCE LEARNING EVIDENCE ==================== -->
-  <main id="mod-records" class="hidden flex-1 max-w-6xl w-full mx-auto p-4 sm:p-6 flex flex-col gap-5">
-    <div class="flex items-center justify-between">
-      <div>
-        <h2 class="text-lg sm:text-xl font-black text-slate-900">📊 My Leave Entitlements, Cover Balance & Student Evidence</h2>
-        <p class="text-xs text-slate-600">Review your personal leave balance and check student Exit-Check mastery from your covered classes.</p>
-      </div>
-      <button onclick="openModule('menu')" class="bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold px-3.5 py-2 rounded-xl text-xs">← Back to Main Menu</button>
-    </div>
-
-    <div class="grid grid-cols-12 gap-5">
-      <div class="col-span-12 lg:col-span-5 flex flex-col gap-5">
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-          <div class="header-gold px-5 py-3 flex items-center justify-between">
-            <h3 class="text-sm font-black">Personal Leave & Cover Ledger</h3>
-            <span id="profile-post-badge" class="text-xs font-bold bg-white/25 px-2 py-0.5 rounded">Teacher</span>
-          </div>
-          <div class="p-4">
-            <div id="profile-summary-cards" class="grid grid-cols-3 gap-2.5 text-center"></div>
-            <div id="profile-policy-note" class="mt-3 school-banner-blue rounded-lg p-3 text-xs text-slate-700 border border-sky-200"></div>
-          </div>
-        </div>
-
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-          <div class="bg-slate-100 border-b border-slate-200 px-5 py-3">
-            <h3 class="text-sm font-black text-slate-800">My Submitted Leave & Swap Applications</h3>
-          </div>
-          <div id="my-requests-history-list" class="p-4 flex flex-col gap-3"></div>
-        </div>
-      </div>
-
-      <div class="col-span-12 lg:col-span-7 flex flex-col gap-4">
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-          <div class="header-teal px-5 py-3">
-            <h3 class="text-sm font-black">🎓 Returned Student Exit-Check Mastery & Cover Teacher Handover Notes</h3>
-          </div>
-          <div id="teacher-evidence-cards" class="p-4 flex flex-col gap-3"></div>
-        </div>
-      </div>
-    </div>
-  </main>
-
-  <!-- ==================== MODULE 5: NEW STAFF SURVIVAL GUIDE & CAMPUS DIRECTORY ==================== -->
-  <main id="mod-guide" class="hidden flex-1 max-w-5xl w-full mx-auto p-4 sm:p-6 flex flex-col gap-5">
-    <div class="flex items-center justify-between">
-      <div>
-        <h2 class="text-lg sm:text-xl font-black text-slate-900">🧭 New Teacher & Supply Staff Survival Guide (新入職及代課教師錦囊)</h2>
-        <p class="text-xs text-slate-600">Everything a newly joined teacher needs on Day 1 at Yan Chai Hospital Lan Chi Pat Memorial Secondary School.</p>
-      </div>
-      <button onclick="openModule('menu')" class="bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold px-3.5 py-2 rounded-xl text-xs">← Back to Main Menu</button>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
-        <div class="text-xs font-black uppercase text-[#0f5e59] mb-2">📞 Emergency Contacts</div>
-        <ul class="text-xs space-y-2 text-slate-700">
-          <li><b>General Office (Sick Leave / Urgent Cover):</b> Ext. 101 / 2471-8382</li>
-          <li><b>IT & AV Helpdesk (Projector / iPad Issue):</b> Ext. 208 (Rm 204A)</li>
-          <li><b>Discipline & SEN Duty Team:</b> Ext. 305 (Staffroom B)</li>
-          <li><b>Laboratory Technician Office:</b> Ext. 402 (3/F & 4/F Labs)</li>
-        </ul>
-      </div>
-
-      <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
-        <div class="text-xs font-black uppercase text-[#0f5e59] mb-2">📍 Special Room Floor Directory</div>
-        <ul class="text-xs space-y-2 text-slate-700">
-          <li><b>Comp Room 1 (Rm 204) & Comp Room 2 (Rm 205):</b> 2/F East Wing</li>
-          <li><b>STEM & Creative Tech Lab (Rm 206):</b> 2/F Next to Staircase B</li>
-          <li><b>Integrated Science Lab (Rm 301):</b> 3/F North Corridor</li>
-          <li><b>Physics Lab (Rm 401):</b> 4/F North Corridor (Lab key at General Office)</li>
-        </ul>
-      </div>
-
-      <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
-        <div class="text-xs font-black uppercase text-[#0f5e59] mb-2">⏰ Standard Bell Schedule</div>
-        <ul class="text-xs space-y-1.5 text-slate-700 font-medium">
-          <li><b>08:15 – 08:35:</b> Morning Assembly / Form Teacher Period</li>
-          <li><b>Period 1:</b> 08:35 – 09:15 · <b>Period 2:</b> 09:15 – 09:55</li>
-          <li><b>Recess 1:</b> 09:55 – 10:15 (20 mins)</li>
-          <li><b>Period 3:</b> 10:15 – 10:55 · <b>Period 4:</b> 10:55 – 11:35</li>
-          <li><b>Period 5:</b> 11:35 – 12:15 · <b>Lunch:</b> 12:15 – 13:25</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
-      <h3 class="text-sm font-black text-slate-900 mb-3">💡 3 Golden Rules for New Teachers Using This System</h3>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-slate-700">
-        <div class="bg-teal-50/70 border border-teal-200 rounded-xl p-3.5">
-          <b>1. Morning Sick Leave before 07:30:</b> Click the red <b>"⚡ 1-Click Morning Sick Leave"</b> button on the Main Menu. The system automatically attaches your subject's default 40-minute Learning Pack so you can rest immediately.
-        </div>
-        <div class="bg-blue-50/70 border border-blue-200 rounded-xl p-3.5">
-          <b>2. Lesson Swaps vs Cover Balance:</b> If you swap a lesson reciprocally with a colleague (e.g. for a competition trip), choose <b>"Reciprocal Lesson Swap"</b>. It will <u>not</u> deduct from your Net Cover workload balance.
-        </div>
-        <div class="bg-amber-50/70 border border-amber-200 rounded-xl p-3.5">
-          <b>3. Supervising a Cover Class:</b> Open <b>Module 3 (Start Cover Lesson)</b> on the classroom computer. Take roll call with 1 click, project the 40-minute timer, and let students complete the 7-minute Exit Check before the bell.
-        </div>
-      </div>
-    </div>
-  </main>
-
-  <!-- ==================== MODULE 6: ADMIN LEAVE & COVER MANAGEMENT ==================== -->
-  <main id="mod-management" class="hidden flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 flex flex-col gap-5">
-    <div class="flex items-center justify-between">
-      <div>
-        <h2 class="text-lg sm:text-xl font-black text-slate-900">🏛️ General Office & Vice-Principal Approval Console</h2>
-        <p class="text-xs text-slate-600">Hard clash validation, workload equity roster, and reversible cover ledger</p>
-      </div>
-      <button onclick="openModule('menu')" class="bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold px-3.5 py-2 rounded-xl text-xs">← Back to Main Menu</button>
-    </div>
-
-    <div id="admin-guard-banner" class="hidden bg-amber-50 border-2 border-amber-400 rounded-xl p-3.5 flex flex-wrap items-center justify-between gap-3 text-xs text-amber-950">
-      <div><b>🔒 Read-Only Mode:</b> Approval & cancellation buttons require Vice-Principal (Admin) privileges.</div>
-      <button onclick="switchSimulatedUser('ADMIN')" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-black px-3.5 py-1.5 rounded-lg">Switch to VP Lee (Admin)</button>
-    </div>
-
-    <div class="grid grid-cols-12 gap-5">
-      <div class="col-span-12 lg:col-span-7 flex flex-col gap-5">
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-          <div class="header-teal px-5 py-3 flex items-center justify-between">
-            <h3 class="text-sm font-black">Pending Approvals (Hard Clash Filter Active)</h3>
-            <span id="mgmt-pending-pill" class="text-xs font-black bg-white text-[#0f5e59] px-2.5 py-0.5 rounded-full">0 Pending</span>
-          </div>
-          <div id="mgmt-pending-container" class="p-4 flex flex-col gap-4"></div>
-        </div>
-
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-          <div class="bg-slate-100 border-b border-slate-200 px-5 py-3 flex items-center justify-between">
-            <h3 class="text-sm font-black text-slate-800">Published Cover & Swap Transactions (Reversible)</h3>
-          </div>
-          <div id="mgmt-published-container" class="p-4 flex flex-col gap-2.5"></div>
-        </div>
-      </div>
-
-      <div class="col-span-12 lg:col-span-5 flex flex-col gap-5">
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-          <div class="header-gold px-5 py-3"><h3 class="text-sm font-black">Staff Leave & Workload Roster</h3></div>
-          <div class="p-4 flex flex-col gap-3">
-            <div id="mgmt-roster-teachers" class="flex flex-col gap-2"></div>
-            <div id="mgmt-roster-tas" class="flex flex-col gap-2 pt-2 border-t border-slate-200"></div>
-          </div>
-        </div>
-
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-          <div class="bg-slate-100 border-b border-slate-200 px-5 py-2.5"><h3 class="text-xs font-black text-slate-700 uppercase">📜 Immutable Audit Log</h3></div>
-          <div id="mgmt-audit-log" class="p-4 flex flex-col gap-1.5 max-h-56 overflow-y-auto text-xs"></div>
-        </div>
-      </div>
-    </div>
-  </main>
-
-  <!-- ==================== MODULE 7: COMPACT, HIGH-DENSITY STAFFROOM TV DISPLAY ==================== -->
-  <main id="mod-display" class="hidden flex-1 w-full max-w-7xl mx-auto p-3 sm:p-4 flex flex-col justify-between gap-3 select-none">
-    
-    <!-- Compact Top TV Header + Live Bell Period Indicator -->
-    <div class="school-header-gradient border-2 border-[#9ed45b] rounded-xl px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 shadow-sm">
-      <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-full bg-white border-2 border-[#8c1d40] flex flex-col items-center justify-center font-black">
-          <span class="text-[7px] text-[#1d4ed8] leading-none">YAN CHAI</span>
-          <span class="text-xs text-[#8c1d40] leading-tight">仁濟</span>
-        </div>
-        <div>
-          <div class="flex items-center gap-2">
-            <h1 class="text-lg sm:text-xl font-black text-slate-900">Staffroom Cover & Swap Noticeboard (教員室代課及調堂壁佈板)</h1>
-            <span class="bg-[#0f5e59] text-white text-[11px] font-black px-2 py-0.5 rounded">Privacy-Safe Compact View</span>
-          </div>
-          <p class="text-[11px] font-bold text-slate-700">Only essential classroom dispatch info is shown · Medical & SEN details are strictly hidden</p>
-        </div>
-      </div>
-
-      <div class="flex items-center gap-3">
-        <div class="bg-amber-400 text-slate-950 px-3 py-1.5 rounded-lg text-xs font-black shadow-sm">
-          🔔 LIVE: Period 2 (09:15–09:55)
-        </div>
-        <div class="bg-white/95 px-3.5 py-1 rounded-lg border border-[#a3d962] text-right">
-          <div class="text-[10px] font-bold text-slate-500">2026-11-05 (Thu) · Day A</div>
-          <div id="tv-clock-display" class="text-lg sm:text-xl font-black text-slate-900 leading-tight">09:20:00</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- High-Density Tidy Table + Teacher Quick-Lookup Strip -->
-    <div class="flex-1 bg-white border border-slate-300 rounded-xl shadow-sm overflow-hidden flex flex-col">
-      <!-- Quick Teacher Summary Strip (Minimum info: Code + Name + Assigned Periods) -->
-      <div class="bg-slate-100 border-b border-slate-300 px-4 py-2 flex flex-wrap items-center justify-between gap-2 text-xs">
-        <div class="flex flex-wrap items-center gap-2" id="tv-teacher-summary-chips">
-          <!-- Populated by JS: e.g. [CWK 張偉傑: P1 (2A), P3 (3A)] -->
-        </div>
-        <div class="flex items-center gap-2 font-bold text-slate-600">
-          <span id="tv-count-pill" class="bg-[#0f5e59] text-white px-2.5 py-0.5 rounded-full text-xs font-black">0 Lessons</span>
-          <span id="tv-page-pill">Page 1/1</span>
-          <button onclick="nextTvPage()" class="bg-white border border-slate-300 px-2 py-0.5 rounded text-slate-800 font-black">Next ➔</button>
-        </div>
-      </div>
-
-      <!-- Compact Table (Fits 12-16 rows cleanly on 1 screen, no bloated cards!) -->
-      <div class="overflow-x-auto flex-1">
-        <table class="w-full text-left border-collapse">
-          <thead>
-            <tr class="header-teal text-xs uppercase tracking-wider font-black">
-              <th class="py-2.5 px-3.5 w-24">Period</th>
-              <th class="py-2.5 px-3 w-28">Time</th>
-              <th class="py-2.5 px-3.5 w-36">Class & Subject</th>
-              <th class="py-2.5 px-3.5 w-36">Room</th>
-              <th class="py-2.5 px-3.5">Cover / Swap Teacher</th>
-              <th class="py-2.5 px-3.5 w-40">Absent Teacher</th>
-              <th class="py-2.5 px-3 w-28">Type</th>
-              <th class="py-2.5 px-3.5 w-32 text-center">Status</th>
-            </tr>
-          </thead>
-          <tbody id="tv-compact-tbody" class="divide-y divide-slate-200 text-xs sm:text-sm">
-            <!-- Populated by JS -->
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- Compact Footer -->
-    <footer class="bg-white border border-slate-200 rounded-xl px-4 py-2 flex items-center justify-between shadow-sm text-xs">
-      <div class="flex items-center gap-2 overflow-hidden flex-1 mr-4">
-        <span class="bg-[#c81e1e] text-white font-black px-2.5 py-0.5 rounded shrink-0">Office Notice</span>
-        <div class="overflow-hidden relative w-full">
-          <p class="font-bold text-slate-700 animate-marquee">
-            Teachers assigned cover duty: please acknowledge on your mobile/iPad and launch Module 3 (Classroom Console) when entering the classroom.
-          </p>
-        </div>
-      </div>
-      <div class="flex items-center gap-2 shrink-0">
-        <button onclick="openModule('menu')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-2.5 py-1 rounded border border-slate-300">← Exit TV</button>
-        <button onclick="toggleKioskMode()" class="bg-slate-800 hover:bg-slate-700 text-white font-bold px-2.5 py-1 rounded">⛶ Fullscreen</button>
-      </div>
-    </footer>
-  </main>
-
-  <!-- Link to Part 2 JavaScript File -->
+  <!-- ==================== SYSTEM JAVASCRIPT ==================== -->
   <script>
-    const STORAGE_KEY = "ychlpyss_continuity_system_v6";
-const syncChannel = new BroadcastChannel("ychlpyss_continuity_sync_v6");
+    let activeModule = "leave";
+    let selectedClassroomDutyId = "DUTY-2";
 
-let currentLang = "en";
-let currentUserId = "T02"; // Default: Mr. Lau Ka Ho [LKH]
-let currentModule = "menu"; // Default starts on the user-friendly Home Menu!
-let currentWizardStep = 1;
-let currentContinuityTab = "cover_console";
-let activeConsoleDutyId = "DUTY-201";
-let tvPage = 0;
-
-// Separate Form Draft State (Preserved across background syncs)
-let formDraft = {
-  ownerId: "T02",
-  leaveType: "OFFICIAL",
-  durationMode: "SPECIFIC_PERIODS",
-  startDate: "2026-11-05",
-  endDate: "2026-11-05",
-  docStatus: "EDB / Competition Circular Attached",
-  reason: "Leading F.2 students to Hong Kong Science Park for STEM Competition Finals",
-  noLessonsAffected: false,
-  taHandover: "Coordinated with Ms. Chan to cover morning assembly & SEN in-class support.",
-  lessonSelections: {
-    0: { selected: false, arrangementType: "OFFICE_COVER", partnerId: "", reciprocalSlot: "", packId: "PACK-PHY-3C", customNote: "Complete Optics refraction worksheet." },
-    1: { selected: false, arrangementType: "PRE_ARRANGED", partnerId: "T03", reciprocalSlot: "", packId: "PACK-IS-2A", customNote: "Complete Workbook Ch.4 P.12-15." },
-    2: { selected: true, arrangementType: "LESSON_SWAP", partnerId: "T03", reciprocalSlot: "2026-11-06 Period 2 (2C Maths)", packId: "PACK-CT-2C", customNote: "Complete smart backpack sensor worksheet & 7-min Exit Check." }
-  }
-};
-
-// Initial School Database (Includes Short Initials Code for Compact Staffroom TV)
-const INITIAL_DB = {
-  config: {
-    maxSpecialLeaveDays: 2.0,
-    policyNoteTeacher: "HK Aided School Rule: Teachers have school holidays rather than Annual Leave (AL). Approved Official Duties and Reciprocal Lesson Swaps do not deduct from your Net Cover Balance.",
-    policyNoteTA: "Teaching Assistants (TAs) are entitled to contractual Annual Leave (AL), Sick Leave, and Time-off in Lieu (TOIL)."
-  },
-
-  learningPacks: [
-    {
-      id: "PACK-CT-2C",
-      className: "2C",
-      subject: "Creative Tech",
-      topic: "Smart Backpack Rearview Sensor & Distance Logic",
-      objective: "Understand how ultrasonic/vision bounding boxes trigger a tailing alert after a 5-second threshold.",
-      durationMins: 40,
-      printablePdf: "2C_CT_Worksheet_Pack_Offline.pdf",
-      senGuidance: "2C Support Note: Maintain a low-stimulation classroom environment; group leaders may distribute sensor cards.",
-      activities: [
-        { phase: "1. Starter / Retrieval", mins: 5, detail: "Review 3 questions on input sensors vs output actuators on the projector." },
-        { phase: "2. Worked Example", mins: 8, detail: "Display the state-machine diagram showing how bounding-box height estimates distance." },
-        { phase: "3. Main Practice Task", mins: 20, detail: "Students complete the flowchart decision table (Safe / Warning / Alert) in Google Classroom or printed sheet." },
-        { phase: "4. Exit Check", mins: 7, detail: "Students complete the 3-question digital Exit Check to verify understanding." }
+    const DEFAULT_STATE = {
+      draft: {
+        leaveType: "OFFICIAL",
+        lessons: [
+          {
+            periodOrder: 2,
+            periodName: "P2",
+            timeRange: "09:15–09:55",
+            className: "3C",
+            subject: "Physics",
+            room: "Rm 401 (Phy Lab)",
+            requiresLab: true,
+            selected: false,
+            packId: "PACK-PHY-3C",
+            packTitle: "Refraction of Light & Ray Diagrams (40m)"
+          },
+          {
+            periodOrder: 5,
+            periodName: "P5",
+            timeRange: "11:35–12:15",
+            className: "2C",
+            subject: "Creative Tech",
+            room: "Rm 206 (STEM Lab)",
+            requiresLab: true,
+            selected: true,
+            packId: "PACK-CT-2C",
+            packTitle: "Smart Backpack Distance Sensor Logic (40m)"
+          }
+        ]
+      },
+      teachers: [
+        { id: "T02", code: "LKH", nameEn: "Mr. Lau Ka Ho", nameZh: "劉家豪", dept: "CT & Physics", labOk: true, busyPeriods: [2, 4, 5], onLeave: false, netCover: +1 },
+        { id: "T03", code: "CWK", nameEn: "Mr. Cheung Wai Kit", nameZh: "張偉傑", dept: "Maths & ICT", labOk: true, busyPeriods: [4], onLeave: false, netCover: 0 },
+        { id: "T04", code: "HSF", nameEn: "Ms. Ho Shuk Fan", nameZh: "何淑芬", dept: "English", labOk: false, busyPeriods: [1, 5], onLeave: false, netCover: +2 },
+        { id: "T01", code: "CTM", nameEn: "Mr. Chan Tai Man", nameZh: "陳大文", dept: "ICT", labOk: true, busyPeriods: [1, 3], onLeave: true, netCover: -1 }
       ],
-      answerKey: "Q1: False-positive filter requires time >= 5s; Q2: Buzzer + OLED warning; Q3: Privacy-first local processing.",
-      exitQuizQuestion: "Why does the smart backpack wait 5 seconds before triggering an alert instead of alerting immediately?",
-      exitQuizOptions: [
-        "A. To save battery power on the OLED screen",
-        "B. To filter out normal passers-by and prevent false alarms",
-        "C. Because the camera only takes 1 photo every 5 seconds"
-      ],
-      correctOptionIndex: 1
-    },
-    {
-      id: "PACK-ICT-3A",
-      className: "3A",
-      subject: "ICT (Database)",
-      topic: "MS Access Detective Investigation — Primary Keys & Queries",
-      objective: "Identify primary keys and filter suspect records using SELECT queries in Microsoft Access.",
-      durationMins: 40,
-      printablePdf: "3A_ICT_Database_Detective_Pack.pdf",
-      senGuidance: "3A Support Note: Uses 'I do, We do, You do' scaffolding. Early finishers can attempt Detective Case #3.",
-      activities: [
-        { phase: "1. Starter / Retrieval", mins: 5, detail: "Match 'Field', 'Record', and 'Primary Key' definitions on screen." },
-        { phase: "2. Worked Example", mins: 8, detail: "Demonstrate filtering the 'Suspects' table where HairColour = 'Brown' AND Alibi = False." },
-        { phase: "3. Main Practice Task", mins: 20, detail: "Open 'CaseFile_3A.accdb' and solve Detective Clues 1 & 2." },
-        { phase: "4. Exit Check", mins: 7, detail: "Submit the culprit's Primary Key ID and complete the Exit Check." }
-      ],
-      answerKey: "Primary Key = StudentID (unique); Culprit ID = SUS-042.",
-      exitQuizQuestion: "Which field is most suitable as a Primary Key in a School Student Table?",
-      exitQuizOptions: [
-        "A. Student Full Name",
-        "B. Unique Student Registration Number (STRN)",
-        "C. Class Name (e.g. 3A)"
-      ],
-      correctOptionIndex: 1
-    },
-    {
-      id: "PACK-CL-2A",
-      className: "2A",
-      subject: "Comp Literacy",
-      topic: "Spreadsheet Formulas — SUM, AVERAGE & IF",
-      objective: "Apply SUM and AVERAGE functions to calculate class tuck-shop sales.",
-      durationMins: 40,
-      printablePdf: "2A_CL_Spreadsheet_Pack.pdf",
-      senGuidance: "2A Support Note: 2 students require front-row seating and step-by-step chunked instructions.",
-      activities: [
-        { phase: "1. Starter / Retrieval", mins: 5, detail: "Spot the syntax error in 'SUM(A1:A5)' (missing '=' sign)." },
-        { phase: "2. Worked Example", mins: 8, detail: "Walk through '=AVERAGE(B2:B10)' on the board." },
-        { phase: "3. Main Practice Task", mins: 20, detail: "Complete 'TuckShop_2A.xlsx' Tasks 1–3." },
-        { phase: "4. Exit Check", mins: 7, detail: "Complete the 3-question formula check." }
-      ],
-      answerKey: "All formulas must begin with '='; Cell range uses colon (B2:B10).",
-      exitQuizQuestion: "Which formula correctly calculates the total of cells B2 through B8?",
-      exitQuizOptions: ["A. =SUM(B2:B8)", "B. SUM(B2-B8)", "C. =TOTAL(B2:B8)"],
-      correctOptionIndex: 0
-    },
-    {
-      id: "PACK-PHY-3C",
-      className: "3C",
-      subject: "Physics",
-      topic: "Refraction of Light & Snell's Law",
-      objective: "Draw ray diagrams for light passing from air into a glass block.",
-      durationMins: 40,
-      printablePdf: "3C_Physics_Refraction_Worksheet.pdf",
-      senGuidance: "Standard classroom supervision; collect worksheets 5 mins before bell.",
-      activities: [
-        { phase: "1. Starter", mins: 5, detail: "Recall angle of incidence vs normal line." },
-        { phase: "2. Worked Example", mins: 8, detail: "Review worked calculation on page 42." },
-        { phase: "3. Main Practice", mins: 20, detail: "Complete Structured Questions Q1–Q4." },
-        { phase: "4. Exit Check", mins: 7, detail: "Submit ray diagram direction check." }
-      ],
-      answerKey: "Light bends towards the normal when entering optically denser medium.",
-      exitQuizQuestion: "When a light ray travels from air into glass at an angle, how does it bend?",
-      exitQuizOptions: ["A. Away from the normal", "B. Towards the normal", "C. It does not bend"],
-      correctOptionIndex: 1
-    },
-    {
-      id: "PACK-IS-2A",
-      className: "2A",
-      subject: "Int. Science",
-      topic: "Common Acids & Alkalis Indicators",
-      objective: "Compare litmus and universal indicator colour changes.",
-      durationMins: 40,
-      printablePdf: "2A_IS_Acids_Worksheet.pdf",
-      senGuidance: "Theory lesson only — no liquid chemicals handled during cover lesson.",
-      activities: [
-        { phase: "1. Starter", mins: 5, detail: "Classify lemon juice vs baking soda." },
-        { phase: "2. Worked Example", mins: 8, detail: "pH scale chart review (0–14)." },
-        { phase: "3. Main Practice", mins: 20, detail: "Complete Workbook Ch.4 P.12-15." },
-        { phase: "4. Exit Check", mins: 7, detail: "Complete pH matching exit check." }
-      ],
-      answerKey: "pH < 7 is acidic; pH = 7 is neutral; pH > 7 is alkaline.",
-      exitQuizQuestion: "What is the pH of a neutral substance such as pure water?",
-      exitQuizOptions: ["A. pH 1", "B. pH 7", "C. pH 14"],
-      correctOptionIndex: 1
-    }
-  ],
-
-  staffList: [
-    {
-      id: "T01",
-      shortCode: "CTM",
-      roleType: "TEACHER",
-      postTitle: "Perm. Teacher (GM)",
-      nameEn: "Mr. Chan Tai Man",
-      nameZh: "陳大文",
-      email: "chan.tm@ychlpyss.edu.hk",
-      dept: "ICT",
-      canUseLab: true,
-      sickLeaveMax: 14.0,
-      baseSickUsed: 1.0,
-      specialLeaveMax: 2.0,
-      baseSpecialUsed: 0.0,
-      baseNetCover: -1,
-      teachingPeriods: [1, 3, 5],
-      timetable: [
-        { periodOrder: 1, periodName: "P1", timeRange: "08:35–09:15", className: "2A", subject: "Comp Literacy", room: "Rm 204 (Comp 1)", requiresLab: true, defaultPackId: "PACK-CL-2A" },
-        { periodOrder: 3, periodName: "P3", timeRange: "10:15–10:55", className: "3A", subject: "ICT (Database)", room: "Rm 205 (Comp 2)", requiresLab: true, defaultPackId: "PACK-ICT-3A" },
-        { periodOrder: 5, periodName: "P5", timeRange: "11:35–12:15", className: "3B", subject: "ICT (Database)", room: "Rm 205 (Comp 2)", requiresLab: true, defaultPackId: "PACK-ICT-3A" }
-      ]
-    },
-    {
-      id: "T02",
-      shortCode: "LKH",
-      roleType: "TEACHER",
-      postTitle: "Perm. Teacher (GM)",
-      nameEn: "Mr. Lau Ka Ho",
-      nameZh: "劉家豪",
-      email: "lau.kh@ychlpyss.edu.hk",
-      dept: "CT & Physics",
-      canUseLab: true,
-      sickLeaveMax: 14.0,
-      baseSickUsed: 0.0,
-      specialLeaveMax: 2.0,
-      baseSpecialUsed: 0.0,
-      baseNetCover: +2,
-      teachingPeriods: [2, 4, 5],
-      timetable: [
-        { periodOrder: 2, periodName: "P2", timeRange: "09:15–09:55", className: "3C", subject: "Physics", room: "Rm 401 (Phy Lab)", requiresLab: true, defaultPackId: "PACK-PHY-3C" },
-        { periodOrder: 4, periodName: "P4", timeRange: "10:55–11:35", className: "2A", subject: "Int. Science", room: "Rm 301 (Sci Lab)", requiresLab: true, defaultPackId: "PACK-IS-2A" },
-        { periodOrder: 5, periodName: "P5", timeRange: "11:35–12:15", className: "2C", subject: "Creative Tech", room: "Rm 206 (STEM)", requiresLab: true, defaultPackId: "PACK-CT-2C" }
-      ]
-    },
-    {
-      id: "T03",
-      shortCode: "CWK",
-      roleType: "TEACHER",
-      postTitle: "Perm. Teacher (GM)",
-      nameEn: "Mr. Cheung Wai Kit",
-      nameZh: "張偉傑",
-      email: "cheung.wk@ychlpyss.edu.hk",
-      dept: "Maths & ICT",
-      canUseLab: true,
-      sickLeaveMax: 14.0,
-      baseSickUsed: 0.5,
-      specialLeaveMax: 2.0,
-      baseSpecialUsed: 0.5,
-      baseNetCover: 0,
-      teachingPeriods: [2, 4],
-      timetable: [
-        { periodOrder: 2, periodName: "P2", timeRange: "09:15–09:55", className: "2C", subject: "Mathematics", room: "Rm 203", requiresLab: false, defaultPackId: "PACK-CL-2A" },
-        { periodOrder: 4, periodName: "P4", timeRange: "10:55–11:35", className: "3A", subject: "Mathematics", room: "Rm 301", requiresLab: false, defaultPackId: "PACK-ICT-3A" }
-      ]
-    },
-    {
-      id: "T04",
-      shortCode: "HSF",
-      roleType: "TEACHER",
-      postTitle: "Perm. Teacher (GM)",
-      nameEn: "Ms. Ho Shuk Fan",
-      nameZh: "何淑芬",
-      email: "ho.sf@ychlpyss.edu.hk",
-      dept: "English",
-      canUseLab: false,
-      sickLeaveMax: 14.0,
-      baseSickUsed: 1.0,
-      specialLeaveMax: 2.0,
-      baseSpecialUsed: 0.0,
-      baseNetCover: 0,
-      teachingPeriods: [1, 6],
-      timetable: []
-    },
-    {
-      id: "TA01",
-      shortCode: "LMK",
-      roleType: "TA",
-      postTitle: "Teaching Assistant",
-      nameEn: "Ms. Lam Mei Ki",
-      nameZh: "林美琪 (TA)",
-      email: "lam.mk@ychlpyss.edu.hk",
-      dept: "SEN Support",
-      annualLeaveMax: 14.0,
-      baseAnnualUsed: 3.5,
-      sickLeaveMax: 12.0,
-      baseSickUsed: 0.0,
-      baseToilHours: 6.5,
-      teachingPeriods: [],
-      timetable: []
-    }
-  ],
-
-  applications: [
-    {
-      id: "REQ-1001",
-      staffId: "T01",
-      leaveType: "SICK",
-      durationMode: "HALF_DAY_AM",
-      deductDays: 0.5,
-      startDate: "2026-11-05",
-      endDate: "2026-11-05",
-      docStatus: "Medical Certificate Attached",
-      reason: "Acute gastroenteritis clinic consultation",
-      status: "APPROVED",
-      approvedBy: "VP Lee (07:50)",
-      lessons: [
+      requests: [
         {
+          id: "REQ-101",
+          staffCode: "CTM",
+          staffName: "Mr. Chan Tai Man (陳大文)",
+          leaveType: "SICK",
+          date: "2026-11-05",
+          status: "APPROVED",
+          lessonsCount: 1
+        },
+        {
+          id: "REQ-102",
+          staffCode: "LKH",
+          staffName: "Mr. Lau Ka Ho (劉家豪)",
+          leaveType: "OFFICIAL",
+          date: "2026-11-05",
+          status: "PENDING",
+          lessons: [
+            {
+              periodOrder: 5,
+              periodName: "P5",
+              timeRange: "11:35–12:15",
+              className: "2C",
+              subject: "Creative Tech",
+              room: "Rm 206 (STEM Lab)",
+              requiresLab: true,
+              packId: "PACK-CT-2C",
+              packTitle: "Smart Backpack Distance Sensor Logic (40m)",
+              selectedCandidateId: "T03"
+            }
+          ]
+        }
+      ],
+      duties: [
+        {
+          id: "DUTY-1",
           periodOrder: 1,
           periodName: "P1",
           timeRange: "08:35–09:15",
           className: "2A",
           subject: "Comp Literacy",
-          room: "Rm 204 (Comp 1)",
-          requiresLab: true,
-          arrangementType: "OFFICE_COVER",
-          preferredTeacherId: "T03",
-          colleagueConfirmed: true,
-          reciprocalSlot: "",
-          packId: "PACK-CL-2A",
-          note: "Complete TuckShop_2A.xlsx Tasks 1–3 & Exit Check."
+          room: "Rm 204",
+          coverCode: "CWK",
+          coverName: "Mr. Cheung (張偉傑)",
+          absentCode: "CTM",
+          absentName: "Mr. Chan (陳大文)",
+          packTitle: "Spreadsheet SUM & AVERAGE Formula Pack",
+          senTip: "2A Support Note: Provide step-by-step formula cards to front-row students.",
+          answerKey: "All formulas must begin with '='; Correct syntax is =SUM(B2:B8).",
+          quizQ: "Which spreadsheet formula correctly adds cells B2 through B8?",
+          quizOptions: ["A. SUM(B2-B8)", "B. =SUM(B2:B8)", "C. =TOTAL(B2:B8)"],
+          correctIdx: 1,
+          status: "COMPLETED",
+          totalStudents: 28,
+          passedStudents: 26
         },
         {
-          periodOrder: 3,
-          periodName: "P3",
-          timeRange: "10:15–10:55",
-          className: "3A",
-          subject: "ICT (Database)",
-          room: "Rm 205 (Comp 2)",
-          requiresLab: true,
-          arrangementType: "PRE_ARRANGED",
-          preferredTeacherId: "T03",
-          colleagueConfirmed: true,
-          reciprocalSlot: "",
-          packId: "PACK-ICT-3A",
-          note: "Open CaseFile_3A.accdb and solve Detective Clues 1 & 2."
+          id: "DUTY-2",
+          periodOrder: 5,
+          periodName: "P5",
+          timeRange: "11:35–12:15",
+          className: "2C",
+          subject: "Creative Tech",
+          room: "Rm 206 (STEM Lab)",
+          coverCode: "CWK",
+          coverName: "Mr. Cheung (張偉傑)",
+          absentCode: "LKH",
+          absentName: "Mr. Lau (劉家豪)",
+          packTitle: "Smart Backpack Rearview Sensor & 5s Filter",
+          senTip: "2C Support Note: Keep classroom volume low; group leaders distribute sensor cards.",
+          answerKey: "Waiting 5 seconds filters out normal passers-by and prevents false alarms.",
+          quizQ: "Why does the Smart Backpack wait 5 seconds before sounding the alarm?",
+          quizOptions: [
+            "A. To save battery power on the screen (為了節省電池電力)",
+            "B. To filter out normal passers-by and stop false alarms (防止路人經過誤鳴)",
+            "C. Because the sensor only works every 5 seconds (感應器每5秒才運作一次)"
+          ],
+          correctIdx: 1,
+          status: "ASSIGNED",
+          totalStudents: 28,
+          passedStudents: 26
         }
       ]
-    }
-  ],
-
-  publishedDuties: [
-    {
-      id: "DUTY-201",
-      requestId: "REQ-1001",
-      date: "2026-11-05",
-      periodOrder: 1,
-      periodName: "P1",
-      timeRange: "08:35–09:15",
-      className: "2A",
-      subject: "Comp Literacy",
-      room: "Rm 204",
-      absentTeacherId: "T01",
-      coverTeacherId: "T03",
-      arrangementType: "OFFICE_COVER",
-      reciprocalSlot: "",
-      packId: "PACK-CL-2A",
-      note: "Complete TuckShop_2A.xlsx Tasks 1–3 and 7-min Exit Check.",
-      status: "COMPLETED",
-      ackTime: "08:02",
-      attendanceTaken: true,
-      coverObservation: "28/28 present. Completed Tasks 1-3 smoothly; 3 students reminded to start formulas with '='.",
-      studentEvidence: { totalStudents: 28, submittedCount: 27, exitCheckPassed: 25, commonDifficulty: "3 students omitted leading '=' in SUM(B2:B8)." }
-    },
-    {
-      id: "DUTY-202",
-      requestId: "REQ-1001",
-      date: "2026-11-05",
-      periodOrder: 3,
-      periodName: "P3",
-      timeRange: "10:15–10:55",
-      className: "3A",
-      subject: "ICT (Database)",
-      room: "Rm 205",
-      absentTeacherId: "T01",
-      coverTeacherId: "T03",
-      arrangementType: "PRE_ARRANGED",
-      reciprocalSlot: "",
-      packId: "PACK-ICT-3A",
-      note: "Open CaseFile_3A.accdb and solve Detective Clues 1 & 2.",
-      status: "ASSIGNED",
-      ackTime: "",
-      attendanceTaken: false,
-      coverObservation: "",
-      studentEvidence: { totalStudents: 30, submittedCount: 19, exitCheckPassed: 18, commonDifficulty: "Some students confused Primary Key with Class Name." }
-    }
-  ],
-
-  auditLog: [
-    { time: "07:45:12", actor: "Mr. Chan Tai Man", action: "Submitted Sick Leave REQ-1001 (2026-11-05 AM, 2 lessons)" },
-    { time: "07:50:04", actor: "VP Lee (Admin)", action: "Approved REQ-1001; assigned clash-free cover to Mr. Cheung Wai Kit (P1, P3)" },
-    { time: "08:02:19", actor: "Mr. Cheung Wai Kit", action: "Acknowledged cover duty DUTY-201 (P1 · 2A Comp Literacy)" }
-  ]
-};
-
-// ==================== CORE STORAGE & HELPERS ====================
-function getDB() {
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_DB));
-    return JSON.parse(JSON.stringify(INITIAL_DB));
-  }
-  return JSON.parse(raw);
-}
-
-function saveDB(db, logEntry) {
-  if (logEntry) {
-    const nowStr = new Date().toTimeString().split(" ")[0];
-    db.auditLog.unshift({ time: nowStr, actor: getActorDisplayName(db, currentUserId), action: logEntry });
-  }
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
-  syncChannel.postMessage({ type: "DB_SYNC" });
-  renderAllActive(true);
-}
-
-function resetSyntheticData() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_DB));
-  syncChannel.postMessage({ type: "DB_RESET" });
-  showToast("Demo data reset to initial state.");
-  renderAllActive();
-}
-
-syncChannel.onmessage = () => renderAllActive(true);
-
-function getStaffById(db, id) {
-  return db.staffList.find(s => s.id === id);
-}
-
-function getStaffName(staff, compact = false) {
-  if (!staff) return "Unassigned";
-  if (compact) {
-    return `${staff.shortCode} ${staff.nameZh}`;
-  }
-  return currentLang === "zh" ? `${staff.nameZh} (${staff.shortCode})` : `${staff.nameEn} (${staff.nameZh})`;
-}
-
-function getActorDisplayName(db, userId) {
-  if (userId === "ADMIN") return "VP Lee (Admin)";
-  if (userId === "STUDENT_2C") return "Student 2C-14";
-  if (userId === "DISPLAY") return "Staffroom TV";
-  const s = getStaffById(db, userId);
-  return s ? s.nameEn : userId;
-}
-
-// ==================== MENU ROUTER & NEW STAFF SHORTCUTS ====================
-const MODULE_TITLES = {
-  menu: "Main Menu — Select a Function (功能主頁)",
-  schedule: "1. Today's Schedule & Cover Duties (今日時間表及代課簽收)",
-  apply: "2. Apply for Leave or Lesson Swap (遞交請假或調堂申請)",
-  continuity: "3. Classroom Supervision & Student Exit Check (課堂代課導航)",
-  records: "4. Leave Balance & Student Learning Reports (個人假期及堂課報告)",
-  guide: "5. New Staff Guide, Bell Times & Room Map (新入職教師校務錦囊)",
-  management: "6. General Office & VP Approval Console (校務處審批中心)",
-  display: "7. Staffroom Compact Noticeboard (教員室精簡電子佈告板)"
-};
-
-function openModule(modName) {
-  if (currentUserId === "DISPLAY" && modName !== "display") {
-    showToast("Staffroom Display Kiosk is locked to Read-Only Display mode.");
-    return;
-  }
-  currentModule = modName;
-  ["menu", "schedule", "apply", "continuity", "records", "guide", "management", "display"].forEach(m => {
-    const el = document.getElementById(`mod-${m}`);
-    if (el) el.classList.toggle("hidden", m !== modName);
-  });
-  document.getElementById("current-module-title").textContent = MODULE_TITLES[modName] || modName;
-  document.getElementById("quick-jump-select").value = modName;
-  renderAllActive();
-}
-
-function toggleNewStaffGuide() {
-  openModule(currentModule === "guide" ? "menu" : "guide");
-}
-
-// 1-Click Express Sick Leave for New/Unwell Teachers at 7:00 AM
-function triggerExpressSickLeave() {
-  const db = getDB();
-  const staffId = ["ADMIN", "DISPLAY", "STUDENT_2C"].includes(currentUserId) ? "T02" : currentUserId;
-  const staff = getStaffById(db, staffId) || db.staffList[1];
-
-  const lessonMap = {};
-  (staff.timetable || []).forEach((les, idx) => {
-    lessonMap[idx] = {
-      selected: true,
-      arrangementType: "OFFICE_COVER",
-      partnerId: "",
-      reciprocalSlot: "",
-      packId: les.defaultPackId,
-      customNote: `Follow attached 40-min Department Pack (${les.defaultPackId}) & complete Exit Check.`
     };
-  });
 
-  formDraft = {
-    ownerId: staff.id,
-    leaveType: "SICK",
-    durationMode: "FULL_DAY",
-    startDate: "2026-11-05",
-    endDate: "2026-11-05",
-    docStatus: "Medical Certificate Attached",
-    reason: "Morning medical consultation (Auto-filled via Express Sick Leave)",
-    noLessonsAffected: staff.roleType === "TA",
-    taHandover: "Coordinated morning duties with General Office.",
-    lessonSelections: lessonMap
-  };
+    let state = JSON.parse(JSON.stringify(DEFAULT_STATE));
 
-  openModule("apply");
-  setWizardStep(3); // Jumps straight to verification step!
-  showToast("⚡ Express Sick Leave pre-filled with today's lessons & default Learning Packs! Review and click Submit.");
-}
+    // ==================== NAVIGATION ====================
+    function switchModule(mod) {
+      activeModule = mod;
+      ["leave", "dispatch", "classroom", "tv"].forEach(m => {
+        const sec = document.getElementById(`mod-${m}`);
+        const tab = document.getElementById(`tab-${m}`);
+        if (m === mod) {
+          sec.classList.remove("hidden");
+          sec.classList.add(m === "tv" ? "flex" : "grid");
+          tab.className = "nav-tab rounded-xl px-3.5 py-2.5 text-left flex items-center justify-between border-2 border-[#0f5e59] bg-[#0f5e59] text-white shadow-sm";
+        } else {
+          sec.classList.add("hidden");
+          sec.classList.remove("flex", "grid");
+          tab.className = "nav-tab rounded-xl px-3.5 py-2.5 text-left flex items-center justify-between border-2 border-white/80 bg-white/90 text-slate-800 hover:bg-white";
+        }
+      });
 
-// ==================== WORKLOAD & HARD CLASH ENGINE ====================
-function computeStaffMetrics(db, staffId) {
-  const staff = getStaffById(db, staffId);
-  if (!staff) return null;
-
-  let sickUsed = staff.baseSickUsed || 0;
-  let specialUsed = staff.baseSpecialUsed || 0;
-  let annualUsed = staff.baseAnnualUsed || 0;
-  let toilHours = staff.baseToilHours || 0;
-  let officialCount = 0;
-
-  db.applications.filter(a => a.staffId === staffId && a.status === "APPROVED").forEach(app => {
-    if (app.leaveType === "SICK") sickUsed += Number(app.deductDays || 0.5);
-    if (app.leaveType === "SPECIAL") specialUsed += Number(app.deductDays || 0.5);
-    if (app.leaveType === "ANNUAL") annualUsed += Number(app.deductDays || 1.0);
-    if (app.leaveType === "OFFICIAL") officialCount += 1;
-  });
-
-  let netCover = staff.baseNetCover || 0;
-  db.publishedDuties.filter(d => d.status !== "CANCELLED").forEach(duty => {
-    if (duty.arrangementType !== "LESSON_SWAP") {
-      if (duty.coverTeacherId === staffId) netCover += 1;
-      const parentApp = db.applications.find(a => a.id === duty.requestId);
-      const isOfficial = parentApp && parentApp.leaveType === "OFFICIAL";
-      if (duty.absentTeacherId === staffId && !isOfficial) netCover -= 1;
+      renderAll();
     }
-  });
 
-  return {
-    sickUsed: +sickUsed.toFixed(1),
-    sickLeft: Math.max(0, +(staff.sickLeaveMax - sickUsed).toFixed(1)),
-    specialLeft: Math.max(0, +((staff.specialLeaveMax || 2) - specialUsed).toFixed(1)),
-    annualLeft: Math.max(0, +((staff.annualLeaveMax || 14) - annualUsed).toFixed(1)),
-    toilHours: +toilHours.toFixed(1),
-    officialCount,
-    netCover
-  };
-}
-
-function evaluateCoverCandidates(db, dateStr, periodOrder, requiresLab, absentTeacherId) {
-  const teachers = db.staffList.filter(s => s.roleType === "TEACHER" && s.id !== absentTeacherId);
-  const absentIds = new Set(
-    db.applications.filter(a => a.status !== "CANCELLED" && a.startDate <= dateStr && a.endDate >= dateStr).map(a => a.staffId)
-  );
-  const busyCoverIds = new Set(
-    db.publishedDuties.filter(d => d.status !== "CANCELLED" && d.date === dateStr && Number(d.periodOrder) === Number(periodOrder)).map(d => d.coverTeacherId)
-  );
-
-  return teachers.map(t => {
-    const m = computeStaffMetrics(db, t.id);
-    const reasons = [];
-    let isValid = true;
-
-    if (absentIds.has(t.id)) { isValid = false; reasons.push("On Leave"); }
-    if (t.teachingPeriods.includes(Number(periodOrder))) { isValid = false; reasons.push(`Teaching P${periodOrder}`); }
-    if (busyCoverIds.has(t.id)) { isValid = false; reasons.push(`Already covering P${periodOrder}`); }
-    if (requiresLab && !t.canUseLab) { isValid = false; reasons.push("No Lab Clearance"); }
-
-    if (isValid) {
-      reasons.push(`Free P${periodOrder}`);
-      if (requiresLab && t.canUseLab) reasons.push("Lab OK");
-      reasons.push(`Net Cover: ${m.netCover >= 0 ? '+' + m.netCover : m.netCover}`);
+    // ==================== MODULE 1: LEAVE & AI PACK GENERATOR ====================
+    function selectLeaveType(type) {
+      state.draft.leaveType = type;
+      renderAll();
     }
-    return { teacher: t, isValid, netCover: m.netCover, summaryText: reasons.join(" · ") };
-  }).sort((a, b) => (a.isValid !== b.isValid ? (a.isValid ? -1 : 1) : a.netCover - b.netCover));
-}
 
-// ==================== ACCOUNT SWITCHING & LANGUAGE ====================
-function switchSimulatedUser(userId) {
-  currentUserId = userId;
-  const db = getDB();
-  const emailEl = document.getElementById("auth-email-display");
-  const badgeEl = document.getElementById("auth-role-badge");
+    function toggleDraftLesson(idx) {
+      state.draft.lessons[idx].selected = !state.draft.lessons[idx].selected;
+      renderAll();
+    }
 
-  if (userId === "ADMIN") {
-    emailEl.textContent = "vp.lee@ychlpyss.edu.hk";
-    badgeEl.textContent = "VP / ADMIN";
-    badgeEl.className = "text-[10px] font-black px-1.5 py-0.5 rounded bg-[#c81e1e] text-white";
-    openModule("management");
-  } else if (userId === "STUDENT_2C") {
-    emailEl.textContent = "s252014@student.ychlpyss.edu.hk";
-    badgeEl.textContent = "STUDENT 2C";
-    badgeEl.className = "text-[10px] font-black px-1.5 py-0.5 rounded bg-indigo-600 text-white";
-    openModule("continuity");
-    setContinuitySubTab("student_portal");
-  } else if (userId === "DISPLAY") {
-    emailEl.textContent = "display@ychlpyss.edu.hk";
-    badgeEl.textContent = "TV KIOSK";
-    badgeEl.className = "text-[10px] font-black px-1.5 py-0.5 rounded bg-slate-700 text-white";
-    openModule("display");
-  } else {
-    const staff = getStaffById(db, userId);
-    emailEl.textContent = staff ? staff.email : "staff@ychlpyss.edu.hk";
-    badgeEl.textContent = staff && staff.roleType === "TA" ? "TA" : "TEACHER";
-    badgeEl.className = "text-[10px] font-black px-1.5 py-0.5 rounded bg-[#3cc2b8] text-white";
-    openModule("menu");
-  }
-}
+    function quickFillMorningSick() {
+      state.draft.leaveType = "SICK";
+      state.draft.lessons.forEach(l => l.selected = true);
+      renderAll();
+      showToast("⚡ Auto-filled Today's Sick Leave & 40-Min Learning Packs!");
+    }
 
-function toggleLanguage() {
-  currentLang = currentLang === "en" ? "zh" : "en";
-  renderAllActive();
-}
+    function aiRegeneratePack() {
+      const customTopic = (document.getElementById("ai-topic-input")?.value || "").trim();
+      state.draft.lessons.forEach(l => {
+        l.selected = true;
+        if (customTopic) {
+          l.packTitle = `✨ AI Generated: ${customTopic} — 40m Worksheet & Exit Quiz`;
+        } else if (l.className === "2C") {
+          l.packTitle = "✨ AI Generated: Smart Backpack Ultrasonic Sensor & 5s Alert Quiz (40m)";
+        } else {
+          l.packTitle = "✨ AI Generated: Snell's Law Ray Diagram Interactive Worksheet (40m)";
+        }
+      });
+      renderAll();
+      showToast("✨ AI generated 40-min Lesson Plan, SEN Note & Student Exit Quiz!");
+    }
 
-// ==================== RENDER ALL VIEWS ====================
-function renderAllActive(preserveWizard = false) {
-  const db = getDB();
-  const staffId = ["ADMIN", "DISPLAY", "STUDENT_2C"].includes(currentUserId) ? "T02" : currentUserId;
-  const staff = getStaffById(db, staffId) || db.staffList[1];
-  const metrics = computeStaffMetrics(db, staff.id);
-
-  // Urgent count calculation
-  const myUnacked = db.publishedDuties.filter(d => d.coverTeacherId === staff.id && d.status === "ASSIGNED");
-  const pendingConsents = [];
-  db.applications.filter(a => a.status === "PENDING").forEach(app => {
-    app.lessons.forEach((les, lIdx) => {
-      if (les.preferredTeacherId === staff.id && !les.colleagueConfirmed && les.arrangementType !== "OFFICE_COVER") {
-        pendingConsents.push({ app, les, lIdx });
+    function submitLeaveApplication() {
+      const selected = state.draft.lessons.filter(l => l.selected);
+      if (selected.length === 0) {
+        showToast("⚠️ Please select at least 1 affected lesson.");
+        return;
       }
-    });
-  });
-  const totalUrgent = myUnacked.length + pendingConsents.length;
-  const pendingAdminCount = db.applications.filter(a => a.status === "PENDING").length;
 
-  // Update Home Menu Header & Badges
-  document.getElementById("welcome-greeting").textContent = currentLang === "zh"
-    ? `早安，${staff.nameZh}老師`
-    : `Welcome, ${staff.nameEn} (${staff.nameZh})`;
-  document.getElementById("welcome-code-pill").textContent = `Short Code: ${staff.shortCode}`;
-  document.getElementById("menu-pending-count").textContent = pendingAdminCount;
+      const bestCandidate = getBestAICandidate(selected[0].periodOrder, selected[0].requiresLab);
+      const newReqId = "REQ-" + (101 + state.requests.length);
+      state.requests.unshift({
+        id: newReqId,
+        staffCode: "LKH",
+        staffName: "Mr. Lau Ka Ho (劉家豪)",
+        leaveType: state.draft.leaveType,
+        date: "2026-11-05",
+        status: "PENDING",
+        lessons: selected.map(l => ({
+          ...l,
+          selectedCandidateId: bestCandidate ? bestCandidate.id : "T03"
+        }))
+      });
 
-  const urgentStrip = document.getElementById("menu-urgent-strip");
-  urgentStrip.classList.toggle("hidden", totalUrgent === 0);
-  if (totalUrgent > 0) {
-    document.getElementById("menu-urgent-text").textContent = `You have ${totalUrgent} pending cover duty acknowledgement or colleague swap request today.`;
-  }
+      showToast(`✓ ${newReqId} Submitted! Opening AI Cover Dispatch...`);
+      setTimeout(() => switchModule("dispatch"), 700);
+    }
 
-  const schedBadge = document.getElementById("card-badge-schedule");
-  if (totalUrgent > 0) {
-    schedBadge.textContent = `⚠️ ${totalUrgent} Action Required`;
-    schedBadge.className = "text-xs font-black px-2.5 py-0.5 rounded-full bg-amber-400 text-slate-950";
-  } else {
-    schedBadge.textContent = "✓ Up to Date";
-    schedBadge.className = "text-xs font-black px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800";
-  }
+    // ==================== MODULE 2: AI SCORING & DISPATCH ====================
+    function evaluateCandidate(teacher, periodOrder, requiresLab) {
+      if (teacher.id === "T02") return { valid: false, score: 0, reason: "Applicant (請假申請人)" };
+      if (teacher.onLeave) return { valid: false, score: 0, reason: "⛔ On Leave Today (今日請假 · 0分)" };
+      if (teacher.busyPeriods.includes(periodOrder)) return { valid: false, score: 0, reason: `⛔ Clash: Teaching P${periodOrder} (撞堂 · 0分)` };
+      if (requiresLab && !teacher.labOk) return { valid: false, score: 0, reason: "⛔ No Lab Safety Clearance (無實驗室資格 · 0分)" };
 
-  renderScheduleAndRecords(db, staff, metrics, myUnacked, pendingConsents, totalUrgent);
-  if (!preserveWizard) renderWizardAllSteps();
-  renderContinuityView(db);
-  renderManagementView(db);
-  renderCompactDisplayView(db);
-}
+      const equityScore = Math.max(5, 25 - (teacher.netCover * 8));
+      const totalScore = Math.min(99, 40 + (requiresLab ? 30 : 25) + equityScore);
 
-function renderScheduleAndRecords(db, staff, metrics, myUnacked, pendingConsents, totalUrgent) {
-  document.getElementById("urgent-count-pill").textContent = `${totalUrgent} Action(s)`;
-  const urgentBox = document.getElementById("urgent-actions-container");
+      return {
+        valid: true,
+        score: totalScore,
+        reason: `✅ Free P${periodOrder} (+40) · Lab OK (+30) · Fair Load Net ${teacher.netCover >= 0 ? '+' + teacher.netCover : teacher.netCover} (+${equityScore})`
+      };
+    }
 
-  if (totalUrgent === 0) {
-    urgentBox.innerHTML = `<div class="col-span-2 bg-emerald-50 border border-emerald-200 rounded-lg p-3 text-xs font-bold text-emerald-800">✓ All assigned cover duties and swap requests have been acknowledged.</div>`;
-  } else {
-    const cards = myUnacked.map(d => {
-      const absent = getStaffById(db, d.absentTeacherId);
-      return `
-        <div class="bg-amber-50 border-2 border-amber-400 rounded-xl p-4 flex flex-col justify-between gap-2">
-          <div>
-            <div class="flex justify-between items-center">
-              <span class="bg-[#0f5e59] text-white font-black px-2 py-0.5 rounded text-xs">${d.periodName} (${d.timeRange})</span>
-              <span class="text-xs font-black text-amber-900">⏳ Needs Ack</span>
-            </div>
-            <div class="font-black text-slate-900 text-sm mt-1.5">${d.className} · ${d.subject} — 📍 ${d.room}</div>
-            <div class="text-xs text-slate-600">Absent: <b>${getStaffName(absent)}</b> · Pack: <b>${d.packId}</b></div>
-          </div>
-          <div class="flex justify-end gap-2 pt-2 border-t border-amber-200">
-            <button onclick="openCoverSupervision('${d.id}')" class="bg-white border border-slate-300 px-3 py-1 rounded-lg text-xs font-bold">Preview Pack</button>
-            <button onclick="acknowledgeCoverDuty('${d.id}')" class="bg-[#0f5e59] text-white font-black px-3.5 py-1 rounded-lg text-xs">✍️ Acknowledge</button>
-          </div>
-        </div>
-      `;
-    });
-    urgentBox.innerHTML = cards.join("");
-  }
+    function getBestAICandidate(periodOrder, requiresLab) {
+      const scored = state.teachers
+        .filter(t => t.id !== "T02")
+        .map(t => ({ teacher: t, ev: evaluateCandidate(t, periodOrder, requiresLab) }))
+        .filter(x => x.ev.valid)
+        .sort((a, b) => b.ev.score - a.ev.score);
+      return scored.length > 0 ? scored[0].teacher : state.teachers[1];
+    }
 
-  // Daily schedule
-  const myCover = db.publishedDuties.filter(d => d.coverTeacherId === staff.id && d.status !== "CANCELLED");
-  const scheduleEl = document.getElementById("my-daily-schedule-list");
-  if (staff.roleType === "TA") {
-    scheduleEl.innerHTML = `<div class="bg-slate-50 border border-slate-200 rounded-xl p-4 text-xs font-semibold text-slate-700">Teaching Assistant Schedule: 08:15 Morning Assembly · P1 2A SEN Support · P3–P4 General Office Resource Prep.</div>`;
-  } else {
-    const slots = [
-      ...staff.timetable.map(l => ({ type: "REGULAR", ...l })),
-      ...myCover.map(d => ({ type: "COVER", ...d }))
-    ].sort((a, b) => a.periodOrder - b.periodOrder);
+    function selectCandidateForLesson(reqId, lessonIdx, teacherId) {
+      const req = state.requests.find(r => r.id === reqId);
+      if (!req || !req.lessons[lessonIdx]) return;
+      req.lessons[lessonIdx].selectedCandidateId = teacherId;
+      renderAll();
+    }
 
-    scheduleEl.innerHTML = slots.map(s => s.type === "COVER" ? `
-      <div class="bg-teal-50 border-2 border-[#3cc2b8] rounded-xl p-3 flex flex-wrap items-center justify-between gap-2 text-xs">
-        <div>
-          <span class="bg-[#0f5e59] text-white font-black px-2 py-0.5 rounded mr-1.5">${s.periodName} (${s.timeRange})</span>
-          <span class="font-black text-slate-900 text-sm">${s.className} · ${s.subject}</span>
-          <span class="ml-2 font-bold text-slate-600">📍 ${s.room}</span>
-          <span class="ml-2 px-2 py-0.5 rounded bg-amber-100 text-amber-900 font-black">COVER (${s.status})</span>
-        </div>
-        <div class="flex gap-2">
-          ${s.status === "ASSIGNED"
-            ? `<button onclick="acknowledgeCoverDuty('${s.id}')" class="bg-amber-500 text-slate-950 font-black px-3 py-1.5 rounded-lg">✍️ Acknowledge</button>`
-            : `<button onclick="openCoverSupervision('${s.id}')" class="bg-[#0f5e59] text-white font-black px-3 py-1.5 rounded-lg">▶ Start Lesson</button>`}
-        </div>
-      </div>
-    ` : `
-      <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 flex items-center justify-between text-xs">
-        <div>
-          <span class="font-black text-slate-800 mr-2">${s.periodName} (${s.timeRange})</span>
-          <span class="font-bold text-[#0f5e59]">${s.className} · ${s.subject}</span>
-        </div>
-        <span class="font-bold text-slate-500">📍 ${s.room}</span>
-      </div>
-    `).join("");
-  }
+    function approvePendingRequest(reqId) {
+      const req = state.requests.find(r => r.id === reqId);
+      if (!req || req.status === "APPROVED") return;
+      req.status = "APPROVED";
 
-  // Leave Balance Cards (Module 4)
-  document.getElementById("profile-post-badge").textContent = `${staff.postTitle} [${staff.shortCode}]`;
-  const summaryCards = document.getElementById("profile-summary-cards");
-  const policyNote = document.getElementById("profile-policy-note");
+      (req.lessons || []).forEach(les => {
+        const pickedTeacher = state.teachers.find(t => t.id === (les.selectedCandidateId || "T03")) || state.teachers[1];
+        pickedTeacher.netCover += 1;
 
-  if (staff.roleType === "TEACHER") {
-    const netStr = metrics.netCover >= 0 ? `+${metrics.netCover}` : `${metrics.netCover}`;
-    summaryCards.innerHTML = `
-      <div class="bg-slate-50 border border-slate-200 rounded-lg p-2.5">
-        <div class="text-[11px] font-bold text-slate-500">Sick Leave</div>
-        <div class="text-base font-black text-slate-900 mt-0.5">${metrics.sickLeft}d</div>
-      </div>
-      <div class="bg-slate-50 border border-slate-200 rounded-lg p-2.5">
-        <div class="text-[11px] font-bold text-slate-500">Special Leave</div>
-        <div class="text-base font-black text-[#0f5e59] mt-0.5">${metrics.specialLeft}d</div>
-      </div>
-      <div class="bg-amber-50 border border-amber-200 rounded-lg p-2.5">
-        <div class="text-[11px] font-bold text-amber-900">Net Cover</div>
-        <div class="text-base font-black text-amber-700 mt-0.5">${netStr}</div>
-      </div>
-    `;
-    policyNote.textContent = db.config.policyNoteTeacher;
-  } else {
-    summaryCards.innerHTML = `
-      <div class="bg-teal-50 border border-teal-200 rounded-lg p-2.5">
-        <div class="text-[11px] font-bold text-teal-900">Annual Leave</div>
-        <div class="text-base font-black text-[#0f5e59] mt-0.5">${metrics.annualLeft}d</div>
-      </div>
-      <div class="bg-slate-50 border border-slate-200 rounded-lg p-2.5">
-        <div class="text-[11px] font-bold text-slate-500">Sick Leave</div>
-        <div class="text-base font-black text-slate-900 mt-0.5">${metrics.sickLeft}d</div>
-      </div>
-      <div class="bg-amber-50 border border-amber-200 rounded-lg p-2.5">
-        <div class="text-[11px] font-bold text-amber-900">TOIL Bank</div>
-        <div class="text-base font-black text-amber-700 mt-0.5">${metrics.toilHours}h</div>
-      </div>
-    `;
-    policyNote.textContent = db.config.policyNoteTA;
-  }
+        const existingDuty = state.duties.find(d => d.periodOrder === les.periodOrder && d.className === les.className);
+        if (existingDuty) {
+          existingDuty.coverCode = pickedTeacher.code;
+          existingDuty.coverName = `${pickedTeacher.nameEn.split(' ').slice(0,2).join(' ')} (${pickedTeacher.nameZh})`;
+          existingDuty.packTitle = les.packTitle;
+        } else {
+          const newDutyId = "DUTY-" + (state.duties.length + 1);
+          state.duties.push({
+            id: newDutyId,
+            periodOrder: les.periodOrder,
+            periodName: les.periodName,
+            timeRange: les.timeRange,
+            className: les.className,
+            subject: les.subject,
+            room: les.room,
+            coverCode: pickedTeacher.code,
+            coverName: `${pickedTeacher.nameEn.split(' ').slice(0,2).join(' ')} (${pickedTeacher.nameZh})`,
+            absentCode: "LKH",
+            absentName: "Mr. Lau (劉家豪)",
+            packTitle: les.packTitle,
+            senTip: "Keep classroom calm; check student ray diagrams / worksheet step-by-step.",
+            answerKey: "Light bends towards the normal when entering a denser medium (glass).",
+            quizQ: "When light enters glass from air at an angle, how does it bend?",
+            quizOptions: [
+              "A. Away from the normal (偏離法線)",
+              "B. Towards the normal (偏向法線)",
+              "C. It does not bend (不會折射)"
+            ],
+            correctIdx: 1,
+            status: "ASSIGNED",
+            totalStudents: 28,
+            passedStudents: 25
+          });
+          selectedClassroomDutyId = newDutyId;
+        }
+      });
 
-  // Recent Requests
-  const myApps = db.applications.filter(a => a.staffId === staff.id);
-  document.getElementById("my-requests-history-list").innerHTML = myApps.length === 0
-    ? `<div class="text-xs text-slate-400">No applications submitted yet.</div>`
-    : myApps.map(app => `
-        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs flex items-center justify-between">
-          <div>
-            <span class="font-black text-slate-900">[${app.leaveType}]</span>
-            <span class="font-bold text-slate-700 ml-1">${app.startDate}</span>
-            <div class="text-slate-500 mt-0.5">${app.reason}</div>
-          </div>
-          <span class="px-2.5 py-0.5 rounded-full font-black ${app.status === 'APPROVED' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-900'}">${app.status}</span>
-        </div>
-      `).join("");
-}
+      renderAll();
+      showToast(`✓ Approved ${reqId}! Cover assigned & published to Staffroom TV.`);
+    }
 
-// ==================== WIZARD LOGIC ====================
-function setWizardStep(step) {
-  currentWizardStep = step;
-  [1, 2, 3].forEach(s => {
-    document.getElementById(`wizard-step-${s}`).classList.toggle("hidden", s !== step);
-    const btn = document.getElementById(`step-btn-${s}`);
-    btn.className = s === step
-      ? "touch-target rounded-lg px-3 py-2 text-xs font-black flex items-center justify-center bg-[#3cc2b8] text-white shadow-sm"
-      : "touch-target rounded-lg px-3 py-2 text-xs font-bold flex items-center justify-center bg-white border border-slate-200 text-slate-600";
-  });
-  renderWizardAllSteps();
-}
+    // ==================== EXCEL / CSV IMPORT & MANUAL INSERT ====================
+    function openExcelModal() {
+      document.getElementById("excel-modal").classList.remove("hidden");
+    }
 
-function calculateDraftDeduction() {
-  if (formDraft.durationMode === "FULL_DAY") return 1.0;
-  if (formDraft.durationMode === "NO_LESSONS") return 0.0;
-  return 0.5;
-}
+    function closeExcelModal() {
+      document.getElementById("excel-modal").classList.add("hidden");
+    }
 
-function updateDraftField(field, value) {
-  formDraft[field] = value;
-  renderWizardAllSteps();
-}
-
-function toggleNoLessonsRoute(checked) {
-  formDraft.noLessonsAffected = checked;
-  renderWizardAllSteps();
-}
-
-function updateLessonDraft(idx, key, val) {
-  if (!formDraft.lessonSelections[idx]) formDraft.lessonSelections[idx] = {};
-  formDraft.lessonSelections[idx][key] = val;
-  renderWizardAllSteps();
-}
-
-function renderWizardAllSteps() {
-  const db = getDB();
-  const staffId = ["ADMIN", "DISPLAY", "STUDENT_2C"].includes(currentUserId) ? "T02" : currentUserId;
-  const staff = getStaffById(db, staffId) || db.staffList[1];
-
-  const leaveSelect = document.getElementById("draft-leave-type");
-  if (staff.roleType === "TEACHER") {
-    leaveSelect.innerHTML = `
-      <option value="OFFICIAL" ${formDraft.leaveType === 'OFFICIAL' ? 'selected' : ''}>Official Duty / Competition Trip (0.0d Deducted)</option>
-      <option value="SICK" ${formDraft.leaveType === 'SICK' ? 'selected' : ''}>Sick Leave (SL)</option>
-      <option value="SPECIAL" ${formDraft.leaveType === 'SPECIAL' ? 'selected' : ''}>Special Leave (Principal Approval)</option>
-      <option value="SWAP_ONLY" ${formDraft.leaveType === 'SWAP_ONLY' ? 'selected' : ''}>Reciprocal Lesson Swap Only</option>
-    `;
-  } else {
-    leaveSelect.innerHTML = `
-      <option value="ANNUAL" ${formDraft.leaveType === 'ANNUAL' ? 'selected' : ''}>Annual Leave (AL — TA Entitlement)</option>
-      <option value="TOIL" ${formDraft.leaveType === 'TOIL' ? 'selected' : ''}>Time-off in Lieu (TOIL)</option>
-      <option value="SICK" ${formDraft.leaveType === 'SICK' ? 'selected' : ''}>Sick Leave (SL)</option>
-    `;
-  }
-
-  document.getElementById("draft-duration-mode").value = formDraft.durationMode;
-  document.getElementById("draft-start-date").value = formDraft.startDate;
-  document.getElementById("draft-end-date").value = formDraft.endDate;
-  document.getElementById("draft-doc-status").value = formDraft.docStatus;
-  document.getElementById("draft-reason").value = formDraft.reason;
-
-  const deduct = calculateDraftDeduction();
-  document.getElementById("step1-validation-box").innerHTML = `<b>✓ Entitlement Validated:</b> ${formDraft.startDate} · Leave Deduction: <b>${formDraft.leaveType === 'OFFICIAL' || formDraft.leaveType === 'SWAP_ONLY' ? '0.0 days (Exempt)' : deduct + ' day(s)'}</b>.`;
-
-  // Step 2 Lesson Cards
-  const cardsContainer = document.getElementById("wizard-lesson-cards");
-  if (staff.roleType === "TA" || formDraft.noLessonsAffected) {
-    cardsContainer.innerHTML = `<div class="bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-xs font-bold text-emerald-900">✓ No teaching lessons affected.</div>`;
-  } else {
-    cardsContainer.innerHTML = staff.timetable.map((les, idx) => {
-      const sel = formDraft.lessonSelections[idx] || { selected: false, arrangementType: "OFFICE_COVER", partnerId: "", packId: les.defaultPackId, customNote: "" };
-      const candidates = evaluateCoverCandidates(db, formDraft.startDate, les.periodOrder, les.requiresLab, staff.id);
-      return `
-        <div class="rounded-xl border-2 ${sel.selected ? 'border-[#3cc2b8] bg-white' : 'border-slate-200 bg-slate-50 opacity-75'} p-4 text-xs">
-          <div class="flex items-center justify-between pb-2 border-b border-slate-200">
-            <label class="flex items-center gap-2 cursor-pointer font-black text-slate-900 text-sm">
-              <input type="checkbox" ${sel.selected ? "checked" : ""} onchange="updateLessonDraft(${idx}, 'selected', this.checked)" class="w-4 h-4 accent-[#3cc2b8]" />
-              <span>${les.periodName} (${les.timeRange}) · ${les.className} ${les.subject}</span>
-            </label>
-            <span class="font-bold text-slate-600">📍 ${les.room}</span>
-          </div>
-          ${sel.selected ? `
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
-              <div>
-                <label class="block font-bold mb-1">Arrangement Mode</label>
-                <select onchange="updateLessonDraft(${idx}, 'arrangementType', this.value)" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-bold">
-                  <option value="OFFICE_COVER" ${sel.arrangementType === 'OFFICE_COVER' ? 'selected' : ''}>Office-Assigned Cover</option>
-                  <option value="PRE_ARRANGED" ${sel.arrangementType === 'PRE_ARRANGED' ? 'selected' : ''}>Pre-Arranged Colleague Cover</option>
-                  <option value="LESSON_SWAP" ${sel.arrangementType === 'LESSON_SWAP' ? 'selected' : ''}>Reciprocal Lesson Swap (0 Cover Deducted)</option>
-                </select>
-              </div>
-              <div>
-                <label class="block font-bold mb-1">Clash-Checked Teacher</label>
-                <select onchange="updateLessonDraft(${idx}, 'partnerId', this.value)" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-bold text-[#0f5e59]">
-                  <option value="">-- Let Office Assign --</option>
-                  ${candidates.map(c => `<option value="${c.teacher.id}" ${!c.isValid ? 'disabled' : ''} ${sel.partnerId === c.teacher.id ? 'selected' : ''}>${c.isValid ? '✓ ' : '⛔ '}${getStaffName(c.teacher, true)} (${c.summaryText})</option>`).join("")}
-                </select>
-              </div>
-              <div class="sm:col-span-2">
-                <label class="block font-bold mb-1">40-Min Department Learning Pack</label>
-                <select onchange="updateLessonDraft(${idx}, 'packId', this.value)" class="w-full bg-[#e0f7f5] border border-[#3cc2b8] rounded-lg p-2 font-black text-[#0f5e59]">
-                  ${db.learningPacks.map(p => `<option value="${p.id}" ${sel.packId === p.id ? 'selected' : ''}>📦 [${p.id}] ${p.className} ${p.subject}: ${p.topic}</option>`).join("")}
-                </select>
-              </div>
-            </div>
-          ` : ""}
-        </div>
-      `;
-    }).join("");
-  }
-
-  // Step 3 Summary
-  const selected = [];
-  if (staff.roleType === "TEACHER" && !formDraft.noLessonsAffected) {
-    staff.timetable.forEach((les, idx) => {
-      const sel = formDraft.lessonSelections[idx];
-      if (sel && sel.selected) selected.push({ les, sel });
-    });
-  }
-  document.getElementById("wizard-plain-summary").innerHTML = `
-    <div class="text-xs font-black uppercase text-[#0f5e59] mb-1">Plain-English Pre-Submission Verification</div>
-    <div class="font-bold">You are submitting <u>${formDraft.leaveType}</u> for <u>${formDraft.startDate}</u> with <u>${selected.length} affected lesson(s)</u>. Every lesson has a 40-minute structured Learning Pack attached.</div>
-  `;
-  document.getElementById("wizard-review-cards").innerHTML = selected.map(({ les, sel }) => `
-    <div class="bg-slate-50 border border-slate-200 rounded-lg p-3 text-xs flex justify-between items-center">
-      <span><b>${les.periodName} · ${les.className} ${les.subject}</b> (${sel.arrangementType}) — Pack: <b>${sel.packId}</b></span>
-      <span class="bg-emerald-100 text-emerald-800 font-black px-2 py-0.5 rounded">✓ Ready</span>
-    </div>
-  `).join("");
-}
-
-function submitValidatedRequest() {
-  const db = getDB();
-  const staffId = ["ADMIN", "DISPLAY", "STUDENT_2C"].includes(currentUserId) ? "T02" : currentUserId;
-  const staff = getStaffById(db, staffId) || db.staffList[1];
-
-  const lessonsPayload = [];
-  if (staff.roleType === "TEACHER" && !formDraft.noLessonsAffected) {
-    staff.timetable.forEach((les, idx) => {
-      const sel = formDraft.lessonSelections[idx];
-      if (sel && sel.selected) {
-        lessonsPayload.push({
-          periodOrder: les.periodOrder,
-          periodName: les.periodName,
-          timeRange: les.timeRange,
-          className: les.className,
-          subject: les.subject,
-          room: les.room,
-          requiresLab: les.requiresLab,
-          arrangementType: sel.arrangementType,
-          preferredTeacherId: sel.partnerId || "",
-          colleagueConfirmed: sel.arrangementType === "OFFICE_COVER",
-          reciprocalSlot: sel.reciprocalSlot || "",
-          packId: sel.packId || les.defaultPackId,
-          note: sel.customNote || "Complete attached 40-min Learning Pack & Exit Check."
+    function simulateExcelImport() {
+      const exists = state.teachers.some(t => t.code === "WKM");
+      if (!exists) {
+        state.teachers.splice(1, 0, {
+          id: "T05",
+          code: "WKM",
+          nameEn: "Mr. Wong Ka Ming",
+          nameZh: "王家明",
+          dept: "Science & STEM",
+          labOk: true,
+          busyPeriods: [1, 2],
+          onLeave: false,
+          netCover: -1
         });
       }
-    });
-  }
+      state.requests.forEach(r => {
+        if (r.status === "PENDING") {
+          (r.lessons || []).forEach(l => l.selectedCandidateId = "T05");
+        }
+      });
+      closeExcelModal();
+      switchModule("dispatch");
+      showToast("📥 Imported Excel Timetable! Added Mr. Wong (王家明 WKM · AI Score 99%).");
+    }
 
-  const newId = "REQ-" + (1002 + db.applications.length);
-  db.applications.unshift({
-    id: newId,
-    staffId: staff.id,
-    leaveType: formDraft.leaveType,
-    durationMode: formDraft.durationMode,
-    deductDays: calculateDraftDeduction(),
-    startDate: formDraft.startDate,
-    endDate: formDraft.endDate,
-    docStatus: formDraft.docStatus,
-    reason: formDraft.reason,
-    status: "PENDING",
-    lessons: lessonsPayload
-  });
+    function manualAddTeacherRecord() {
+      const code = (document.getElementById("new-t-code").value || "LSY").trim().toUpperCase();
+      const nameZh = (document.getElementById("new-t-name").value || "李思欣").trim();
+      const dept = (document.getElementById("new-t-dept").value || "Biology & STEM").trim();
+      const busyRaw = (document.getElementById("new-t-busy").value || "1,3").trim();
+      const net = parseInt(document.getElementById("new-t-net").value || "-2", 10);
 
-  saveDB(db, `Submitted ${formDraft.leaveType} request ${newId} (${lessonsPayload.length} lessons)`);
-  openModule("menu");
-  showToast(`✓ Request ${newId} submitted! Switch to VP Lee (Admin) in the top bar to approve and publish it to the Staffroom TV.`);
-}
+      const busyPeriods = busyRaw
+        .split(/[,; ]+/)
+        .map(s => parseInt(s.replace(/[^0-9]/g, ""), 10))
+        .filter(n => !isNaN(n));
 
-// ==================== CLASSROOM SUPERVISION & CONTINUITY ====================
-function setContinuitySubTab(tab) {
-  currentContinuityTab = tab;
-  ["cover_console", "student_portal"].forEach(t => {
-    document.getElementById(`cont-panel-${t}`).classList.toggle("hidden", t !== tab);
-    document.getElementById(`cont-tab-${t}`).className = t === tab
-      ? "px-3.5 py-2 rounded-lg text-xs font-black bg-[#3cc2b8] text-white"
-      : "px-3.5 py-2 rounded-lg text-xs font-bold bg-slate-100 text-slate-700";
-  });
-}
+      const newId = "T-MAN-" + (state.teachers.length + 1);
+      state.teachers.splice(1, 0, {
+        id: newId,
+        code,
+        nameEn: `Teacher ${code}`,
+        nameZh,
+        dept,
+        labOk: true,
+        busyPeriods: busyPeriods.length ? busyPeriods : [1],
+        onLeave: false,
+        netCover: isNaN(net) ? -1 : net
+      });
 
-function openCoverSupervision(dutyId) {
-  activeConsoleDutyId = dutyId;
-  openModule("continuity");
-  setContinuitySubTab("cover_console");
-}
+      closeExcelModal();
+      switchModule("dispatch");
+      showToast(`✅ Added ${code} (${nameZh}) with timetable & current cover record!`);
+    }
 
-function renderContinuityView(db) {
-  const activeDuties = db.publishedDuties.filter(d => d.status !== "CANCELLED");
-  const duty = activeDuties.find(d => d.id === activeConsoleDutyId) || activeDuties[0];
+    function handleCSVFileUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const lines = e.target.result.split(/\r?\n/).filter(l => l.trim().length > 0);
+        let importedCount = 0;
+        lines.slice(1).forEach((line, idx) => {
+          const cols = line.split(",");
+          if (cols.length >= 3) {
+            const code = cols[0].trim();
+            const name = cols[1].trim();
+            const dept = cols[2].trim();
+            if (code && !state.teachers.some(t => t.code === code)) {
+              state.teachers.push({
+                id: "CSV-" + idx,
+                code,
+                nameEn: name,
+                nameZh: name,
+                dept,
+                labOk: true,
+                busyPeriods: [1],
+                onLeave: false,
+                netCover: 0
+              });
+              importedCount++;
+            }
+          }
+        });
+        closeExcelModal();
+        if (importedCount === 0) {
+          simulateExcelImport();
+        } else {
+          switchModule("dispatch");
+          showToast(`📥 Imported ${importedCount} teacher record(s) from ${file.name}!`);
+        }
+      };
+      reader.readAsText(file);
+    }
 
-  document.getElementById("cover-console-selector-list").innerHTML = activeDuties.map(d => `
-    <button onclick="activeConsoleDutyId='${d.id}'; renderAllActive();" class="text-left p-3 rounded-xl border-2 text-xs ${d.id === duty?.id ? 'border-[#3cc2b8] bg-teal-50/60' : 'border-slate-200 bg-slate-50'}">
-      <div class="font-black text-[#0f5e59]">${d.periodName} (${d.timeRange}) · ${d.status}</div>
-      <div class="font-black text-slate-900 text-sm mt-0.5">${d.className} · ${d.subject}</div>
-      <div class="text-slate-500">📍 ${d.room}</div>
-    </button>
-  `).join("");
+    function exportCurrentExcelCSV() {
+      let csv = "\uFEFFCode,NameEn,NameZh,Department,LabCertified,BusyPeriods,NetCover\n";
+      state.teachers.forEach(t => {
+        csv += `${t.code},"${t.nameEn}","${t.nameZh}","${t.dept}",${t.labOk ? 'YES' : 'NO'},"P${t.busyPeriods.join(';P')}",${t.netCover}\n`;
+      });
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "YCHLPYSS_Staff_Timetable_Template.csv";
+      a.click();
+      showToast("⬇️ Downloaded Excel (.CSV) Timetable Template!");
+    }
 
-  if (duty) {
-    const pack = db.learningPacks.find(p => p.id === duty.packId) || db.learningPacks[0];
-    document.getElementById("cover-console-main").innerHTML = `
-      <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm flex flex-col gap-4">
-        <div class="flex flex-wrap justify-between items-center gap-2 border-b border-slate-200 pb-3">
-          <div>
-            <span class="bg-[#0f5e59] text-white font-black px-2 py-0.5 rounded text-xs">${duty.periodName} · 📍 ${duty.room}</span>
-            <h3 class="text-lg font-black text-slate-900 mt-1">${duty.className} ${duty.subject}: ${pack.topic}</h3>
-          </div>
-          <button onclick="markLessonStarted('${duty.id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-black px-4 py-2 rounded-xl text-xs">✓ Roll Call & Start 40m Timer</button>
-        </div>
-        <div class="school-banner-blue border border-sky-300 rounded-lg p-3 text-xs text-slate-800">
-          <b>🛡️ Staff-Only SEN & Supervision Note:</b> ${pack.senGuidance}
-        </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
-          ${pack.activities.map(a => `
-            <div class="bg-slate-50 border border-slate-200 rounded-lg p-3">
-              <div class="flex justify-between font-black text-slate-900"><span>${a.phase}</span><span class="text-[#0f5e59]">${a.mins}m</span></div>
-              <p class="text-slate-600 mt-1">${a.detail}</p>
-            </div>
-          `).join("")}
-        </div>
-        <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 text-xs text-amber-950">
-          <b>🔑 Authorised Answer Key:</b> ${pack.answerKey}
-        </div>
-      </div>
-    `;
+    // ==================== MODULE 3: CLASSROOM & STUDENT QUIZ ====================
+    function selectClassroomDuty(dutyId) {
+      selectedClassroomDutyId = dutyId;
+      renderAll();
+    }
 
-    document.getElementById("student-learning-workspace").innerHTML = `
-      <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm flex flex-col gap-4">
-        <div>
-          <span class="bg-indigo-600 text-white font-black px-2.5 py-0.5 rounded text-xs">Student Portal · ${duty.className}</span>
-          <h3 class="text-lg font-black text-slate-900 mt-1">${pack.topic}</h3>
-          <p class="text-xs text-slate-600">${duty.note}</p>
-        </div>
-        <div class="bg-indigo-50 border-2 border-indigo-200 rounded-xl p-4 flex flex-col gap-2.5 text-xs">
-          <div class="font-black text-indigo-950">🎯 7-Minute Exit Check Question</div>
-          <p class="font-bold text-slate-800">${pack.exitQuizQuestion}</p>
-          ${pack.exitQuizOptions.map((opt, idx) => `
-            <label class="flex items-center gap-2 bg-white border border-indigo-200 rounded-lg p-2.5 font-bold cursor-pointer">
-              <input type="radio" name="student-exit-quiz" value="${idx}" ${idx === pack.correctOptionIndex ? 'checked' : ''} />
-              <span>${opt}</span>
-            </label>
-          `).join("")}
-          <button onclick="submitStudentExitCheck('${duty.id}', ${pack.correctOptionIndex})" class="mt-2 bg-indigo-600 text-white font-black py-2 px-4 rounded-xl self-end">Submit Exit Check</button>
-        </div>
-      </div>
-    `;
-  }
+    function completeClassroomDuty(dutyId) {
+      const duty = state.duties.find(d => d.id === dutyId);
+      if (!duty) return;
+      duty.status = "COMPLETED";
+      renderAll();
+      showToast(`✓ Marked ${duty.className} (${duty.periodName}) Supervision Completed!`);
+    }
 
-  // Teacher Evidence Cards in Module 4
-  document.getElementById("teacher-evidence-cards").innerHTML = activeDuties.map(d => {
-    const ev = d.studentEvidence || { totalStudents: 28, submittedCount: 0, exitCheckPassed: 0, commonDifficulty: "" };
-    const pct = Math.round((ev.exitCheckPassed / ev.totalStudents) * 100);
-    return `
-      <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 text-xs flex flex-col gap-2">
-        <div class="flex justify-between items-center">
-          <span class="font-black text-slate-900 text-sm">${d.periodName} · ${d.className} ${d.subject}</span>
-          <span class="bg-emerald-100 text-emerald-800 font-black px-2.5 py-0.5 rounded-full">Exit Check Mastery: ${pct}% (${ev.exitCheckPassed}/${ev.totalStudents})</span>
-        </div>
-        <div class="text-slate-600"><b>🔍 Common Difficulty:</b> ${ev.commonDifficulty}</div>
-        <div class="text-slate-600"><b>📝 Cover Teacher Note:</b> ${d.coverObservation || "Pending lesson completion."}</div>
-      </div>
-    `;
-  }).join("");
-}
+    function submitStudentQuizAnswer(dutyId, optionIdx) {
+      const duty = state.duties.find(d => d.id === dutyId);
+      if (!duty) return;
+      if (optionIdx === duty.correctIdx) {
+        duty.totalStudents += 1;
+        duty.passedStudents += 1;
+        showToast("🎉 Correct Answer! Student mastery recorded (+1 Pass).");
+      } else {
+        duty.totalStudents += 1;
+        showToast("⚠️ Incorrect Answer. Answer key explanation displayed to student.");
+      }
+      renderAll();
+    }
 
-function acknowledgeCoverDuty(dutyId) {
-  const db = getDB();
-  const duty = db.publishedDuties.find(d => d.id === dutyId);
-  if (!duty) return;
-  duty.status = "ACKNOWLEDGED";
-  duty.ackTime = new Date().toTimeString().slice(0, 5);
-  saveDB(db, `Acknowledged cover duty ${duty.id} (${duty.periodName} ${duty.className})`);
-  showToast(`✓ Duty ${duty.id} acknowledged!`);
-}
+    // ==================== MASTER RENDER ====================
+    function renderAll() {
+      // Update pending badge
+      const pendingReqs = state.requests.filter(r => r.status === "PENDING");
+      const badge = document.getElementById("badge-pending");
+      if (badge) badge.textContent = pendingReqs.length;
 
-function markLessonStarted(dutyId) {
-  const db = getDB();
-  const duty = db.publishedDuties.find(d => d.id === dutyId);
-  if (!duty) return;
-  duty.status = "IN_PROGRESS";
-  duty.attendanceTaken = true;
-  saveDB(db, `Started classroom supervision for ${duty.id}`);
-  showToast("✓ Roll call verified & 40-minute lesson started!");
-}
-
-function submitStudentExitCheck(dutyId, correctIdx) {
-  const db = getDB();
-  const duty = db.publishedDuties.find(d => d.id === dutyId);
-  if (!duty) return;
-  duty.studentEvidence.submittedCount = Math.min(duty.studentEvidence.totalStudents, duty.studentEvidence.submittedCount + 1);
-  duty.studentEvidence.exitCheckPassed = Math.min(duty.studentEvidence.totalStudents, duty.studentEvidence.exitCheckPassed + 1);
-  saveDB(db, `Student submitted Exit Check for ${duty.className} ${duty.subject}`);
-  showToast("✓ Exit Check recorded and synced to your regular teacher's report!");
-}
-
-// ==================== MODULE 6: ADMIN CONSOLE ====================
-function renderManagementView(db) {
-  const isAdmin = currentUserId === "ADMIN";
-  document.getElementById("admin-guard-banner").classList.toggle("hidden", isAdmin);
-
-  const pendingApps = db.applications.filter(a => a.status === "PENDING");
-  document.getElementById("mgmt-pending-pill").textContent = `${pendingApps.length} Pending`;
-
-  const pendingContainer = document.getElementById("mgmt-pending-container");
-  if (pendingApps.length === 0) {
-    pendingContainer.innerHTML = `<div class="bg-slate-50 border border-slate-200 rounded-xl p-4 text-xs text-slate-500 text-center">All leave and swap requests have been processed.</div>`;
-  } else {
-    pendingContainer.innerHTML = pendingApps.map(app => {
-      const applicant = getStaffById(db, app.staffId);
-      return `
-        <div class="bg-amber-50/60 border-2 border-[#dec016] rounded-xl p-4 text-xs">
-          <div class="flex justify-between items-center mb-2">
-            <div>
-              <span class="font-black text-slate-900 text-sm">${getStaffName(applicant)}</span>
-              <span class="ml-2 font-bold bg-white border border-slate-300 px-2 py-0.5 rounded">${app.leaveType} · ${app.startDate}</span>
-            </div>
-            <button onclick="approveRequestAdmin('${app.id}')" ${!isAdmin ? 'disabled' : ''} class="${isAdmin ? 'bg-[#0f5e59] text-white' : 'bg-slate-300 text-slate-500'} font-black px-3.5 py-1.5 rounded-lg">✓ Approve & Publish</button>
-          </div>
-          ${app.lessons.map((les, lIdx) => {
-            const cands = evaluateCoverCandidates(db, app.startDate, les.periodOrder, les.requiresLab, app.staffId);
-            return `
-              <div class="bg-white border border-slate-200 rounded-lg p-2.5 mt-2">
-                <div class="font-black text-slate-800 mb-1">${les.periodName} · ${les.className} ${les.subject} (${les.room}) — Pack: ${les.packId}</div>
-                <select id="admin-pick-${app.id}-${lIdx}" class="w-full bg-slate-50 border border-slate-300 rounded p-1.5 font-bold">
-                  ${cands.map(c => `<option value="${c.teacher.id}" ${!c.isValid ? 'disabled' : ''}>${c.isValid ? '✓ VALID: ' : '⛔ CLASH: '}${getStaffName(c.teacher, true)} — ${c.summaryText}</option>`).join("")}
-                </select>
-              </div>
-            `;
-          }).join("")}
-        </div>
-      `;
-    }).join("");
-  }
-
-  document.getElementById("mgmt-published-container").innerHTML = db.publishedDuties.map(d => {
-    const absent = getStaffById(db, d.absentTeacherId);
-    const cover = getStaffById(db, d.coverTeacherId);
-    const isCancelled = d.status === "CANCELLED";
-    return `
-      <div class="bg-slate-50 border border-slate-200 rounded-lg p-2.5 flex justify-between items-center text-xs ${isCancelled ? 'opacity-50' : ''}">
-        <div>
-          <span class="font-black text-[#0f5e59]">${d.periodName} · ${d.className} ${d.subject}</span>
-          <span class="ml-2 text-slate-600">${getStaffName(absent, true)} ➔ <b>${getStaffName(cover, true)}</b> [${d.status}]</span>
-        </div>
-        ${!isCancelled ? `<button onclick="cancelPublishedDuty('${d.id}')" ${!isAdmin ? 'disabled' : ''} class="text-rose-700 border border-rose-200 bg-white px-2.5 py-1 rounded font-bold">Cancel & Reverse</button>` : `<span class="text-rose-700 font-bold">Reversed</span>`}
-      </div>
-    `;
-  }).join("");
-
-  document.getElementById("mgmt-roster-teachers").innerHTML = db.staffList.filter(s => s.roleType === "TEACHER").map(t => {
-    const m = computeStaffMetrics(db, t.id);
-    return `
-      <div class="bg-slate-50 border border-slate-200 rounded-lg p-2 flex justify-between items-center text-xs">
-        <span><b>${t.shortCode}</b> · ${getStaffName(t)} (SL Left: ${m.sickLeft}d)</span>
-        <span class="font-black px-2 py-0.5 rounded bg-white border border-slate-300">Net Cover: ${m.netCover >= 0 ? '+' + m.netCover : m.netCover}</span>
-      </div>
-    `;
-  }).join("");
-
-  document.getElementById("mgmt-roster-tas").innerHTML = db.staffList.filter(s => s.roleType === "TA").map(ta => {
-    const m = computeStaffMetrics(db, ta.id);
-    return `
-      <div class="bg-teal-50/50 border border-teal-200 rounded-lg p-2 flex justify-between items-center text-xs">
-        <span><b>${ta.shortCode}</b> · ${getStaffName(ta)} (TOIL: ${m.toilHours}h)</span>
-        <span class="font-black px-2 py-0.5 rounded bg-white border border-teal-300">AL Left: ${m.annualLeft}d</span>
-      </div>
-    `;
-  }).join("");
-
-  document.getElementById("mgmt-audit-log").innerHTML = db.auditLog.map(e => `
-    <div class="border-b border-slate-100 pb-1">
-      <span class="font-mono text-[10px] text-slate-400">${e.time}</span>
-      <b class="text-[#0f5e59] ml-1">${e.actor}:</b> ${e.action}
-    </div>
-  `).join("");
-}
-
-function approveRequestAdmin(appId) {
-  if (currentUserId !== "ADMIN") return;
-  const db = getDB();
-  const app = db.applications.find(a => a.id === appId);
-  if (!app || app.status === "APPROVED") return;
-  app.status = "APPROVED";
-
-  app.lessons.forEach((les, lIdx) => {
-    const selEl = document.getElementById(`admin-pick-${app.id}-${lIdx}`);
-    const pickedId = selEl ? selEl.value : (les.preferredTeacherId || "T03");
-    db.publishedDuties.push({
-      id: "DUTY-" + (203 + db.publishedDuties.length),
-      requestId: app.id,
-      date: app.startDate,
-      periodOrder: les.periodOrder,
-      periodName: les.periodName,
-      timeRange: les.timeRange,
-      className: les.className,
-      subject: les.subject,
-      room: les.room.split(" (")[0],
-      absentTeacherId: app.staffId,
-      coverTeacherId: pickedId,
-      arrangementType: les.arrangementType,
-      packId: les.packId,
-      note: les.note,
-      status: les.arrangementType === "LESSON_SWAP" ? "ACKNOWLEDGED" : "ASSIGNED",
-      ackTime: les.arrangementType === "LESSON_SWAP" ? "Swap" : "",
-      attendanceTaken: false,
-      coverObservation: "",
-      studentEvidence: { totalStudents: 28, submittedCount: 0, exitCheckPassed: 0, commonDifficulty: "Awaiting completion" }
-    });
-  });
-
-  saveDB(db, `Approved ${app.id} & published to Staffroom TV`);
-  showToast(`✓ Request ${app.id} approved and added to the compact Staffroom TV!`);
-}
-
-function cancelPublishedDuty(dutyId) {
-  if (currentUserId !== "ADMIN") return;
-  const db = getDB();
-  const duty = db.publishedDuties.find(d => d.id === dutyId);
-  if (!duty) return;
-  duty.status = "CANCELLED";
-  saveDB(db, `Cancelled ${duty.id} and reversed cover workload`);
-  showToast(`Duty ${duty.id} cancelled and workload reversed.`);
-}
-
-// ==================== MODULE 7: COMPACT, HIGH-DENSITY STAFFROOM TV ====================
-function renderCompactDisplayView(db) {
-  const activeDuties = db.publishedDuties
-    .filter(d => d.status !== "CANCELLED")
-    .sort((a, b) => a.periodOrder - b.periodOrder);
-
-  // 1. Compact Teacher Summary Chips at top of TV (Groups duties by Cover Teacher initials)
-  const groupedByTeacher = {};
-  activeDuties.forEach(d => {
-    if (!groupedByTeacher[d.coverTeacherId]) groupedByTeacher[d.coverTeacherId] = [];
-    groupedByTeacher[d.coverTeacherId].push(`${d.periodName}(${d.className})`);
-  });
-
-  const chipsContainer = document.getElementById("tv-teacher-summary-chips");
-  chipsContainer.innerHTML = Object.keys(groupedByTeacher).length === 0
-    ? `<span class="text-slate-400 font-bold">No active cover duties today</span>`
-    : `<span class="font-black text-slate-600 uppercase text-[11px]">Cover Summary:</span>` +
-      Object.entries(groupedByTeacher).map(([tId, slots]) => {
-        const st = getStaffById(db, tId);
+      // 1. Render Leave Type Buttons
+      const types = [
+        { id: "OFFICIAL", label: "Official Duty (公假帶隊)", desc: "STEM Competition / Exam" },
+        { id: "SICK", label: "Sick Leave (病假)", desc: "Medical Certificate" },
+        { id: "TRAINING", label: "EDB Training (進修)", desc: "Professional Seminar" }
+      ];
+      document.getElementById("leave-type-buttons").innerHTML = types.map(t => {
+        const active = state.draft.leaveType === t.id;
         return `
-          <span class="bg-white border border-slate-300 px-2.5 py-0.5 rounded-md font-bold text-slate-800 shadow-sm">
-            <b class="text-[#0f5e59]">${st ? st.shortCode : tId} ${st ? st.nameZh : ''}</b>: ${slots.join(", ")}
-          </span>
+          <button onclick="selectLeaveType('${t.id}')" class="touch-btn p-3 rounded-xl border-2 text-left transition ${active ? 'border-[#0f5e59] bg-teal-50/70' : 'border-slate-200 bg-slate-50 hover:bg-white'}">
+            <div class="text-xs font-black text-slate-900">${t.label}</div>
+            <div class="text-[11px] font-bold text-slate-500 mt-0.5">${t.desc}</div>
+          </button>
         `;
       }).join("");
 
-  // 2. High-Density Table Rows (Up to 12 rows per page)
-  const perPage = 12;
-  const totalPages = Math.max(1, Math.ceil(activeDuties.length / perPage));
-  if (tvPage >= totalPages) tvPage = 0;
-  const slice = activeDuties.slice(tvPage * perPage, (tvPage + 1) * perPage);
-
-  document.getElementById("tv-count-pill").textContent = `${activeDuties.length} Lesson(s)`;
-  document.getElementById("tv-page-pill").textContent = `Page ${tvPage + 1}/${totalPages}`;
-
-  const tbody = document.getElementById("tv-compact-tbody");
-  tbody.innerHTML = slice.map(d => {
-    const absent = getStaffById(db, d.absentTeacherId);
-    const cover = getStaffById(db, d.coverTeacherId);
-    const isSwap = d.arrangementType === "LESSON_SWAP";
-    const isAcked = d.status !== "ASSIGNED";
-
-    return `
-      <tr class="hover:bg-teal-50/40 transition">
-        <td class="py-2.5 px-3.5">
-          <span class="bg-[#0f5e59] text-white font-black px-2.5 py-1 rounded text-xs">${d.periodName}</span>
-        </td>
-        <td class="py-2.5 px-3 font-mono text-xs font-bold text-slate-600">${d.timeRange}</td>
-        <td class="py-2.5 px-3.5">
-          <span class="font-black text-slate-900 text-base mr-1">${d.className}</span>
-          <span class="font-bold text-slate-700 text-xs">${d.subject}</span>
-        </td>
-        <td class="py-2.5 px-3.5 font-black text-slate-800 text-xs">📍 ${d.room}</td>
-        <td class="py-2.5 px-3.5">
-          <div class="inline-flex items-center gap-1.5 bg-[#e0f7f5] border border-[#3cc2b8] px-2.5 py-1 rounded-lg">
-            <span class="bg-[#0f5e59] text-white text-[11px] font-black px-1.5 py-0.2 rounded">${cover ? cover.shortCode : 'TBD'}</span>
-            <span class="font-black text-[#0f5e59] text-sm">${cover ? cover.nameZh : ''} (${cover ? cover.nameEn.replace('Mr. ', '').replace('Ms. ', '') : ''})</span>
+      // Render Affected Lessons in Leave Form
+      document.getElementById("leave-lessons-list").innerHTML = state.draft.lessons.map((les, idx) => `
+        <div onclick="toggleDraftLesson(${idx})" class="cursor-pointer rounded-xl p-3.5 border-2 transition flex flex-col gap-2 ${les.selected ? 'border-[#0f5e59] bg-emerald-50/40' : 'border-slate-200 bg-slate-50 opacity-75'}">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <input type="checkbox" ${les.selected ? 'checked' : ''} class="w-4 h-4 accent-[#0f5e59]" />
+              <span class="font-black text-xs sm:text-sm text-slate-900">${les.periodName} (${les.timeRange}) · Class ${les.className} — ${les.subject}</span>
+            </div>
+            <span class="text-xs font-black px-2 py-0.5 rounded bg-amber-100 text-amber-900">📍 ${les.room}</span>
           </div>
-        </td>
-        <td class="py-2.5 px-3.5 text-xs font-semibold text-slate-500">
-          ${absent ? `${absent.shortCode} ${absent.nameZh}` : ''}
-        </td>
-        <td class="py-2.5 px-3">
-          <span class="text-[11px] font-black px-2 py-0.5 rounded ${isSwap ? 'bg-blue-100 text-blue-800' : 'bg-slate-100 text-slate-700'}">
-            ${isSwap ? '🔄 Swap' : '📋 Cover'}
+          <div class="text-xs font-bold text-[#0f5e59] pl-6">
+            📦 Attached AI Learning Pack: ${les.packTitle}
+          </div>
+        </div>
+      `).join("");
+
+      // Render Leave History List
+      document.getElementById("leave-history-list").innerHTML = state.requests.map(r => `
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 flex items-center justify-between">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-black text-slate-900">${r.id} · ${r.staffName}</span>
+              <span class="text-[11px] font-black px-2 py-0.5 rounded ${r.status === 'APPROVED' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-900'}">${r.status}</span>
+            </div>
+            <div class="text-xs font-bold text-slate-500 mt-1">${r.date} · Leave Type: ${r.leaveType}</div>
+          </div>
+          ${r.status === 'PENDING' ? `
+            <button onclick="switchModule('dispatch')" class="touch-btn bg-amber-400 text-slate-950 font-black px-3 py-1.5 rounded-lg text-xs">
+              排代課 ➔
+            </button>
+          ` : `<span class="text-xs font-black text-emerald-700">✓ Dispatched</span>`}
+        </div>
+      `).join("");
+
+      // 2. Render AI Cover Dispatch Queue
+      const dispatchBox = document.getElementById("dispatch-queue-container");
+      if (pendingReqs.length === 0) {
+        dispatchBox.innerHTML = `
+          <div class="bg-emerald-50 border-2 border-emerald-300 rounded-2xl p-6 text-center">
+            <div class="text-2xl mb-1">✅</div>
+            <div class="text-base font-black text-emerald-950">All Leave Requests Dispatched (所有代課已成功派發)</div>
+            <div class="text-xs font-bold text-emerald-800 mt-1">Staffroom TV Board and Substitute Teacher Classroom Hubs are synced.</div>
+            <div class="mt-4 flex justify-center gap-3">
+              <button onclick="switchModule('classroom')" class="touch-btn bg-[#0f5e59] text-white font-black px-4 py-2 rounded-xl text-xs">Open Classroom Hub ➔</button>
+              <button onclick="switchModule('tv')" class="touch-btn bg-white border border-slate-300 text-slate-800 font-black px-4 py-2 rounded-xl text-xs">View Staffroom TV ➔</button>
+            </div>
+          </div>
+        `;
+      } else {
+        dispatchBox.innerHTML = pendingReqs.map(req => `
+          <div class="bg-amber-50/70 border-2 border-amber-400 rounded-2xl p-4 flex flex-col gap-3">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-amber-200 pb-3">
+              <div>
+                <span class="bg-amber-400 text-slate-950 font-black px-2 py-0.5 rounded text-xs">${req.id} · ${req.leaveType}</span>
+                <h3 class="text-base font-black text-slate-900 mt-1">${req.staffName} — ${req.date}</h3>
+              </div>
+              <button onclick="approvePendingRequest('${req.id}')" class="touch-btn bg-emerald-600 hover:bg-emerald-700 text-white font-black px-5 py-2.5 rounded-xl text-xs sm:text-sm shadow-md">
+                ✓ Approve & Dispatch Cover (批核並派發代課)
+              </button>
+            </div>
+            ${(req.lessons || []).map((les, lIdx) => `
+              <div class="bg-white border border-slate-200 rounded-xl p-3.5 flex flex-col gap-2">
+                <div class="flex flex-wrap items-center justify-between text-xs sm:text-sm font-black text-slate-900">
+                  <span>${les.periodName} (${les.timeRange}) · ${les.className} ${les.subject}</span>
+                  <span class="text-[#0f5e59]">📍 ${les.room} · 📦 ${les.packTitle}</span>
+                </div>
+                <label class="text-[11px] font-black text-slate-500 uppercase mt-1">
+                  🤖 AI Candidate Ranking — Tap to Select (AI 根據空堂、實驗室資格及代課公平度評分):
+                </label>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                  ${state.teachers.filter(t => t.id !== "T02").map(t => {
+                    const ev = evaluateCandidate(t, les.periodOrder, les.requiresLab);
+                    const isPicked = les.selectedCandidateId === t.id;
+                    return `
+                      <div onclick="${ev.valid ? `selectCandidateForLesson('${req.id}', ${lIdx}, '${t.id}')` : ''}" class="rounded-xl p-2.5 border-2 text-xs transition ${ev.valid ? (isPicked ? 'cursor-pointer border-emerald-600 bg-emerald-50 shadow-sm' : 'cursor-pointer border-slate-200 bg-slate-50 hover:border-emerald-400') : 'border-rose-200 bg-rose-50/60 opacity-75'}">
+                        <div class="flex items-center justify-between">
+                          <span class="font-black text-slate-900">${t.code} · ${t.nameZh}</span>
+                          <span class="px-1.5 py-0.5 rounded font-black text-[10px] ${ev.valid ? 'bg-emerald-600 text-white' : 'bg-rose-200 text-rose-800'}">
+                            ${ev.valid ? `AI ${ev.score}%` : 'Blocked'}
+                          </span>
+                        </div>
+                        <div class="font-bold mt-1 ${ev.valid ? 'text-emerald-900' : 'text-rose-700'}">${ev.reason}</div>
+                      </div>
+                    `;
+                  }).join("")}
+                </div>
+              </div>
+            `).join("")}
+          </div>
+        `).join("");
+      }
+
+      // Render Dispatch Roster
+      document.getElementById("dispatch-roster-list").innerHTML = state.teachers.map(t => `
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 flex items-center justify-between text-xs">
+          <div>
+            <div class="font-black text-slate-900">${t.code} · ${t.nameEn} (${t.nameZh})</div>
+            <div class="font-bold text-slate-500 mt-0.5">
+              ${t.dept} · ${t.labOk ? '🧪 Lab OK' : 'No Lab'} · Busy: P${t.busyPeriods.join(', P')}
+            </div>
+          </div>
+          <span class="px-2.5 py-1 rounded-lg font-black border ${t.netCover <= 0 ? 'bg-emerald-50 border-emerald-300 text-emerald-800' : 'bg-white border-slate-300 text-slate-800'}">
+            Net: ${t.netCover >= 0 ? '+' + t.netCover : t.netCover}
           </span>
-        </td>
-        <td class="py-2.5 px-3.5 text-center">
-          ${isAcked
-            ? `<span class="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-black bg-emerald-100 text-emerald-800 border border-emerald-300">✓ ${d.status === 'COMPLETED' ? 'Done' : 'Ack'}</span>`
-            : `<span class="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-black bg-amber-100 text-amber-900 border border-amber-300">⏳ Pending</span>`
-          }
-        </td>
-      </tr>
-    `;
-  }).join("");
-}
+        </div>
+      `).join("");
 
-function nextTvPage() {
-  tvPage++;
-  renderCompactDisplayView(getDB());
-}
+      // 3. Render Classroom Console & Student Quiz
+      document.getElementById("classroom-duty-tabs").innerHTML = state.duties.map(d => `
+        <button onclick="selectClassroomDuty('${d.id}')" class="touch-btn px-3 py-1 rounded-lg text-xs font-black ${selectedClassroomDutyId === d.id ? 'bg-amber-400 text-slate-950' : 'bg-white/15 text-white hover:bg-white/25'}">
+          ${d.periodName} · ${d.className}
+        </button>
+      `).join("");
 
-function openStandaloneDisplay() {
-  const url = new URL(window.location.href);
-  url.searchParams.set("kiosk", "1");
-  window.open(url.toString(), "StaffroomTV", "width=1360,height=780");
-}
+      const activeDuty = state.duties.find(d => d.id === selectedClassroomDutyId) || state.duties[0];
+      if (activeDuty) {
+        const passRate = Math.round((activeDuty.passedStudents / activeDuty.totalStudents) * 100);
+        document.getElementById("classroom-detail-box").innerHTML = `
+          <div class="flex flex-wrap items-center justify-between gap-2 bg-slate-50 border border-slate-200 rounded-xl p-3.5">
+            <div>
+              <span class="text-xs font-black text-[#0f5e59]">${activeDuty.periodName} (${activeDuty.timeRange}) · ${activeDuty.room}</span>
+              <h3 class="text-base font-black text-slate-900 mt-0.5">Class ${activeDuty.className} — ${activeDuty.subject}</h3>
+              <p class="text-xs font-bold text-slate-500">Substitute: ${activeDuty.coverName} (Covering for ${activeDuty.absentName})</p>
+            </div>
+            <span class="px-3 py-1 rounded-full text-xs font-black ${activeDuty.status === 'COMPLETED' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-900'}">
+              ${activeDuty.status}
+            </span>
+          </div>
 
-function toggleKioskMode() {
-  document.getElementById("demo-control-bar").classList.toggle("hidden");
-  document.getElementById("top-breadcrumb-bar").classList.toggle("hidden");
-}
+          <div class="bg-emerald-50/70 border border-emerald-200 rounded-xl p-4 flex flex-col gap-2">
+            <div class="text-xs font-black text-emerald-950 uppercase">📦 40-Min AI Learning Continuity Pack (代課教學任務)</div>
+            <div class="text-sm font-black text-slate-900">${activeDuty.packTitle}</div>
+            <div class="text-xs font-bold text-slate-700 bg-white p-2.5 rounded-lg border border-emerald-200">
+              💡 <strong>SEN & Classroom Tip:</strong> ${activeDuty.senTip}
+            </div>
+            <div class="text-xs font-bold text-emerald-950 bg-white p-2.5 rounded-lg border border-emerald-200">
+              🔑 <strong>Teacher Answer Key:</strong> ${activeDuty.answerKey}
+            </div>
+          </div>
 
-// ==================== METRICS & EXPORT ====================
-function toggleMetricsModal() {
-  const modal = document.getElementById("metrics-modal");
-  modal.classList.toggle("hidden");
-  if (!modal.classList.contains("hidden")) {
-    const db = getDB();
-    const active = db.publishedDuties.filter(d => d.status !== "CANCELLED");
-    document.getElementById("metrics-modal-body").innerHTML = `
-      <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
-        <div class="text-xs font-bold text-slate-500">1. Clash & Duplicate Prevention</div>
-        <div class="text-2xl font-black text-emerald-700 mt-1">0 Clashes Permitted</div>
-      </div>
-      <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
-        <div class="text-xs font-bold text-slate-500">2. Learning Pack Coverage</div>
-        <div class="text-2xl font-black text-[#0f5e59] mt-1">100% (${active.length}/${active.length} Lessons)</div>
-      </div>
-    `;
-  }
-}
+          <button onclick="completeClassroomDuty('${activeDuty.id}')" class="touch-btn w-full bg-[#0f5e59] hover:bg-teal-900 text-white font-black py-3 rounded-xl text-xs sm:text-sm shadow-sm">
+            ✓ Sign Off Lesson & Sync Mastery Report (完成代課課堂並提交報告)
+          </button>
+        `;
 
-function exportAuditCSV() {
-  const db = getDB();
-  let csv = "\uFEFFDuty ID,Date,Period,Class,Subject,Room,Cover Teacher,Status,Pack\n";
-  db.publishedDuties.forEach(d => {
-    const c = getStaffById(db, d.coverTeacherId);
-    csv += `${d.id},${d.date},${d.periodName},${d.className},${d.subject},"${d.room}","${c ? c.shortCode + ' ' + c.nameEn : ''}",${d.status},${d.packId}\n`;
-  });
-  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "YCHLPYSS_Compact_Cover_Report.csv";
-  a.click();
-}
+        document.getElementById("student-quiz-box").innerHTML = `
+          <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5">
+            <div class="text-xs font-black text-indigo-900 uppercase">Question for Class ${activeDuty.className}:</div>
+            <div class="text-sm font-black text-slate-900 mt-1">${activeDuty.quizQ}</div>
+          </div>
 
-function showToast(msg) {
-  const b = document.getElementById("toast-banner");
-  document.getElementById("toast-message").textContent = msg;
-  b.classList.remove("hidden");
-  setTimeout(() => b.classList.add("hidden"), 4500);
-}
-function hideToast() {
-  document.getElementById("toast-banner").classList.add("hidden");
-}
+          <div class="flex flex-col gap-2">
+            ${activeDuty.quizOptions.map((opt, oIdx) => `
+              <button onclick="submitStudentQuizAnswer('${activeDuty.id}', ${oIdx})" class="touch-btn text-left p-3 rounded-xl border-2 border-slate-200 hover:border-indigo-600 bg-white font-bold text-xs text-slate-800">
+                ${opt}
+              </button>
+            `).join("")}
+          </div>
 
-setInterval(() => {
-  const el = document.getElementById("tv-clock-display");
-  if (el) el.textContent = new Date().toTimeString().split(" ")[0];
-}, 1000);
+          <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-3.5 flex items-center justify-between">
+            <div>
+              <div class="text-xs font-black text-indigo-950">📊 Live Class Exit-Quiz Pass Rate (即時達標率)</div>
+              <div class="text-[11px] font-bold text-indigo-700">${activeDuty.passedStudents} / ${activeDuty.totalStudents} Students Passed</div>
+            </div>
+            <span class="text-lg font-black text-indigo-900">${passRate}%</span>
+          </div>
+        `;
+      }
 
-const params = new URLSearchParams(window.location.search);
-if (params.get("kiosk") === "1") {
-  document.getElementById("demo-user-select").value = "DISPLAY";
-  switchSimulatedUser("DISPLAY");
-} else {
-  openModule("menu");
-}
+      // 4. Render Staffroom TV Board
+      document.getElementById("tv-duties-grid").innerHTML = state.duties.map(d => {
+        const rate = Math.round((d.passedStudents / d.totalStudents) * 100);
+        return `
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col justify-between gap-3">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+              <span class="bg-amber-400 text-slate-950 font-black px-2.5 py-0.5 rounded text-xs">${d.periodName} (${d.timeRange})</span>
+              <span class="text-xs font-black ${d.status === 'COMPLETED' ? 'text-emerald-400' : 'text-amber-300'}">● ${d.status}</span>
+            </div>
+            <div>
+              <div class="text-lg font-black text-white">Class ${d.className} · ${d.subject} (${d.room})</div>
+              <div class="text-xs font-bold text-slate-400 mt-1">Absent: ${d.absentName} ➔ Cover: <span class="text-emerald-400 font-black">${d.coverName}</span></div>
+            </div>
+            <div class="bg-slate-950 border border-slate-800 rounded-xl p-2.5 flex items-center justify-between text-xs">
+              <span class="font-bold text-slate-300">📦 ${d.packTitle}</span>
+              <span class="font-black text-amber-400">Quiz Mastery: ${rate}%</span>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    // ==================== UTILITIES ====================
+    function resetSystemData() {
+      state = JSON.parse(JSON.stringify(DEFAULT_STATE));
+      selectedClassroomDutyId = "DUTY-2";
+      switchModule("leave");
+      showToast("↺ System data reset.");
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById("toast");
+      t.textContent = msg;
+      t.classList.remove("hidden");
+      setTimeout(() => t.classList.add("hidden"), 2800);
+    }
+
+    setInterval(() => {
+      const el = document.getElementById("live-clock");
+      if (el) el.textContent = new Date().toTimeString().split(" ")[0];
+    }, 1000);
+
+    // Initialize System
+    switchModule("leave");
   </script>
 </body>
 </html>
