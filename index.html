@@ -3,17 +3,27 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SmartSchool Admin - 一體化學校行政電子系統 (全功能比賽原型)</title>
+  <title>SmartSchool SLRS - 智能校務、請假及代課調配系統</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@600;800&family=Noto+Sans+HK:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@600;700&family=Noto+Sans+HK:wght@400;500;700;900&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Noto Sans HK', sans-serif; }
-    .font-mono-clock { font-family: 'JetBrains Mono', monospace; }
-    @keyframes highlightPulse {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.75); border-color: rgba(245, 158, 11, 1); }
-      50% { box-shadow: 0 0 28px 8px rgba(245, 158, 11, 0.35); border-color: rgba(251, 191, 36, 1); }
+    body {
+      font-family: 'Noto Sans HK', sans-serif;
+      background-color: #f1f5f9;
+      color: #0f172a;
     }
-    .new-update-flash { animation: highlightPulse 1.8s infinite; }
+    .font-mono-num {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    /* 新派單高亮閃爍動畫 (明亮專業版) */
+    @keyframes pulseBorder {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.5); border-color: #2563eb; }
+      50% { box-shadow: 0 0 0 6px rgba(37, 99, 235, 0.15); border-color: #1d4ed8; }
+    }
+    .new-card-highlight {
+      animation: pulseBorder 2s infinite;
+    }
+    /* 電視通告跑馬燈 */
     @keyframes marquee {
       0% { transform: translateX(100%); }
       100% { transform: translateX(-100%); }
@@ -21,395 +31,478 @@
     .animate-marquee {
       display: inline-block;
       white-space: nowrap;
-      animation: marquee 26s linear infinite;
+      animation: marquee 28s linear infinite;
     }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
+<body class="min-h-screen flex flex-col selection:bg-blue-600 selection:text-white">
 
-  <!-- ==================== 頂部比賽演示模式切換列 (可隱藏以全螢幕展示電視) ==================== -->
-  <nav id="demo-topbar" class="bg-slate-900 border-b border-slate-800 px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 sticky top-0 z-50 shadow-md">
-    <div class="flex items-center gap-3">
-      <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center font-black text-white shadow">
-        SS
-      </div>
-      <div>
-        <div class="flex items-center gap-2">
-          <span class="font-black text-white tracking-wide">SmartSchool Admin</span>
-          <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-700/70">
-            ● 本地實時同步引擎已啟動
-          </span>
+  <!-- ==================== 頂部香港校務系統標準導航列 (eClass / EduCal 風格) ==================== -->
+  <header id="app-topbar" class="bg-[#0f3460] text-white shadow-md sticky top-0 z-50">
+    <!-- 第一層：學校名稱、學年循環週與系統工具 -->
+    <div class="max-w-7xl mx-auto px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 border-b border-blue-800/60">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-lg bg-white text-[#0f3460] flex flex-col items-center justify-center font-black shadow-sm shrink-0">
+          <span class="text-xs leading-none">HK</span>
+          <span class="text-sm leading-tight">SS</span>
         </div>
-        <p class="text-[11px] text-slate-400 hidden sm:block">中學組創新科技比賽原型 · 免紙本請假 · 智能公平代課 · 時間銀行結算</p>
+        <div>
+          <div class="flex items-center gap-2.5">
+            <h1 class="font-black text-base sm:text-lg tracking-wide text-white">香港創新中學 · SmartSchool 綜合校務平台</h1>
+            <span class="hidden md:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-200 border border-emerald-400/40">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+              SLRS 實時同步已連線
+            </span>
+          </div>
+          <p class="text-xs text-blue-200">2026-2027 學年 (上學期) · 循環週：第 9 週 (Day A) · 教職員考勤及代課調配模組</p>
+        </div>
+      </div>
+
+      <!-- 右側快速示範工具 -->
+      <div class="flex items-center gap-2">
+        <button onclick="openPopupTV()" class="bg-amber-400 hover:bg-amber-300 text-slate-900 font-black px-3 py-1.5 rounded-lg text-xs transition shadow-sm flex items-center gap-1.5">
+          <span>🖥️</span> 彈出教員室大螢幕 (雙視窗實時連動)
+        </button>
+        <button onclick="exportCSVReport()" class="bg-blue-800 hover:bg-blue-700 text-blue-100 border border-blue-600 px-3 py-1.5 rounded-lg text-xs font-bold transition hidden sm:inline-flex items-center gap-1">
+          <span>📥</span> 匯出 Excel/CSV
+        </button>
+        <button onclick="resetAllDemoData()" class="bg-blue-900/80 hover:bg-rose-700 text-blue-100 hover:text-white border border-blue-700 px-3 py-1.5 rounded-lg text-xs font-bold transition">
+          🔄 還原預設數據
+        </button>
       </div>
     </div>
 
-    <!-- 角色切換按鈕群組 -->
-    <div class="flex items-center bg-slate-950 p-1 rounded-xl border border-slate-800 gap-1">
-      <button onclick="switchRole('teacher')" id="tab-teacher" class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-black transition flex items-center gap-1.5">
-        📱 1. 教師端 (課表請假/時間銀行)
-      </button>
-      <button onclick="switchRole('admin')" id="tab-admin" class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-black transition flex items-center gap-1.5">
-        🛠️ 2. 校務處後台 (AI 派單/批核)
-        <span id="nav-pending-badge" class="px-1.5 py-0.2 rounded-full text-[11px] bg-amber-400 text-slate-950 font-black">1</span>
-      </button>
-      <button onclick="switchRole('tv')" id="tab-tv" class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-black transition flex items-center gap-1.5">
-        📺 3. 教員室大螢幕看板
-      </button>
+    <!-- 第二層：三大模組切換分頁 (Module Tabs) -->
+    <div class="bg-[#164276] px-4">
+      <div class="max-w-7xl mx-auto flex items-center justify-between overflow-x-auto">
+        <div class="flex items-center gap-1 py-1.5">
+          <button onclick="switchRole('teacher')" id="tab-teacher" class="px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition flex items-center gap-2 whitespace-nowrap">
+            <span>📱</span> 1. 教師端 (eClass 個人課表請假 / 代課簽收)
+          </button>
+          <button onclick="switchRole('admin')" id="tab-admin" class="px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition flex items-center gap-2 whitespace-nowrap">
+            <span>🗂️</span> 2. 校務處後台 (EduCal 智能審批及調配中心)
+            <span id="nav-pending-badge" class="px-2 py-0.5 rounded-full text-xs bg-amber-400 text-slate-950 font-black">1</span>
+          </button>
+          <button onclick="switchRole('tv')" id="tab-tv" class="px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition flex items-center gap-2 whitespace-nowrap">
+            <span>📺</span> 3. 教員室大螢幕看板 (Digital Signage)
+          </button>
+        </div>
+        <div class="hidden lg:flex items-center gap-2 text-xs text-blue-200 font-medium">
+          <span>系統時間：</span>
+          <span id="header-clock" class="font-mono-num font-bold text-white">08:30:00</span>
+        </div>
+      </div>
     </div>
+  </header>
 
-    <!-- 多視窗同步與重置工具 -->
-    <div class="flex items-center gap-2">
-      <button onclick="openPopupTV()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black px-3 py-1.5 rounded-lg text-xs transition shadow flex items-center gap-1">
-        🪟 彈出獨立電視視窗 (雙螢幕連動示範)
-      </button>
-      <button onclick="resetAllDemoData()" class="bg-slate-800 hover:bg-rose-950 hover:text-rose-300 border border-slate-700 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 transition">
-        🔄 還原預設數據
-      </button>
-    </div>
-  </nav>
-
-  <!-- ==================== 視圖 1：📱 教師端 (包含互動課堂時間表請假建立器) ==================== -->
+  <!-- ==================== 視圖 1：📱 教師端工作台 (eClass Teacher App / GRWTH 風格) ==================== -->
   <div id="view-teacher" class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 grid grid-cols-12 gap-6">
     
-    <!-- 左側 (5 Cols)：當前登入教師身份切換 + 個人假期與時間銀行戶口 + 我的代課通知 -->
-    <div class="col-span-12 lg:col-span-5 flex flex-col gap-5">
+    <!-- 左側欄 (4 Cols)：教職員檔案、考勤狀態、假期結餘、代課電子簽收 -->
+    <div class="col-span-12 lg:col-span-4 flex flex-col gap-5">
       
-      <!-- 教師身份選擇器 (方便比賽時模擬不同老師登入) -->
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg">
-        <div class="flex items-center justify-between mb-3">
-          <span class="text-xs font-bold uppercase tracking-wider text-indigo-400">模擬登入教師身份</span>
-          <span class="text-xs bg-indigo-950 text-indigo-300 border border-indigo-800 px-2 py-0.5 rounded">免密碼快速切換</span>
+      <!-- 教師身份與今日考勤卡片 -->
+      <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+        <div class="bg-gradient-to-r from-blue-700 to-blue-600 px-5 py-3.5 text-white flex items-center justify-between">
+          <div>
+            <span class="text-[11px] font-bold uppercase tracking-wider text-blue-200 block">當前登入教職員 (模擬切換)</span>
+            <h2 class="text-base font-black mt-0.5">eClass Teacher Portal</h2>
+          </div>
+          <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-400/20 text-emerald-100 border border-emerald-300/40">
+            ✓ 今日已拍卡 (07:46)
+          </span>
         </div>
-        <select id="current-teacher-select" onchange="renderTeacherView()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-base font-black text-white focus:outline-none focus:border-indigo-500">
-          <!-- JS 動態填入 -->
-        </select>
 
-        <!-- 個人假期與時間銀行儀表板 -->
-        <div class="grid grid-cols-3 gap-3 mt-4">
-          <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 text-center">
-            <div class="text-xs text-slate-400 font-bold">事假結餘 (AL)</div>
-            <div id="t-al-balance" class="text-2xl font-black text-purple-400 mt-1">7.0 日</div>
+        <div class="p-5">
+          <label class="block text-xs font-bold text-slate-500 mb-1.5">選擇模擬教師帳號：</label>
+          <select id="current-teacher-select" onchange="renderTeacherView()" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3.5 py-2.5 text-sm font-black text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-600">
+            <!-- JS 動態填入 -->
+          </select>
+
+          <!-- 假期戶口與時間銀行結餘 (3格明亮統計卡) -->
+          <div class="grid grid-cols-3 gap-2.5 mt-4">
+            <div class="bg-slate-50 border border-slate-200 rounded-lg p-3 text-center">
+              <div class="text-[11px] font-bold text-slate-500">事假結餘 (AL)</div>
+              <div id="t-al-balance" class="text-xl font-black text-blue-700 mt-1">7.0 日</div>
+            </div>
+            <div class="bg-slate-50 border border-slate-200 rounded-lg p-3 text-center">
+              <div class="text-[11px] font-bold text-slate-500">病假結餘 (SL)</div>
+              <div id="t-sl-balance" class="text-xl font-black text-teal-700 mt-1">14.0 日</div>
+            </div>
+            <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 text-center">
+              <div class="text-[11px] font-bold text-amber-800">⚡ 時間銀行</div>
+              <div id="t-ot-credits" class="text-xl font-black text-amber-600 mt-1">5 節</div>
+            </div>
           </div>
-          <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 text-center">
-            <div class="text-xs text-slate-400 font-bold">病假結餘 (SL)</div>
-            <div id="t-sl-balance" class="text-2xl font-black text-rose-400 mt-1">14.0 日</div>
-          </div>
-          <div class="bg-amber-950/30 border border-amber-600/50 rounded-xl p-3 text-center">
-            <div class="text-xs text-amber-300 font-bold">⚡ 時間銀行 (OT)</div>
-            <div id="t-ot-credits" class="text-2xl font-black text-amber-400 mt-1">4 節</div>
+
+          <div class="mt-3.5 bg-blue-50/70 border border-blue-100 rounded-lg p-3 text-xs text-slate-600 leading-relaxed">
+            <b class="text-blue-800">💡 課節時間銀行 (Time-Bank)：</b>平時協助代課或帶隊活動可累積「節數積分」。如需短暫請假（如覆診/帶隊比賽），可選擇以積分對沖，免扣正式事假。
           </div>
         </div>
-        <p class="text-xs text-slate-400 mt-3 leading-relaxed">
-          💡 <b>獨家「課節時間銀行」機制：</b>平時協助代課或帶隊比賽可累積「OT 節數積分」；如需短暫外出（如覆診/帶隊），可優先使用積分對沖，免扣正式事假！
-        </p>
       </div>
 
-      <!-- 今日指派給我的代課任務 (連 SEN 課堂交接微檔案) -->
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex-1">
-        <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+      <!-- 今日指派給我的代課通知與「電子簽收 (e-Sign)」 -->
+      <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-5 flex-1 flex flex-col">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
           <div class="flex items-center gap-2">
-            <span class="w-2.5 h-6 rounded-full bg-emerald-400"></span>
-            <h2 class="text-lg font-black text-white">今日指派給我的代課任務</h2>
+            <span class="w-2 h-5 rounded-full bg-teal-600"></span>
+            <h3 class="text-base font-black text-slate-800">今日代課通知及電子簽收</h3>
           </div>
-          <span id="my-sub-count-badge" class="text-xs font-bold bg-emerald-950 text-emerald-300 border border-emerald-800 px-2.5 py-1 rounded-lg">0 節</span>
+          <span id="my-sub-count-badge" class="text-xs font-bold bg-teal-50 text-teal-700 border border-teal-200 px-2.5 py-0.5 rounded-full">0 節</span>
         </div>
-        <div id="my-assigned-subs" class="flex flex-col gap-3">
+        <div id="my-assigned-subs" class="flex flex-col gap-3 flex-1">
           <!-- JS 動態填入 -->
         </div>
       </div>
 
     </div>
 
-    <!-- 右側 (7 Cols)：互動式課堂時間表請假建立器 (Create Leave Request & Timetable Table) -->
-    <div class="col-span-12 lg:col-span-7 flex flex-col gap-5">
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg">
-        <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+    <!-- 右側欄 (8 Cols)：網上請假申請及個人課堂時間表勾選器 (eLeave & Timetable Table) -->
+    <div class="col-span-12 lg:col-span-8 flex flex-col gap-5">
+      
+      <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+        <div class="bg-slate-50 border-b border-slate-200 px-6 py-4 flex flex-wrap items-center justify-between gap-2">
           <div>
-            <h2 class="text-xl font-black text-white">🗓️ 步驟 1：從個人課堂時間表勾選需代課節數 (Create Request Table)</h2>
-            <p class="text-xs text-slate-400 mt-0.5">點擊下方表格中的課堂即可自動加入請假單，系統會自動帶出課室及 SEN 班別提示</p>
+            <h2 class="text-lg font-black text-slate-800">🗓️ 網上請假申請表 (e-Leave Application & Timetable)</h2>
+            <p class="text-xs text-slate-500 mt-0.5">步驟 1：請在下方個人今日課堂時間表中，勾選因請假而需要安排代課的節數</p>
           </div>
+          <span class="text-xs font-bold text-blue-700 bg-blue-50 border border-blue-200 px-3 py-1 rounded-md">
+            自動連繫 WebSAMS 課表及 SEN 班別庫
+          </span>
         </div>
 
-        <!-- 互動式今日課堂時間表 Table -->
-        <div class="overflow-x-auto rounded-xl border border-slate-800 mb-5">
-          <table class="w-full text-left border-collapse">
-            <thead>
-              <tr class="bg-slate-950 text-slate-400 text-xs font-bold border-b border-slate-800">
-                <th class="py-3 px-3 w-12 text-center">勾選</th>
-                <th class="py-3 px-3">節數 / 時間</th>
-                <th class="py-3 px-3">任教班別與科目</th>
-                <th class="py-3 px-3">課室 / 特別室</th>
-                <th class="py-3 px-3">堂課交接備註 (可即場修改)</th>
-              </tr>
-            </thead>
-            <tbody id="teacher-timetable-tbody" class="divide-y divide-slate-800/80 text-sm">
-              <!-- JS 動態渲染該老師的今日課表與空堂 -->
-            </tbody>
-          </table>
-        </div>
-
-        <!-- 請假類別與原因表單 -->
-        <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 flex flex-col gap-4">
-          <h3 class="text-base font-black text-amber-400">📝 步驟 2：選擇請假類別及填寫原因</h3>
-          
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-xs font-bold text-slate-300 mb-1.5">請假及戶口扣減方式</label>
-              <select id="leave-type-select" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm font-bold text-white focus:outline-none focus:border-amber-400">
-                <option value="OT">⚡ 時間銀行對沖 (優先扣減 OT 代課積分，免扣事假)</option>
-                <option value="SL">🏥 病假 (SL - 扣減病假結餘)</option>
-                <option value="AL">📅 事假 (AL - 扣減事假結餘)</option>
-                <option value="OL">🏛️ 教育局公假 / 帶隊比賽 (OL - 不扣個人假期)</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-slate-300 mb-1.5">請假原因 / 證明文件說明</label>
-              <input id="leave-reason-input" type="text" value="帶領學生外出參加創新科技比賽決賽綵排" placeholder="例如：身體不適求醫 / 帶隊外出比賽..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-400" />
-            </div>
+        <div class="p-6">
+          <!-- 個人課堂時間表 Table -->
+          <div class="overflow-x-auto border border-slate-200 rounded-lg mb-6">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-slate-100 text-slate-600 text-xs font-bold border-b border-slate-200">
+                  <th class="py-3 px-3.5 w-14 text-center">需代課</th>
+                  <th class="py-3 px-3.5">節數 / 上課時間</th>
+                  <th class="py-3 px-3.5">任教班別及科目</th>
+                  <th class="py-3 px-3.5">上課地點</th>
+                  <th class="py-3 px-3.5">交接堂課 / 教材指示 (供代課老師查閱)</th>
+                </tr>
+              </thead>
+              <tbody id="teacher-timetable-tbody" class="divide-y divide-slate-200 text-sm bg-white">
+                <!-- JS 動態渲染 -->
+              </tbody>
+            </table>
           </div>
 
-          <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-800">
-            <div id="selected-lessons-summary" class="text-xs font-bold text-emerald-400">
-              已勾選 1 節需要代課之課堂
+          <!-- 步驟 2：請假詳情表單 -->
+          <div class="bg-slate-50 border border-slate-200 rounded-xl p-5">
+            <h3 class="text-sm font-black text-slate-800 mb-3.5 flex items-center gap-2">
+              <span class="w-5 h-5 rounded-full bg-blue-700 text-white text-xs flex items-center justify-center">2</span>
+              填寫請假類別、原因及證明文件狀態
+            </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+              <div class="md:col-span-5">
+                <label class="block text-xs font-bold text-slate-600 mb-1">請假類別及假期結算方式</label>
+                <select id="leave-type-select" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-600">
+                  <option value="OT">⚡ 時間銀行對沖 (以代課/OT 積分抵銷，免扣事假)</option>
+                  <option value="SL">🏥 病假 (Sick Leave - 扣減病假結餘)</option>
+                  <option value="OL">🏛️ 公假 / 帶隊出賽 (Official Leave - 不扣個人假期)</option>
+                  <option value="AL">📅 事假 (Casual / Annual Leave - 扣減事假結餘)</option>
+                </select>
+              </div>
+              <div class="md:col-span-4">
+                <label class="block text-xs font-bold text-slate-600 mb-1">請假事由 / 外出公幹說明</label>
+                <input id="leave-reason-input" type="text" value="帶領學生前往科學園參加香港中學創新科技大賽決賽" placeholder="請輸入請假原因..." class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-600" />
+              </div>
+              <div class="md:col-span-3">
+                <label class="block text-xs font-bold text-slate-600 mb-1">證明文件附件</label>
+                <select id="leave-doc-select" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-700">
+                  <option value="已附上比賽通告">📎 已附教育局/比賽通告</option>
+                  <option value="已上傳醫生紙">📎 已上傳電子醫生證明</option>
+                  <option value="後補證明文件">⏳ 後補相關文件</option>
+                </select>
+              </div>
             </div>
-            <button onclick="submitLeaveRequestFromTeacher()" class="bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white font-black px-6 py-2.5 rounded-xl text-sm transition shadow-lg shadow-indigo-950">
-              🚀 提交請假申請至校務處 (即時同步)
-            </button>
+
+            <div class="mt-4 pt-4 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3">
+              <div id="selected-lessons-summary" class="text-xs font-bold text-blue-700 bg-blue-100/80 px-3 py-1.5 rounded-md">
+                已勾選 1 節課堂申請代課
+              </div>
+              <button onclick="submitLeaveRequestFromTeacher()" class="bg-[#0f3460] hover:bg-blue-800 active:scale-95 text-white font-bold px-6 py-2.5 rounded-lg text-sm transition shadow-sm flex items-center gap-2">
+                <span>📤</span> 遞交請假申請至校務處審批
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- 我提交過的請假紀錄狀態 -->
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
-        <h3 class="text-base font-black text-white mb-3">📋 我的請假申請進度</h3>
-        <div id="my-leave-history" class="flex flex-col gap-2.5">
+      <!-- 個人歷史請假審批進度表 -->
+      <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-5">
+        <h3 class="text-sm font-black text-slate-800 mb-3">📋 本學期個人請假申請紀錄 (Leave History)</h3>
+        <div id="my-leave-history" class="flex flex-col gap-2">
           <!-- JS 動態渲染 -->
         </div>
       </div>
-    </div>
-
-  </div>
-
-  <!-- ==================== 視圖 2：🛠️ 校務處後台 (AI 智能公平派代課 + 快速建單表格 + 假期總表) ==================== -->
-  <div id="view-admin" class="hidden flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 grid grid-cols-12 gap-6">
-
-    <!-- 左側 (7 Cols)：待批核請假申請 + 校務處手動快速新增代課表 -->
-    <div class="col-span-12 lg:col-span-7 flex flex-col gap-6">
-      
-      <!-- 待批核請假與 AI 配對清單 -->
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg">
-        <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
-          <div class="flex items-center gap-2.5">
-            <span class="w-3 h-6 rounded-full bg-amber-400"></span>
-            <h2 class="text-xl font-black text-white">待批核請假申請 & AI 智能公平代課配對</h2>
-          </div>
-          <span id="admin-pending-badge" class="px-3 py-1 rounded-lg bg-amber-500/20 text-amber-300 font-bold text-sm">1 宗待批核</span>
-        </div>
-        <div id="admin-pending-container" class="flex flex-col gap-4">
-          <!-- JS 動態生成 -->
-        </div>
-      </div>
-
-      <!-- 校務處手動快速建單表格 (Admin Quick-Create Substitution Table) -->
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
-        <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
-          <div>
-            <h2 class="text-lg font-black text-white">➕ 校務處直接新增臨時調堂 / 代課單 (Quick Create Table)</h2>
-            <p class="text-xs text-slate-400">如遇老師突發遲到或緊急會議，書記可直接在此表格新增代課並秒級推播上電視</p>
-          </div>
-        </div>
-        <div class="grid grid-cols-2 sm:grid-cols-6 gap-2.5 text-xs">
-          <div>
-            <label class="text-slate-400 font-bold block mb-1">節數</label>
-            <select id="quick-period" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white font-bold">
-              <option value="1">第 1 節 (08:35)</option>
-              <option value="2">第 2 節 (09:15)</option>
-              <option value="3">第 3 節 (10:15)</option>
-              <option value="4" selected>第 4 節 (10:55)</option>
-              <option value="5">第 5 節 (11:35)</option>
-              <option value="6">第 6 節 (13:30)</option>
-              <option value="7">第 7 節 (14:10)</option>
-            </select>
-          </div>
-          <div>
-            <label class="text-slate-400 font-bold block mb-1">班別</label>
-            <select id="quick-class" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white font-bold">
-              <option value="2A">2A (電腦室)</option>
-              <option value="2C" selected>2C (STEM Lab)</option>
-              <option value="3A">3A (電腦室)</option>
-              <option value="3B">3B (Room 302)</option>
-              <option value="3C">3C (Room 303)</option>
-            </select>
-          </div>
-          <div>
-            <label class="text-slate-400 font-bold block mb-1">科目</label>
-            <input id="quick-subject" type="text" value="創意科技 (CT)" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white font-bold" />
-          </div>
-          <div>
-            <label class="text-slate-400 font-bold block mb-1">請假老師</label>
-            <select id="quick-absent" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-rose-300 font-bold"></select>
-          </div>
-          <div>
-            <label class="text-slate-400 font-bold block mb-1">負責代課老師</label>
-            <select id="quick-sub" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-emerald-300 font-bold"></select>
-          </div>
-          <div class="flex items-end">
-            <button onclick="adminQuickAddSub()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black py-2 px-3 rounded-lg transition shadow">
-              ⚡ 立即派單上電視
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- 今日已生效之代課清單 (可刪除或改狀態) -->
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
-        <h2 class="text-lg font-black text-white border-b border-slate-800 pb-3 mb-4">📺 今日已廣播至教員室電視之代課課堂</h2>
-        <div id="admin-active-subs" class="flex flex-col gap-2.5">
-          <!-- JS 動態生成 -->
-        </div>
-      </div>
-
-    </div>
-
-    <!-- 右側 (5 Cols)：全校職員假期戶口結算表 & 班別 SEN 微檔案管理表 -->
-    <div class="col-span-12 lg:col-span-5 flex flex-col gap-6">
-      
-      <!-- 職員假期與時間銀行總表 -->
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
-        <div class="border-b border-slate-800 pb-3 mb-4">
-          <h2 class="text-xl font-black text-white">🏦 全校教職員「假期與時間銀行」結算表</h2>
-          <p class="text-xs text-slate-400 mt-0.5">每次批核請假或指派代課，系統自動實時扣減 AL/SL 或增減 OT 課節積分</p>
-        </div>
-        <div id="admin-ledger-list" class="flex flex-col gap-3">
-          <!-- JS 動態生成 -->
-        </div>
-      </div>
-
-      <!-- 班別 SEN 及安全交接微檔案設定表 -->
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
-        <div class="border-b border-slate-800 pb-3 mb-3">
-          <h2 class="text-lg font-black text-white">🛡️ 班別 SEN 支援與特別室交接微檔案庫</h2>
-          <p class="text-xs text-slate-400 mt-0.5">派代課時自動附帶給代課老師，解決傳統代課「盲摸摸入班房」痛點</p>
-        </div>
-        <div id="admin-class-profiles" class="flex flex-col gap-2.5 text-xs">
-          <!-- JS 動態生成 -->
-        </div>
-      </div>
 
     </div>
   </div>
 
-  <!-- ==================== 視圖 3：📺 教員室大螢幕看板 (無滾動條高對比度電視介面) ==================== -->
-  <div id="view-tv" class="hidden flex-1 w-full overflow-hidden flex flex-col justify-between p-5 select-none">
+  <!-- ==================== 視圖 2：🗂️ 校務處後台 (EduCal / eSchool SLRS 調配中心風格) ==================== -->
+  <div id="view-admin" class="hidden flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 flex flex-col gap-6">
+
+    <!-- 頂部 4 格校務統計指標卡 (KPI Cards) -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm border-l-4 border-l-amber-500">
+        <div class="text-xs font-bold text-slate-500">待審批請假申請</div>
+        <div class="flex items-baseline justify-between mt-1">
+          <span id="kpi-pending" class="text-3xl font-black text-amber-600">1</span>
+          <span class="text-xs font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded">需優先處理</span>
+        </div>
+      </div>
+      <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm border-l-4 border-l-rose-500">
+        <div class="text-xs font-bold text-slate-500">今日獲批請假教師</div>
+        <div class="flex items-baseline justify-between mt-1">
+          <span id="kpi-absent" class="text-3xl font-black text-rose-600">1</span>
+          <span class="text-xs text-slate-400">位教職員</span>
+        </div>
+      </div>
+      <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm border-l-4 border-l-blue-600">
+        <div class="text-xs font-bold text-slate-500">今日已編排代課總節數</div>
+        <div class="flex items-baseline justify-between mt-1">
+          <span id="kpi-subs" class="text-3xl font-black text-blue-700">2</span>
+          <span class="text-xs font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded">已推播至電視</span>
+        </div>
+      </div>
+      <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm border-l-4 border-l-emerald-500">
+        <div class="text-xs font-bold text-slate-500">代課教師電子簽收率</div>
+        <div class="flex items-baseline justify-between mt-1">
+          <span id="kpi-ack-rate" class="text-3xl font-black text-emerald-600">100%</span>
+          <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">免紙本派單</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-12 gap-6">
+      <!-- 左側 (7 Cols)：待審批請假與 AI 智能代課調配 + 手動快速編排 -->
+      <div class="col-span-12 lg:col-span-7 flex flex-col gap-6">
+        
+        <!-- 待審批請假與 EduCal 風格 AI 推薦面板 -->
+        <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+          <div class="bg-slate-50 border-b border-slate-200 px-5 py-3.5 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-5 rounded-full bg-amber-500"></span>
+              <h2 class="text-base font-black text-slate-800">待審批請假申請及 AI 智能代課調配 (SLRS Approval)</h2>
+            </div>
+            <span id="admin-pending-badge" class="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 font-bold text-xs">1 宗待審批</span>
+          </div>
+          <div id="admin-pending-container" class="p-5 flex flex-col gap-4">
+            <!-- JS 動態生成 -->
+          </div>
+        </div>
+
+        <!-- 校務處手動快速編排代課表 (Quick Assignment Table) -->
+        <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+          <div class="bg-slate-50 border-b border-slate-200 px-5 py-3.5">
+            <h2 class="text-base font-black text-slate-800">➕ 校務處手動新增臨時調堂 / 代課編排 (Ad-hoc Relief Table)</h2>
+            <p class="text-xs text-slate-500">適用於突發遲到、緊急會議或臨時調堂，新增後即時同步至教員室大螢幕及教師 App</p>
+          </div>
+          <div class="p-5 grid grid-cols-2 sm:grid-cols-6 gap-3 text-xs">
+            <div>
+              <label class="text-slate-600 font-bold block mb-1">節數</label>
+              <select id="quick-period" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-slate-800 font-bold">
+                <option value="1">第 1 節 (08:35)</option>
+                <option value="2">第 2 節 (09:15)</option>
+                <option value="3">第 3 節 (10:15)</option>
+                <option value="4" selected>第 4 節 (10:55)</option>
+                <option value="5">第 5 節 (11:35)</option>
+                <option value="6">第 6 節 (13:30)</option>
+                <option value="7">第 7 節 (14:10)</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-slate-600 font-bold block mb-1">班別</label>
+              <select id="quick-class" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-slate-800 font-bold">
+                <option value="2A">2A (電腦室)</option>
+                <option value="2C" selected>2C (STEM Lab)</option>
+                <option value="3A">3A (電腦室)</option>
+                <option value="3B">3B (Room 302)</option>
+                <option value="3C">3C (Room 303)</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-slate-600 font-bold block mb-1">科目</label>
+              <input id="quick-subject" type="text" value="創意科技 (CT)" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-slate-800 font-bold" />
+            </div>
+            <div>
+              <label class="text-slate-600 font-bold block mb-1">請假老師</label>
+              <select id="quick-absent" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-rose-700 font-bold"></select>
+            </div>
+            <div>
+              <label class="text-slate-600 font-bold block mb-1">指派代課老師</label>
+              <select id="quick-sub" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-emerald-700 font-bold"></select>
+            </div>
+            <div class="flex items-end">
+              <button onclick="adminQuickAddSub()" class="w-full bg-[#0f3460] hover:bg-blue-800 text-white font-bold py-2 px-3 rounded-lg transition shadow-sm">
+                ➕ 新增並推播
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 今日已生效代課編排及簽收狀態監察表 -->
+        <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+          <div class="bg-slate-50 border-b border-slate-200 px-5 py-3.5 flex items-center justify-between">
+            <h2 class="text-base font-black text-slate-800">📋 今日代課編排總表及教師電子簽收狀態</h2>
+            <span class="text-xs text-slate-500">實時監察代課老師是否已於手機確認知悉</span>
+          </div>
+          <div id="admin-active-subs" class="p-5 flex flex-col gap-2.5">
+            <!-- JS 動態生成 -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 右側 (5 Cols)：全校教職員假期與時間銀行結算表 + 班別 SEN 交接資料庫 -->
+      <div class="col-span-12 lg:col-span-5 flex flex-col gap-6">
+        
+        <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+          <div class="bg-slate-50 border-b border-slate-200 px-5 py-3.5 flex items-center justify-between">
+            <div>
+              <h2 class="text-base font-black text-slate-800">🏦 教職員假期戶口及代課節數統計表</h2>
+              <p class="text-xs text-slate-500">審批請假或派代課後，結餘即時自動核算</p>
+            </div>
+            <button onclick="exportCSVReport()" class="text-xs font-bold text-blue-700 hover:underline">📥 匯出 CSV</button>
+          </div>
+          <div id="admin-ledger-list" class="p-5 flex flex-col gap-3">
+            <!-- JS 動態生成 -->
+          </div>
+        </div>
+
+        <!-- 班別 SEN 及特別室安全交接微檔案 -->
+        <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+          <div class="bg-slate-50 border-b border-slate-200 px-5 py-3.5">
+            <h2 class="text-base font-black text-slate-800">🛡️ 班別 SEN 支援及特別室常規微檔案庫</h2>
+            <p class="text-xs text-slate-500">派代課時自動隨代課通知發送予代課老師，保障教學質素</p>
+          </div>
+          <div id="admin-class-profiles" class="p-5 flex flex-col gap-2.5 text-xs">
+            <!-- JS 動態生成 -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 視圖 3：📺 教員室大螢幕看板 (明亮清晰高對比度校務電視版) ==================== -->
+  <div id="view-tv" class="hidden flex-1 w-full overflow-hidden flex flex-col justify-between p-4 sm:p-6 bg-slate-100 select-none">
     
-    <!-- 電視頂部資訊列 -->
-    <header class="bg-slate-900/90 border border-slate-800 rounded-2xl px-6 py-3.5 flex items-center justify-between shadow-lg shrink-0">
+    <!-- 電視頂部皇家藍校務標題列 -->
+    <div class="bg-[#0f3460] text-white rounded-2xl px-6 py-4 flex flex-wrap items-center justify-between gap-4 shadow-md shrink-0">
       <div class="flex items-center gap-4">
-        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center shadow-md">
-          <span class="text-xl font-black text-white">SS</span>
+        <div class="w-12 h-12 rounded-xl bg-white text-[#0f3460] flex items-center justify-center font-black text-xl shadow">
+          SS
         </div>
         <div>
           <div class="flex items-center gap-3">
-            <h1 class="text-2xl sm:text-3xl font-black tracking-wide text-white">教員室實時代課及校務看板</h1>
-            <span class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-xs font-bold bg-emerald-950 text-emerald-400 border border-emerald-700">
+            <h1 class="text-2xl sm:text-3xl font-black tracking-wide">教員室代課編排及考勤電子看板</h1>
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-200 border border-emerald-400/40">
               <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-              零延遲實時同步中
+              校務處實時連線
             </span>
           </div>
-          <p class="text-slate-400 text-sm">SmartSchool Admin 一體化學校行政電子系統 · 免紙本簽收終端</p>
+          <p class="text-blue-200 text-sm mt-0.5">Staffroom Relief & Attendance Digital Signage · 免紙本自動派單及電子簽收系統</p>
         </div>
       </div>
 
-      <div class="hidden xl:flex bg-slate-950 border border-slate-800 px-5 py-2 rounded-xl items-center gap-4">
+      <!-- 中間：目前課節狀態 -->
+      <div class="hidden xl:flex bg-blue-950/80 border border-blue-700 px-5 py-2.5 rounded-xl items-center gap-4">
         <div class="text-right">
-          <div class="text-[11px] font-bold text-slate-400">目前上課節數</div>
-          <div class="text-xl font-black text-amber-400">第 3 節 (10:15 - 10:55)</div>
+          <div class="text-[11px] font-bold text-blue-300">目前上課時段</div>
+          <div class="text-xl font-black text-amber-300">第 3 節 (10:15 - 10:55)</div>
         </div>
-        <div class="h-8 w-0.5 bg-slate-800"></div>
+        <div class="h-8 w-0.5 bg-blue-800"></div>
         <div>
-          <div class="text-[11px] font-bold text-slate-400">循環週 / 學期</div>
-          <div class="text-lg font-extrabold text-cyan-400">Day A · 上學期</div>
+          <div class="text-[11px] font-bold text-blue-300">循環週 / 學期</div>
+          <div class="text-lg font-extrabold text-white">Day A · 第 9 週</div>
         </div>
       </div>
 
+      <!-- 右側：香港日期與大時鐘 -->
       <div class="text-right">
-        <div id="tv-date" class="text-sm sm:text-base font-bold text-slate-300">2026年11月5日 (星期四)</div>
-        <div id="tv-clock" class="text-3xl sm:text-4xl font-extrabold font-mono-clock text-white tracking-wider">10:24:35</div>
+        <div id="tv-date" class="text-sm sm:text-base font-bold text-blue-200">2026年11月5日 (星期四)</div>
+        <div id="tv-clock" class="text-3xl sm:text-4xl font-extrabold font-mono-num text-white tracking-wider">10:24:35</div>
       </div>
-    </header>
+    </div>
 
-    <!-- 電視中間主視覺網格 -->
-    <main class="grid grid-cols-12 gap-5 my-4 flex-1 min-h-0">
-      <!-- 左側 9 欄：代課卡片矩陣 -->
-      <section class="col-span-12 lg:col-span-9 bg-slate-900/60 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between min-h-0">
-        <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-3 mb-4 gap-2 shrink-0">
+    <!-- 電視主內容網格 -->
+    <div class="grid grid-cols-12 gap-5 my-4 flex-1 min-h-0">
+      
+      <!-- 左側 9 欄：明亮清晰代課卡片矩陣 -->
+      <section class="col-span-12 lg:col-span-9 bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-col justify-between min-h-0">
+        <div class="flex flex-wrap items-center justify-between border-b border-slate-200 pb-3 mb-4 gap-2 shrink-0">
           <div class="flex items-center gap-3">
-            <span class="w-3 h-7 rounded-full bg-amber-400"></span>
-            <h2 class="text-xl sm:text-2xl font-black text-white">今日代課課堂安排 (Substitution Schedule)</h2>
-            <span id="tv-total-sub-badge" class="px-3 py-0.5 rounded-lg bg-amber-500/20 border border-amber-500/40 text-amber-300 font-bold text-base">
-              共 0 節代課
+            <span class="w-3 h-7 rounded-full bg-[#0f3460]"></span>
+            <h2 class="text-xl sm:text-2xl font-black text-slate-800">今日代課課堂編排表 (Daily Relief Schedule)</h2>
+            <span id="tv-total-sub-badge" class="px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-800 font-black text-base">
+              共 2 節代課
             </span>
           </div>
-          <div class="flex items-center gap-4 text-xs font-bold">
-            <span class="flex items-center gap-1.5 text-slate-300"><span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span> 進行中/新派單</span>
-            <span class="flex items-center gap-1.5 text-slate-300"><span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span> 稍後節數</span>
-            <span id="tv-page-indicator" class="bg-slate-800 px-3 py-1 rounded-lg text-slate-300">第 1 / 1 頁</span>
+          <div class="flex items-center gap-4 text-xs font-bold text-slate-600">
+            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> 已電子簽收</span>
+            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> 待教師簽收</span>
+            <span id="tv-page-indicator" class="bg-slate-100 border border-slate-200 px-3 py-1 rounded-lg text-slate-700">第 1 / 1 頁</span>
           </div>
         </div>
 
-        <!-- 6 格大字體代課卡片區 -->
+        <!-- 6 格高對比度白色代課卡片 -->
         <div id="tv-substitution-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 flex-1 min-h-0">
           <!-- JS 動態渲染 -->
         </div>
       </section>
 
-      <!-- 右側 3 欄：今日請假名單與統計 -->
+      <!-- 右側 3 欄：今日請假名單與簽收統計 -->
       <aside class="col-span-12 lg:col-span-3 flex flex-col gap-4 min-h-0">
         <div class="grid grid-cols-2 gap-3 shrink-0">
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-3.5">
-            <span class="text-xs font-bold text-slate-400">今日獲批請假</span>
+          <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm border-t-4 border-t-rose-500">
+            <span class="text-xs font-bold text-slate-500">今日請假教師</span>
             <div class="flex items-baseline gap-1.5 mt-1">
-              <span id="tv-stat-absent" class="text-3xl font-black text-rose-400">1</span>
-              <span class="text-sm font-bold text-slate-400">位老師</span>
+              <span id="tv-stat-absent" class="text-3xl font-black text-rose-600">1</span>
+              <span class="text-sm font-bold text-slate-500">位</span>
             </div>
           </div>
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-3.5">
-            <span class="text-xs font-bold text-slate-400">已派代課節數</span>
+          <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm border-t-4 border-t-emerald-500">
+            <span class="text-xs font-bold text-slate-500">已簽收代課節數</span>
             <div class="flex items-baseline gap-1.5 mt-1">
-              <span id="tv-stat-subs" class="text-3xl font-black text-emerald-400">2</span>
-              <span class="text-sm font-bold text-slate-400">節</span>
+              <span id="tv-stat-subs" class="text-3xl font-black text-emerald-600">2/2</span>
+              <span class="text-sm font-bold text-slate-500">節</span>
             </div>
           </div>
         </div>
 
-        <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 flex-1 flex flex-col min-h-0">
-          <div class="flex items-center gap-2 border-b border-slate-800 pb-2.5 mb-3 shrink-0">
-            <span class="w-2 h-5 rounded-full bg-rose-500"></span>
-            <h3 class="text-lg font-black text-white">今日請假教職員</h3>
+        <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex-1 flex flex-col min-h-0">
+          <div class="flex items-center gap-2 border-b border-slate-200 pb-2.5 mb-3 shrink-0">
+            <span class="w-2 h-5 rounded-full bg-rose-600"></span>
+            <h3 class="text-lg font-black text-slate-800">今日獲批請假教職員</h3>
           </div>
           <div id="tv-absent-list" class="flex flex-col gap-2.5 flex-1 overflow-y-auto">
             <!-- JS 動態渲染 -->
           </div>
-          <div class="mt-auto pt-2.5 border-t border-slate-800 text-[11px] text-slate-400 flex items-center justify-between">
-            <span>時間銀行與代課節數已自動結算</span>
-            <span class="text-emerald-400 font-bold">✓ 全電子化免簽收</span>
+          <div class="mt-auto pt-2.5 border-t border-slate-100 text-[11px] text-slate-500 flex items-center justify-between">
+            <span>由 SmartSchool SLRS 自動派單</span>
+            <span class="text-emerald-700 font-bold">✓ eClass / WebSAMS 相容</span>
           </div>
         </div>
       </aside>
-    </main>
+    </div>
 
-    <!-- 電視底部校務處跑馬燈 -->
-    <footer class="bg-slate-900 border border-slate-800 rounded-xl px-4 py-2 flex items-center justify-between shrink-0">
+    <!-- 電視底部通告欄 -->
+    <footer class="bg-white border border-slate-200 rounded-xl px-4 py-2.5 flex items-center justify-between shadow-sm shrink-0">
       <div class="flex items-center gap-3 overflow-hidden flex-1 mr-4">
-        <span class="bg-rose-600 text-white text-xs font-black px-2.5 py-1 rounded shrink-0">校務處通告</span>
+        <span class="bg-[#0f3460] text-white text-xs font-black px-3 py-1 rounded-md shrink-0">校務處廣播</span>
         <div class="overflow-hidden relative w-full">
-          <p class="text-base font-bold text-slate-200 animate-marquee">
-            📢 【智能交接提示】所有代課課堂已自動附帶班別 SEN 支援微檔案及特別室門卡授權；代課完成後系統將自動為老師存入 1 節「時間銀行 (OT) 積分」！
+          <p class="text-base font-bold text-slate-700 animate-marquee">
+            📢 【代課電子簽收提示】請獲派代課之老師於手機或電腦登入「教師端」點擊「確認知悉 (電子簽收)」；所有堂課指示及班別 SEN 照顧提示已同步附載於系統內，無需前往校務處簽領紙本代課單。
           </p>
         </div>
       </div>
-      <button onclick="toggleFullscreenTV()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-700 shrink-0">
+      <button onclick="toggleFullscreenTV()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold px-3.5 py-1.5 rounded-lg border border-slate-300 shrink-0">
         ⛶ 全螢幕展示模式
       </button>
     </footer>
@@ -417,10 +510,9 @@
 
   <!-- ==================== 核心資料庫、AI 代課配對算法與互動邏輯 ==================== -->
   <script>
-    const STORAGE_KEY = "smartschool_all_in_one_db_v3";
-    const syncChannel = new BroadcastChannel("smartschool_realtime_bus");
+    const STORAGE_KEY = "smartschool_slrs_pro_v4";
+    const syncChannel = new BroadcastChannel("smartschool_slrs_bus");
 
-    // 預設完整香港中學資料庫（包含每位老師的今日課表，供教師端「勾選建單表格」使用）
     const DEFAULT_DB = {
       lastUpdated: Date.now(),
       teachers: [
@@ -428,19 +520,17 @@
           id: "T01",
           name: "陳大文老師 (Mr. Chan)",
           shortName: "陳大文老師",
-          subject: "資訊科技 (ICT) / 初中電腦",
+          subject: "資訊及通訊科技 (ICT)",
           canUseLab: true,
           alBalance: 7.0,
           slBalance: 13.5,
           otCredits: 4,
           subCountMonth: 2,
           freePeriodsToday: [2, 4, 6, 7],
-          busyStreakPeriods: [1, 3, 5],
-          // 教師今日任教課表 (供教師端 Timetable 勾選請假)
           scheduleToday: [
-            { periodOrder: 1, periodName: "第 1 節", timeRange: "08:35 - 09:15", className: "2A", subject: "初中電腦 (CL)", room: "電腦室 1 (Room 204)", defaultNote: "完成 Google Classroom 試算表練習" },
-            { periodOrder: 3, periodName: "第 3 節", timeRange: "10:15 - 10:55", className: "3A", subject: "資訊科技 (ICT)", room: "電腦室 2 (Room 205)", defaultNote: "進行 MS Access 偵探資料庫查詢任務" },
-            { periodOrder: 5, periodName: "第 5 節", timeRange: "11:35 - 12:15", className: "3B", subject: "資訊科技 (ICT)", room: "電腦室 2 (Room 205)", defaultNote: "資料庫主鍵與關聯表設計練習" }
+            { periodOrder: 1, periodName: "第 1 節", timeRange: "08:35 - 09:15", className: "2A", subject: "初中電腦 (CL)", room: "電腦室 1 (Rm 204)", defaultNote: "登入 Google Classroom 完成試算表函數練習" },
+            { periodOrder: 3, periodName: "第 3 節", timeRange: "10:15 - 10:55", className: "3A", subject: "資訊科技 (ICT)", room: "電腦室 2 (Rm 205)", defaultNote: "繼續進行 MS Access 偵探資料庫查詢任務" },
+            { periodOrder: 5, periodName: "第 5 節", timeRange: "11:35 - 12:15", className: "3B", subject: "資訊科技 (ICT)", room: "電腦室 2 (Rm 205)", defaultNote: "完成資料庫主鍵設計工作紙並交予科長" }
           ]
         },
         {
@@ -454,11 +544,10 @@
           otCredits: 5,
           subCountMonth: 3,
           freePeriodsToday: [1, 3, 6],
-          busyStreakPeriods: [2, 4, 5],
           scheduleToday: [
-            { periodOrder: 2, periodName: "第 2 節", timeRange: "09:15 - 09:55", className: "3C", subject: "物理 (Physics)", room: "物理實驗室 (Room 401)", defaultNote: "派發光學折射實驗工作紙" },
-            { periodOrder: 4, periodName: "第 4 節", timeRange: "10:55 - 11:35", className: "2A", subject: "綜合科學 (IS)", room: "科學室 (Room 301)", defaultNote: "自修課本第 4 章及完成習題" },
-            { periodOrder: 5, periodName: "第 5 節", timeRange: "11:35 - 12:15", className: "2C", subject: "創意科技 (CT)", room: "STEM Lab (Room 206)", defaultNote: "監督學生組裝 AI 書包鏡頭原型，勿開烙鐵電源" }
+            { periodOrder: 2, periodName: "第 2 節", timeRange: "09:15 - 09:55", className: "3C", subject: "物理 (Physics)", room: "物理室 (Rm 401)", defaultNote: "派發光學折射練習工作紙，下課前收回" },
+            { periodOrder: 4, periodName: "第 4 節", timeRange: "10:55 - 11:35", className: "2A", subject: "綜合科學 (IS)", room: "科學室 (Rm 301)", defaultNote: "閱讀課本第 4 章及完成習題冊 P.12-14" },
+            { periodOrder: 5, periodName: "第 5 節", timeRange: "11:35 - 12:15", className: "2C", subject: "創意科技 (CT)", room: "STEM Lab (Rm 206)", defaultNote: "指導學生測試 AI 書包鏡頭原型，勿開啟焊接電源" }
           ]
         },
         {
@@ -469,29 +558,27 @@
           canUseLab: true,
           alBalance: 5.5,
           slBalance: 12.0,
-          otCredits: 2,
+          otCredits: 3,
           subCountMonth: 1,
           freePeriodsToday: [1, 3, 5, 6],
-          busyStreakPeriods: [2, 4],
           scheduleToday: [
             { periodOrder: 2, periodName: "第 2 節", timeRange: "09:15 - 09:55", className: "2C", subject: "數學", room: "Room 203", defaultNote: "完成代數工作紙 Ex.3A" },
-            { periodOrder: 4, periodName: "第 4 節", timeRange: "10:55 - 11:35", className: "3A", subject: "數學", room: "Room 301", defaultNote: "核對小測卷答案" }
+            { periodOrder: 4, periodName: "第 4 節", timeRange: "10:55 - 11:35", className: "3A", subject: "數學", room: "Room 301", defaultNote: "核對小測卷答案及訂正" }
           ]
         },
         {
           id: "T04",
           name: "何淑芬老師 (Ms. Ho)",
           shortName: "何淑芬老師",
-          subject: "英國語文",
+          subject: "英國語文 (English)",
           canUseLab: false,
           alBalance: 4.5,
           slBalance: 11.0,
           otCredits: 3,
           subCountMonth: 2,
           freePeriodsToday: [2, 3, 4, 7],
-          busyStreakPeriods: [1, 5],
           scheduleToday: [
-            { periodOrder: 1, periodName: "第 1 節", timeRange: "08:35 - 09:15", className: "3B", subject: "英國語文", room: "Room 302", defaultNote: "Reading Comprehension 堂課" },
+            { periodOrder: 1, periodName: "第 1 節", timeRange: "08:35 - 09:15", className: "3B", subject: "英國語文", room: "Room 302", defaultNote: "Reading Comprehension 堂課練習" },
             { periodOrder: 6, periodName: "第 6 節", timeRange: "13:30 - 14:10", className: "2A", subject: "英國語文", room: "Room 201", defaultNote: "播放聆聽練習錄音檔" }
           ]
         },
@@ -506,7 +593,6 @@
           otCredits: 2,
           subCountMonth: 0,
           freePeriodsToday: [1, 4, 5, 6],
-          busyStreakPeriods: [2, 3],
           scheduleToday: [
             { periodOrder: 2, periodName: "第 2 節", timeRange: "09:15 - 09:55", className: "3A", subject: "中國語文", room: "Room 301", defaultNote: "文言文閱讀理解練習" },
             { periodOrder: 3, periodName: "第 3 節", timeRange: "10:15 - 10:55", className: "2C", subject: "中國歷史", room: "Room 203", defaultNote: "完成史料分析工作紙" }
@@ -527,33 +613,35 @@
           id: "LR-101",
           teacherId: "T01",
           teacherName: "陳大文老師",
-          subject: "資訊科技 (ICT)",
+          subject: "資訊及通訊科技 (ICT)",
           leaveType: "病假 (SL)",
           leaveCode: "SL",
-          leaveBadgeClass: "bg-rose-500/20 text-rose-300 border-rose-500/40",
+          leaveBadgeClass: "bg-rose-50 text-rose-700 border-rose-200",
           useTimeBankOffset: false,
-          reason: "急性腸胃炎求醫（已上傳電子醫生紙）",
+          reason: "急性腸胃炎門診求醫",
+          docStatus: "📎 已上傳電子醫生證明",
           status: "approved",
           approvedBy: "校務處 林書記 (07:50)",
           affectedLessons: [
-            { periodOrder: 1, periodName: "第 1 節", timeRange: "08:35 - 09:15", className: "2A", subject: "初中電腦 (CL)", room: "電腦室 1 (Room 204)", note: "完成 Google Classroom 試算表練習" },
-            { periodOrder: 3, periodName: "第 3 節", timeRange: "10:15 - 10:55", className: "3A", subject: "資訊科技 (ICT)", room: "電腦室 2 (Room 205)", note: "進行 MS Access 偵探資料庫查詢任務" }
+            { periodOrder: 1, periodName: "第 1 節", timeRange: "08:35 - 09:15", className: "2A", subject: "初中電腦 (CL)", room: "電腦室 1 (Rm 204)", note: "登入 Google Classroom 完成試算表函數練習" },
+            { periodOrder: 3, periodName: "第 3 節", timeRange: "10:15 - 10:55", className: "3A", subject: "資訊科技 (ICT)", room: "電腦室 2 (Rm 205)", note: "繼續進行 MS Access 偵探資料庫查詢任務" }
           ]
         },
         {
           id: "LR-102",
           teacherId: "T02",
           teacherName: "劉家豪老師",
-          subject: "創意科技 (CT)",
+          subject: "創意科技 (CT) / 物理",
           leaveType: "⚡ 時間銀行對沖 (OT 補鐘)",
           leaveCode: "OT",
-          leaveBadgeClass: "bg-amber-500/20 text-amber-300 border-amber-500/40",
+          leaveBadgeClass: "bg-amber-50 text-amber-800 border-amber-300",
           useTimeBankOffset: true,
-          reason: "帶領中二學生前往科學園參加 STEM 創新比賽綵排（申請以 1 節 OT 積分對沖）",
+          reason: "帶領中二學生前往科學園參加創新科技大賽決賽綵排",
+          docStatus: "📎 已附教育局/比賽通告",
           status: "pending",
-          approvedBy: "待批核",
+          approvedBy: "待副校長審批",
           affectedLessons: [
-            { periodOrder: 5, periodName: "第 5 節", timeRange: "11:35 - 12:15", className: "2C", subject: "創意科技 (CT)", room: "STEM Lab (Room 206)", note: "監督學生組裝 AI 書包鏡頭原型，勿開烙鐵電源" }
+            { periodOrder: 5, periodName: "第 5 節", timeRange: "11:35 - 12:15", className: "2C", subject: "創意科技 (CT)", room: "STEM Lab (Rm 206)", note: "指導學生測試 AI 書包鏡頭原型，勿開啟焊接電源" }
           ]
         }
       ],
@@ -566,14 +654,15 @@
           timeRange: "08:35 - 09:15",
           className: "2A",
           subject: "初中電腦 (CL)",
-          room: "電腦室 1 (Room 204)",
+          room: "電腦室 1 (Rm 204)",
           absentTeacher: "陳大文老師",
           subTeacherId: "T03",
           subTeacher: "張偉傑老師",
-          note: "完成 Google Classroom 試算表練習",
+          note: "登入 Google Classroom 完成試算表函數練習",
           senBrief: "班內有 2 名 SEN 學生（專注力不足），建議安排坐前排並分段給予清晰指令。",
           matchScore: 96,
-          status: "completed",
+          acknowledged: true,
+          ackTime: "08:02",
           isNew: false
         },
         {
@@ -583,20 +672,20 @@
           timeRange: "10:15 - 10:55",
           className: "3A",
           subject: "資訊科技 (ICT)",
-          room: "電腦室 2 (Room 205)",
+          room: "電腦室 2 (Rm 205)",
           absentTeacher: "陳大文老師",
           subTeacherId: "T03",
           subTeacher: "張偉傑老師",
-          note: "進行 MS Access 偵探資料庫查詢任務",
+          note: "繼續進行 MS Access 偵探資料庫查詢任務",
           senBrief: "秩序良好，正進行 MS Access 偵探資料庫專題，學生可自行登入 Google Classroom 查閱步驟。",
-          matchScore: 92,
-          status: "active",
+          matchScore: 94,
+          acknowledged: true,
+          ackTime: "08:02",
           isNew: false
         }
       ]
     };
 
-    // 資料庫讀取與儲存
     function getDB() {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) {
@@ -619,40 +708,37 @@
       renderAllViews();
     }
 
-    // 監聽跨視窗 BroadcastChannel 同步
-    syncChannel.onmessage = () => {
-      renderAllViews();
-    };
+    syncChannel.onmessage = () => renderAllViews();
     window.addEventListener("storage", (e) => {
       if (e.key === STORAGE_KEY) renderAllViews();
     });
 
-    // 🧠 智能公平代課配對算法
+    // EduCal 風格 AI 代課配對評分算法
     function getRecommendedSubs(periodOrder, className, absentTeacherId) {
       const db = getDB();
       const classInfo = db.classProfiles[className] || { requiresLabAuth: false };
       const candidates = db.teachers.filter(t => t.id !== absentTeacherId);
 
       return candidates.map(t => {
-        let score = 70;
+        let score = 72;
         const reasons = [];
         const isFree = t.freePeriodsToday.includes(Number(periodOrder));
 
         if (isFree) {
-          score += 10;
+          score += 12;
           reasons.push("該節空堂");
         } else {
           score -= 35;
           reasons.push("該節有原定課堂");
         }
 
-        const fairnessBonus = Math.max(0, (4 - t.subCountMonth) * 5);
+        const fairnessBonus = Math.max(0, (4 - t.subCountMonth) * 4);
         score += fairnessBonus;
         reasons.push(`本月代課 ${t.subCountMonth} 節`);
 
         if (classInfo.requiresLabAuth) {
           if (t.canUseLab) {
-            score += 12;
+            score += 10;
             reasons.push("具特別室/電腦室資格");
           } else {
             score -= 15;
@@ -662,13 +748,13 @@
 
         return {
           ...t,
-          matchScore: Math.min(99, Math.max(30, score)),
+          matchScore: Math.min(99, Math.max(35, score)),
           matchReasons: reasons.join(" · ")
         };
       }).sort((a, b) => b.matchScore - a.matchScore);
     }
 
-    // ==================== 角色視圖切換邏輯 ====================
+    // 視圖切換
     let currentRole = "teacher";
 
     function switchRole(role) {
@@ -677,9 +763,9 @@
         document.getElementById(`view-${r}`).classList.toggle("hidden", r !== role);
         const btn = document.getElementById(`tab-${r}`);
         if (r === role) {
-          btn.className = "px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-black transition flex items-center gap-1.5 bg-indigo-600 text-white shadow";
+          btn.className = "px-4 py-2 rounded-lg text-xs sm:text-sm font-black transition flex items-center gap-2 whitespace-nowrap bg-white text-[#0f3460] shadow-sm";
         } else {
-          btn.className = "px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold transition flex items-center gap-1.5 text-slate-400 hover:text-white";
+          btn.className = "px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition flex items-center gap-2 whitespace-nowrap text-blue-100 hover:bg-blue-800/50";
         }
       });
       renderAllViews();
@@ -688,11 +774,11 @@
     function openPopupTV() {
       const url = new URL(window.location.href);
       url.searchParams.set("view", "tv");
-      window.open(url.toString(), "SmartSchoolTV", "width=1280,height=760");
+      window.open(url.toString(), "SmartSchoolSignage", "width=1360,height=800");
     }
 
     function toggleFullscreenTV() {
-      const topbar = document.getElementById("demo-topbar");
+      const topbar = document.getElementById("app-topbar");
       topbar.classList.toggle("hidden");
       if (!document.fullscreenElement) {
         document.documentElement.requestFullscreen().catch(() => {});
@@ -701,8 +787,8 @@
       }
     }
 
-    // ==================== 1. 渲染教師端 (含互動課表建單器) ====================
-    function initTeacherSelect() {
+    // 初始化教師選單
+    function initSelects() {
       const db = getDB();
       const select = document.getElementById("current-teacher-select");
       if (!select.innerHTML.trim()) {
@@ -711,7 +797,6 @@
         `).join("");
       }
 
-      // 初始化校務處快速建單下拉選單
       const qAbsent = document.getElementById("quick-absent");
       const qSub = document.getElementById("quick-sub");
       if (qAbsent && !qAbsent.innerHTML.trim()) {
@@ -720,40 +805,40 @@
       }
     }
 
+    // ==================== 1. 渲染教師端 ====================
     function renderTeacherView() {
       const db = getDB();
       const select = document.getElementById("current-teacher-select");
       const teacherId = select.value || "T02";
       const teacher = db.teachers.find(t => t.id === teacherId) || db.teachers[0];
 
-      // 更新個人假期與時間銀行結餘
       document.getElementById("t-al-balance").textContent = `${teacher.alBalance} 日`;
       document.getElementById("t-sl-balance").textContent = `${teacher.slBalance} 日`;
       document.getElementById("t-ot-credits").textContent = `${teacher.otCredits} 節`;
 
-      // 渲染互動式課堂時間表 Table
+      // 渲染個人課表
       const tbody = document.getElementById("teacher-timetable-tbody");
       tbody.innerHTML = teacher.scheduleToday.map((lesson, idx) => {
         const classInfo = db.classProfiles[lesson.className] || {};
         return `
-          <tr class="hover:bg-slate-950/60 transition">
-            <td class="py-3 px-3 text-center">
-              <input type="checkbox" id="tt-check-${idx}" data-idx="${idx}" onchange="updateSelectedLessonsSummary()" ${idx === 0 ? "checked" : ""} class="w-4 h-4 accent-indigo-500 rounded cursor-pointer" />
+          <tr class="hover:bg-blue-50/40 transition">
+            <td class="py-3.5 px-3.5 text-center">
+              <input type="checkbox" id="tt-check-${idx}" onchange="updateSelectedLessonsSummary()" ${idx === 2 ? "checked" : ""} class="w-4 h-4 accent-blue-700 rounded cursor-pointer" />
             </td>
-            <td class="py-3 px-3">
-              <div class="font-black text-amber-400">${lesson.periodName}</div>
-              <div class="text-xs text-slate-400 font-mono-clock">${lesson.timeRange}</div>
+            <td class="py-3.5 px-3.5">
+              <div class="font-black text-blue-900">${lesson.periodName}</div>
+              <div class="text-xs text-slate-500 font-mono-num">${lesson.timeRange}</div>
             </td>
-            <td class="py-3 px-3">
-              <span class="font-black text-white text-base mr-1">${lesson.className}</span>
-              <span class="font-bold text-slate-300">${lesson.subject}</span>
-              <div class="text-[11px] text-indigo-300 mt-0.5">🛡️ ${classInfo.senNote ? "已連繫班別 SEN 支援微檔案" : "一般常規課堂"}</div>
+            <td class="py-3.5 px-3.5">
+              <span class="inline-block bg-blue-100 text-blue-900 font-black px-2 py-0.5 rounded text-xs mr-1">${lesson.className}</span>
+              <span class="font-bold text-slate-800">${lesson.subject}</span>
+              <div class="text-[11px] text-teal-700 font-medium mt-0.5">🛡️ ${classInfo.senNote ? "已連結 SEN 班別支援微檔案" : "一般常規課堂"}</div>
             </td>
-            <td class="py-3 px-3">
-              <span class="text-xs bg-slate-950 border border-slate-700 px-2.5 py-1 rounded-lg text-slate-200 font-bold">📍 ${lesson.room}</span>
+            <td class="py-3.5 px-3.5">
+              <span class="text-xs bg-slate-100 border border-slate-200 px-2.5 py-1 rounded-md text-slate-700 font-bold">📍 ${lesson.room}</span>
             </td>
-            <td class="py-3 px-3">
-              <input type="text" id="tt-note-${idx}" value="${lesson.defaultNote}" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500" />
+            <td class="py-3.5 px-3.5">
+              <input type="text" id="tt-note-${idx}" value="${lesson.defaultNote}" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-600" />
             </td>
           </tr>
         `;
@@ -761,47 +846,75 @@
 
       updateSelectedLessonsSummary();
 
-      // 渲染指派給該老師的代課任務
+      // 渲染指派給該老師的代課單 (支援電子簽收 e-Sign)
       const mySubs = db.substitutions.filter(s => s.subTeacherId === teacher.id || s.subTeacher === teacher.shortName);
       document.getElementById("my-sub-count-badge").textContent = `${mySubs.length} 節`;
       const mySubsContainer = document.getElementById("my-assigned-subs");
+
       if (mySubs.length === 0) {
-        mySubsContainer.innerHTML = `<div class="bg-slate-950/60 border border-slate-800 rounded-xl p-4 text-xs text-slate-400 text-center">今日暫無指派給你的代課課堂</div>`;
+        mySubsContainer.innerHTML = `
+          <div class="bg-slate-50 border border-slate-200 rounded-xl p-6 text-xs text-slate-500 text-center my-auto">
+            今日暫無獲派代課任務
+          </div>
+        `;
       } else {
         mySubsContainer.innerHTML = mySubs.map(sub => `
-          <div class="bg-slate-950 border border-emerald-800/60 rounded-xl p-3.5 flex flex-col gap-2">
+          <div class="bg-slate-50 border ${sub.acknowledged ? 'border-slate-200' : 'border-2 border-amber-400 bg-amber-50/30'} rounded-xl p-3.5 flex flex-col gap-2 shadow-sm">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
-                <span class="bg-emerald-500 text-slate-950 font-black px-2 py-0.5 rounded text-xs">${sub.periodName}</span>
-                <span class="font-black text-white text-base">${sub.className} · ${sub.subject}</span>
+                <span class="bg-[#0f3460] text-white font-black px-2.5 py-0.5 rounded text-xs">${sub.periodName}</span>
+                <span class="font-black text-slate-800 text-base">${sub.className} · ${sub.subject}</span>
               </div>
-              <span class="text-xs text-indigo-300 font-bold">📍 ${sub.room}</span>
+              <span class="text-xs text-slate-600 font-bold bg-white border border-slate-200 px-2 py-0.5 rounded">📍 ${sub.room}</span>
             </div>
-            <div class="text-xs text-slate-300">原任老師：<span class="text-rose-300 font-bold">${sub.absentTeacher}</span> · 堂課：${sub.note}</div>
-            <div class="bg-indigo-950/50 border border-indigo-800/60 rounded-lg p-2 text-[11px] text-indigo-200">
-              <b class="text-indigo-400">🛡️ 班別微檔案：</b>${sub.senBrief || "一般課室常規"}
+            <div class="text-xs text-slate-600">
+              原任老師：<b class="text-rose-700">${sub.absentTeacher}</b> · 堂課：<span class="text-slate-800 font-medium">${sub.note}</span>
+            </div>
+            <div class="bg-blue-50 border border-blue-100 rounded-lg p-2 text-[11px] text-blue-900">
+              <b>🛡️ 班別交接提示：</b>${sub.senBrief || "一般課室常規"}
+            </div>
+            <div class="pt-1 flex items-center justify-between">
+              <span class="text-[11px] text-slate-500">代課完成將自動存入 +1 節時間銀行積分</span>
+              ${sub.acknowledged 
+                ? `<span class="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-md">✅ 已電子簽收 (${sub.ackTime || '剛剛'})</span>`
+                : `<button onclick="acknowledgeSub('${sub.id}')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black px-3 py-1 rounded-md text-xs shadow-sm transition">✍️ 確認知悉 (電子簽收)</button>`
+              }
             </div>
           </div>
         `).join("");
       }
 
-      // 渲染該老師提交過的請假紀錄
+      // 渲染個人請假申請紀錄
       const myLeaves = db.leaveRequests.filter(r => r.teacherId === teacher.id);
       const historyContainer = document.getElementById("my-leave-history");
       if (myLeaves.length === 0) {
-        historyContainer.innerHTML = `<div class="text-xs text-slate-400">尚無請假紀錄</div>`;
+        historyContainer.innerHTML = `<div class="text-xs text-slate-400">本學期暫無請假紀錄</div>`;
       } else {
         historyContainer.innerHTML = myLeaves.map(r => `
-          <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 flex items-center justify-between text-xs">
+          <div class="bg-slate-50 border border-slate-200 rounded-lg p-3 flex flex-wrap items-center justify-between gap-2 text-xs">
             <div>
-              <span class="font-bold text-white">${r.leaveType}</span> — <span class="text-slate-300">${r.reason}</span>
-              <span class="text-amber-300 ml-2">(共 ${r.affectedLessons.length} 節課)</span>
+              <span class="font-bold px-2 py-0.5 rounded border ${r.leaveBadgeClass} mr-1.5">${r.leaveType}</span>
+              <span class="font-bold text-slate-800">${r.reason}</span>
+              <span class="text-slate-500 ml-1">(${r.docStatus || '已附證明'} · 共 ${r.affectedLessons.length} 節課)</span>
             </div>
-            <span class="px-2.5 py-1 rounded font-bold ${r.status === 'approved' ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' : 'bg-amber-500/20 text-amber-300 border border-amber-500/40'}">
-              ${r.status === 'approved' ? '✓ 已批核並派代課' : '⏳ 待校務處批核'}
+            <span class="px-2.5 py-1 rounded-full font-bold ${r.status === 'approved' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-amber-50 text-amber-800 border border-amber-300'}">
+              ${r.status === 'approved' ? '✓ 已審批並完成派單' : '⏳ 待校務處審批'}
             </span>
           </div>
         `).join("");
+      }
+    }
+
+    // 教師點擊「電子簽收」代課單
+    function acknowledgeSub(subId) {
+      const db = getDB();
+      const sub = db.substitutions.find(s => s.id === subId);
+      if (sub) {
+        const now = new Date();
+        sub.acknowledged = true;
+        sub.ackTime = now.toTimeString().slice(0, 5);
+        sub.isNew = false;
+        saveDB(db);
       }
     }
 
@@ -809,17 +922,18 @@
       const checks = document.querySelectorAll("[id^='tt-check-']:checked");
       const summaryEl = document.getElementById("selected-lessons-summary");
       if (summaryEl) {
-        summaryEl.textContent = `已勾選 ${checks.length} 節需要代課之課堂`;
+        summaryEl.textContent = `已勾選 ${checks.length} 節課堂申請代課`;
       }
     }
 
-    // 教師端提交新請假申請
+    // 教師遞交請假申請
     function submitLeaveRequestFromTeacher() {
       const db = getDB();
       const teacherId = document.getElementById("current-teacher-select").value;
       const teacher = db.teachers.find(t => t.id === teacherId);
       const leaveCode = document.getElementById("leave-type-select").value;
-      const reason = document.getElementById("leave-reason-input").value.trim() || "個人事務請假";
+      const reason = document.getElementById("leave-reason-input").value.trim() || "公務/個人事務請假";
+      const docStatus = document.getElementById("leave-doc-select").value;
 
       const selectedLessons = [];
       teacher.scheduleToday.forEach((lesson, idx) => {
@@ -839,15 +953,15 @@
       });
 
       if (selectedLessons.length === 0) {
-        alert("請至少在上方課堂時間表勾選 1 節需要代課的課堂！");
+        alert("請至少在上方個人課堂時間表中勾選 1 節需要安排代課的課堂！");
         return;
       }
 
       const typeMap = {
-        OT: { label: "⚡ 時間銀行對沖 (OT 補鐘)", badge: "bg-amber-500/20 text-amber-300 border-amber-500/40", useOT: true },
-        SL: { label: "病假 (SL)", badge: "bg-rose-500/20 text-rose-300 border-rose-500/40", useOT: false },
-        AL: { label: "事假 (AL)", badge: "bg-purple-500/20 text-purple-300 border-purple-500/40", useOT: false },
-        OL: { label: "教育局公假 (OL)", badge: "bg-sky-500/20 text-sky-300 border-sky-500/40", useOT: false }
+        OT: { label: "⚡ 時間銀行對沖 (OT 補鐘)", badge: "bg-amber-50 text-amber-800 border-amber-300", useOT: true },
+        SL: { label: "病假 (SL)", badge: "bg-rose-50 text-rose-700 border-rose-200", useOT: false },
+        OL: { label: "公假 / 帶隊 (OL)", badge: "bg-blue-50 text-blue-700 border-blue-200", useOT: false },
+        AL: { label: "事假 (AL)", badge: "bg-purple-50 text-purple-700 border-purple-200", useOT: false }
       };
       const chosen = typeMap[leaveCode];
 
@@ -861,13 +975,13 @@
         leaveBadgeClass: chosen.badge,
         useTimeBankOffset: chosen.useOT,
         reason: reason,
+        docStatus: docStatus,
         status: "pending",
-        approvedBy: "待批核",
+        approvedBy: "待副校長審批",
         affectedLessons: selectedLessons
       });
 
       saveDB(db);
-      // 自動切換至校務處後台讓使用者立即體驗批核與 AI 配對！
       switchRole("admin");
     }
 
@@ -875,15 +989,25 @@
     function renderAdminView() {
       const db = getDB();
       const pendingList = db.leaveRequests.filter(r => r.status === "pending");
-      document.getElementById("admin-pending-badge").textContent = `${pendingList.length} 宗待批核`;
+      const approvedList = db.leaveRequests.filter(r => r.status === "approved");
+      const ackedCount = db.substitutions.filter(s => s.acknowledged).length;
+      const totalSubs = db.substitutions.length;
+      const ackRate = totalSubs > 0 ? Math.round((ackedCount / totalSubs) * 100) : 100;
+
+      // 更新頂部 KPI
+      document.getElementById("kpi-pending").textContent = pendingList.length;
+      document.getElementById("kpi-absent").textContent = approvedList.length;
+      document.getElementById("kpi-subs").textContent = totalSubs;
+      document.getElementById("kpi-ack-rate").textContent = `${ackRate}%`;
+      document.getElementById("admin-pending-badge").textContent = `${pendingList.length} 宗待審批`;
       document.getElementById("nav-pending-badge").textContent = `${pendingList.length}`;
 
       const pendingContainer = document.getElementById("admin-pending-container");
       if (pendingList.length === 0) {
         pendingContainer.innerHTML = `
-          <div class="bg-slate-950 border border-slate-800 rounded-xl p-6 text-center">
-            <div class="text-emerald-400 font-black text-base mb-1">✓ 所有請假申請已完成批核！</div>
-            <p class="text-xs text-slate-400">你可切換至「1. 教師端」勾選課表提交新請假，或使用下方「校務處直接新增代課單」測試電視秒級同步。</p>
+          <div class="bg-slate-50 border border-slate-200 rounded-xl p-6 text-center">
+            <div class="text-emerald-700 font-black text-base mb-1">✓ 目前所有請假申請均已審批及完成代課調配</div>
+            <p class="text-xs text-slate-500">可切換至「1. 教師端」遞交新請假申請，或使用下方「手動新增臨時調堂」測試實時廣播。</p>
           </div>
         `;
       } else {
@@ -893,25 +1017,26 @@
             const classInfo = db.classProfiles[lesson.className] || {};
             const optionsHtml = recs.map((cand, cIdx) => `
               <option value="${cand.id}" data-score="${cand.matchScore}">
-                ${cIdx === 0 ? "★ AI 首選：" : ""}${cand.shortName} — 適合度 ${cand.matchScore}分 [${cand.matchReasons}]
+                ${cIdx === 0 ? "★ AI 首選推薦：" : ""}${cand.shortName} (${cand.subject}) — 推薦指數 ${cand.matchScore}% [${cand.matchReasons}]
               </option>
             `).join("");
 
             return `
-              <div class="bg-slate-950 border border-slate-800 rounded-xl p-3.5 mt-3">
+              <div class="bg-white border border-slate-200 rounded-xl p-4 mt-3 shadow-sm">
                 <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
                   <div class="flex items-center gap-2">
-                    <span class="bg-amber-400 text-slate-950 font-black px-2 py-0.5 rounded text-xs">${lesson.periodName}</span>
-                    <span class="font-black text-base text-white">${lesson.className} · ${lesson.subject}</span>
-                    <span class="text-xs bg-indigo-950 text-indigo-300 border border-indigo-800 px-2 py-0.5 rounded">📍 ${lesson.room}</span>
+                    <span class="bg-[#0f3460] text-white font-black px-2.5 py-0.5 rounded text-xs">${lesson.periodName}</span>
+                    <span class="font-black text-base text-slate-800">${lesson.className} · ${lesson.subject}</span>
+                    <span class="text-xs bg-slate-100 text-slate-700 border border-slate-200 px-2 py-0.5 rounded font-bold">📍 ${lesson.room}</span>
                   </div>
-                  <span class="text-xs text-slate-400">${lesson.timeRange}</span>
+                  <span class="text-xs font-mono-num text-slate-500">${lesson.timeRange}</span>
                 </div>
-                <div class="bg-indigo-950/40 border border-indigo-800/60 rounded-lg p-2 mb-2.5 text-xs text-indigo-200">
-                  <b class="text-indigo-400">🛡️ 自動附帶【${lesson.className} 班別微檔案】：</b>${classInfo.senNote || "一般課室常規"}
+                <div class="text-xs text-slate-600 mb-2"><b>堂課指示：</b>${lesson.note}</div>
+                <div class="bg-blue-50/80 border border-blue-200 rounded-lg p-2.5 mb-3 text-xs text-blue-900">
+                  <b>🛡️ 系統自動附載【${lesson.className} 班別微檔案】：</b>${classInfo.senNote || "一般課室常規"}
                 </div>
-                <label class="block text-xs font-bold text-amber-300 mb-1">🧠 智能公平代課推薦名單（綜合空堂、本月代課節數與特別室資格）：</label>
-                <select id="admin-sub-select-${req.id}-${idx}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs sm:text-sm font-bold text-emerald-300">
+                <label class="block text-xs font-bold text-slate-700 mb-1">🧠 EduCal 智能代課人選推薦（已綜合空堂、同科資格及本月代課節數排序）：</label>
+                <select id="admin-sub-select-${req.id}-${idx}" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs sm:text-sm font-bold text-emerald-800 focus:outline-none focus:ring-2 focus:ring-blue-600">
                   ${optionsHtml}
                 </select>
               </div>
@@ -919,17 +1044,18 @@
           }).join("");
 
           return `
-            <div class="bg-slate-950/70 border-2 border-amber-500/70 rounded-2xl p-4 shadow-lg">
-              <div class="flex items-start justify-between gap-3">
+            <div class="bg-amber-50/40 border-2 border-amber-300 rounded-xl p-4">
+              <div class="flex flex-wrap items-start justify-between gap-3">
                 <div>
                   <div class="flex items-center gap-2">
-                    <span class="text-lg font-black text-white">${req.teacherName}</span>
-                    <span class="text-xs font-bold px-2 py-0.5 rounded border ${req.leaveBadgeClass}">${req.leaveType}</span>
+                    <span class="text-lg font-black text-slate-900">${req.teacherName}</span>
+                    <span class="text-xs font-bold px-2.5 py-0.5 rounded-full border ${req.leaveBadgeClass}">${req.leaveType}</span>
+                    <span class="text-xs text-slate-500 font-medium">${req.docStatus || ''}</span>
                   </div>
-                  <p class="text-xs text-slate-300 mt-1">原因：${req.reason}</p>
+                  <p class="text-xs text-slate-600 mt-1">請假原因：<b>${req.reason}</b></p>
                 </div>
-                <button onclick="approveLeaveRequest('${req.id}')" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black px-4 py-2 rounded-xl text-xs sm:text-sm transition shadow-lg shrink-0">
-                  ✓ 批核、結算戶口並推播上電視
+                <button onclick="approveLeaveRequest('${req.id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-black px-4 py-2 rounded-lg text-xs sm:text-sm transition shadow-sm shrink-0">
+                  ✓ 批准請假、結算假期並派發代課單
                 </button>
               </div>
               ${lessonsHtml}
@@ -938,43 +1064,55 @@
         }).join("");
       }
 
-      // 渲染已廣播代課列表
-      const activeSubsContainer = document.getElementById("admin-active-subs");
-      activeSubsContainer.innerHTML = db.substitutions.map(sub => `
-        <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 flex items-center justify-between gap-2 text-xs">
+      // 渲染已生效代課列表與電子簽收狀態
+      document.getElementById("admin-active-subs").innerHTML = db.substitutions.map(sub => `
+        <div class="bg-slate-50 border border-slate-200 rounded-lg p-3 flex flex-wrap items-center justify-between gap-2 text-xs">
           <div>
-            <span class="font-black text-amber-400 mr-1.5">${sub.periodName}</span>
-            <span class="font-black text-white text-sm mr-1.5">${sub.className} ${sub.subject}</span>
-            <span class="text-slate-400">(${sub.room})</span>
-            <div class="text-slate-300 mt-1">
-              請假：<b class="text-rose-300">${sub.absentTeacher}</b> ➔ 代課：<b class="text-emerald-400">${sub.subTeacher}</b>
+            <div class="flex items-center gap-2">
+              <span class="font-black text-[#0f3460] bg-blue-100 px-2 py-0.5 rounded">${sub.periodName}</span>
+              <span class="font-black text-slate-800 text-sm">${sub.className} · ${sub.subject}</span>
+              <span class="text-slate-500">(${sub.room})</span>
+              ${sub.acknowledged 
+                ? `<span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold">✅ 已電子簽收 (${sub.ackTime})</span>`
+                : `<span class="px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-300 font-bold animate-pulse">⏳ 待代課老師簽收</span>`
+              }
+            </div>
+            <div class="text-slate-600 mt-1">
+              請假教師：<b class="text-rose-700">${sub.absentTeacher}</b> ➔ 代課教師：<b class="text-emerald-700">${sub.subTeacher}</b>
+              <span class="text-slate-400 ml-2">(AI 適配度 ${sub.matchScore || 95}%)</span>
             </div>
           </div>
-          <button onclick="removeSubstitution('${sub.id}')" class="text-slate-400 hover:text-rose-400 px-2.5 py-1 rounded border border-slate-800 hover:border-rose-800 transition">
-            撤銷
-          </button>
+          <div class="flex items-center gap-2">
+            ${!sub.acknowledged ? `<button onclick="acknowledgeSub('${sub.id}')" class="text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 px-2.5 py-1 rounded font-bold transition">代簽收</button>` : ""}
+            <button onclick="removeSubstitution('${sub.id}')" class="text-slate-500 hover:text-rose-600 px-2.5 py-1 rounded border border-slate-200 hover:border-rose-300 bg-white transition">
+              刪除
+            </button>
+          </div>
         </div>
       `).join("");
 
-      // 渲染職員假期與時間銀行戶口總表
+      // 渲染職員假期與時間銀行總表
       document.getElementById("admin-ledger-list").innerHTML = db.teachers.map(t => `
-        <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 flex flex-col gap-2">
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 flex flex-col gap-2">
           <div class="flex items-center justify-between">
-            <span class="font-black text-white text-sm">${t.name}</span>
-            <span class="text-xs bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-bold">本月已代課：${t.subCountMonth} 節</span>
+            <div>
+              <span class="font-black text-slate-800 text-sm">${t.name}</span>
+              <span class="text-xs text-slate-500 ml-1">(${t.subject})</span>
+            </div>
+            <span class="text-xs bg-blue-50 text-blue-800 border border-blue-200 px-2.5 py-0.5 rounded-full font-bold">本月已代課：${t.subCountMonth} 節</span>
           </div>
           <div class="grid grid-cols-3 gap-2 text-center text-xs">
-            <div class="bg-slate-900 rounded-lg p-1.5">
-              <div class="text-slate-400 text-[10px]">事假 (AL)</div>
-              <div class="font-black text-purple-300 text-sm">${t.alBalance} 日</div>
+            <div class="bg-white border border-slate-200 rounded-lg p-1.5">
+              <div class="text-slate-500 text-[11px]">事假結餘 (AL)</div>
+              <div class="font-black text-blue-700 text-sm">${t.alBalance} 日</div>
             </div>
-            <div class="bg-slate-900 rounded-lg p-1.5">
-              <div class="text-slate-400 text-[10px]">病假 (SL)</div>
-              <div class="font-black text-rose-300 text-sm">${t.slBalance} 日</div>
+            <div class="bg-white border border-slate-200 rounded-lg p-1.5">
+              <div class="text-slate-500 text-[11px]">病假結餘 (SL)</div>
+              <div class="font-black text-teal-700 text-sm">${t.slBalance} 日</div>
             </div>
-            <div class="bg-amber-950/30 border border-amber-700/40 rounded-lg p-1.5">
-              <div class="text-amber-300 text-[10px] font-bold">⚡ 時間銀行</div>
-              <div class="font-black text-amber-400 text-sm">${t.otCredits} 節</div>
+            <div class="bg-amber-50 border border-amber-200 rounded-lg p-1.5">
+              <div class="text-amber-800 text-[11px] font-bold">⚡ 時間銀行</div>
+              <div class="font-black text-amber-600 text-sm">${t.otCredits} 節</div>
             </div>
           </div>
         </div>
@@ -982,14 +1120,14 @@
 
       // 渲染班別微檔案列表
       document.getElementById("admin-class-profiles").innerHTML = Object.entries(db.classProfiles).map(([cls, info]) => `
-        <div class="bg-slate-950 border border-slate-800 rounded-xl p-2.5">
-          <span class="font-black text-indigo-400 mr-1.5">${cls} 班：</span>
-          <span class="text-slate-300">${info.senNote}</span>
+        <div class="bg-slate-50 border border-slate-200 rounded-lg p-2.5">
+          <span class="font-black text-blue-800 mr-1.5">${cls} 班：</span>
+          <span class="text-slate-700">${info.senNote}</span>
         </div>
       `).join("");
     }
 
-    // 校務處批核請假並推送至電視
+    // 校務處批准請假並自動派單
     function approveLeaveRequest(reqId) {
       const db = getDB();
       const req = db.leaveRequests.find(r => r.id === reqId);
@@ -1035,7 +1173,8 @@
           note: lesson.note,
           senBrief: classInfo.senNote || "",
           matchScore: score,
-          status: "active",
+          acknowledged: false,
+          ackTime: "",
           isNew: true
         });
       });
@@ -1043,7 +1182,7 @@
       saveDB(db);
     }
 
-    // 校務處手動快速新增代課單
+    // 校務處手動新增代課
     function adminQuickAddSub() {
       const db = getDB();
       const periodOrder = Number(document.getElementById("quick-period").value);
@@ -1075,14 +1214,15 @@
         timeRange: periodMap[periodOrder][1],
         className: className,
         subject: subject,
-        room: className === "2C" ? "STEM Lab" : (className.includes("A") ? "電腦室" : `Room ${className}`),
+        room: className === "2C" ? "STEM Lab (Rm 206)" : (className.includes("A") ? "電腦室 (Rm 204)" : `Room ${className}`),
         absentTeacher: absentName,
         subTeacherId: subId,
         subTeacher: subTeacherObj ? subTeacherObj.shortName : "張偉傑老師",
-        note: "【校務處即時派單】請協助點名及維持課室秩序",
+        note: "【校務處臨時派單】請協助點名及督導學生完成堂課練習",
         senBrief: classInfo.senNote || "",
         matchScore: 95,
-        status: "active",
+        acknowledged: false,
+        ackTime: "",
         isNew: true
       });
 
@@ -1095,7 +1235,7 @@
       saveDB(db);
     }
 
-    // ==================== 3. 渲染教員室大螢幕看板 ====================
+    // ==================== 3. 渲染教員室大螢幕看板 (明亮清晰版) ====================
     let tvCurrentPage = 0;
     const TV_ITEMS_PER_PAGE = 6;
 
@@ -1106,108 +1246,136 @@
       if (tvCurrentPage >= totalPages) tvCurrentPage = 0;
 
       const pageItems = sorted.slice(tvCurrentPage * TV_ITEMS_PER_PAGE, (tvCurrentPage + 1) * TV_ITEMS_PER_PAGE);
+      const ackedCount = sorted.filter(s => s.acknowledged).length;
 
       document.getElementById("tv-total-sub-badge").textContent = `共 ${sorted.length} 節代課`;
-      document.getElementById("tv-stat-subs").textContent = `${sorted.length}`;
+      document.getElementById("tv-stat-subs").textContent = `${ackedCount}/${sorted.length}`;
       document.getElementById("tv-page-indicator").textContent = `第 ${tvCurrentPage + 1} / ${totalPages} 頁`;
 
       const tvGrid = document.getElementById("tv-substitution-grid");
       tvGrid.innerHTML = pageItems.map(item => {
-        let cardStyle = "bg-slate-950/90 border-slate-700/80";
-        let badgeStyle = "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40";
-        let statusTag = `<span class="px-2 py-0.5 rounded text-xs font-extrabold bg-cyan-950 text-cyan-300 border border-cyan-700">稍後上課</span>`;
-
-        if (item.status === "active") {
-          cardStyle = "bg-amber-950/30 border-2 border-amber-400 shadow-lg";
-          badgeStyle = "bg-amber-400 text-slate-950 font-black";
-          statusTag = `<span class="px-2 py-0.5 rounded text-xs font-extrabold bg-amber-400 text-slate-950 animate-pulse">● 正在上課 / 新派單</span>`;
-        } else if (item.status === "completed") {
-          cardStyle = "bg-slate-950/50 border-slate-800 opacity-65";
-          badgeStyle = "bg-slate-800 text-slate-400";
-          statusTag = `<span class="px-2 py-0.5 rounded text-xs font-bold bg-slate-800 text-slate-400">已完成</span>`;
-        }
-
-        if (item.isNew) cardStyle += " new-update-flash";
+        const borderLeftColor = item.acknowledged ? "border-l-emerald-500" : "border-l-amber-500";
+        const highlightClass = item.isNew ? "new-card-highlight" : "";
+        const ackBadge = item.acknowledged
+          ? `<span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-200">✅ 已電子簽收</span>`
+          : `<span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-amber-100 text-amber-800 border border-amber-300 animate-pulse">⏳ 待教師簽收</span>`;
 
         return `
-          <div class="rounded-2xl p-4 border flex flex-col justify-between transition-all ${cardStyle}">
+          <div class="bg-slate-50/70 rounded-xl p-4 border border-slate-200 border-l-4 ${borderLeftColor} ${highlightClass} shadow-sm flex flex-col justify-between transition-all">
             <div>
+              <!-- 節數與簽收狀態 -->
               <div class="flex items-center justify-between mb-2.5">
                 <div class="flex items-center gap-2">
-                  <span class="px-2.5 py-0.5 rounded-lg text-base font-black ${badgeStyle}">${item.periodName}</span>
-                  <span class="text-xs font-mono-clock font-bold text-slate-400">${item.timeRange}</span>
+                  <span class="px-2.5 py-0.5 rounded-md text-base font-black bg-[#0f3460] text-white">${item.periodName}</span>
+                  <span class="text-xs font-mono-num font-bold text-slate-500">${item.timeRange}</span>
                 </div>
-                ${statusTag}
+                ${ackBadge}
               </div>
 
-              <div class="flex items-baseline justify-between bg-slate-900 px-3 py-2 rounded-xl border border-slate-800 mb-2.5">
+              <!-- 班別、科目與課室 -->
+              <div class="flex items-baseline justify-between bg-white px-3.5 py-2.5 rounded-lg border border-slate-200 mb-2.5">
                 <div>
-                  <span class="text-2xl font-black text-white mr-1.5">${item.className}</span>
-                  <span class="text-lg font-bold text-slate-200">${item.subject}</span>
+                  <span class="text-2xl font-black text-blue-900 mr-1.5">${item.className}</span>
+                  <span class="text-lg font-bold text-slate-800">${item.subject}</span>
                 </div>
-                <span class="text-xs font-bold text-indigo-300 bg-indigo-950 border border-indigo-700/50 px-2 py-0.5 rounded">📍 ${item.room}</span>
+                <span class="text-xs font-bold text-slate-700 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded">📍 ${item.room}</span>
               </div>
 
-              <div class="grid grid-cols-11 items-center bg-slate-900/60 rounded-xl p-2 border border-slate-800">
+              <!-- 請假老師 -> 代課老師 -->
+              <div class="grid grid-cols-11 items-center bg-white rounded-lg p-2.5 border border-slate-200">
                 <div class="col-span-5">
                   <div class="text-[11px] font-bold text-slate-400">請假老師</div>
-                  <div class="text-sm font-bold text-rose-300 truncate">${item.absentTeacher}</div>
+                  <div class="text-sm font-bold text-rose-700 truncate">${item.absentTeacher}</div>
                 </div>
-                <div class="col-span-1 text-center text-slate-500 font-black">➔</div>
+                <div class="col-span-1 text-center text-slate-400 font-black">➔</div>
                 <div class="col-span-5 pl-1">
-                  <div class="text-[11px] font-bold text-amber-300">負責代課老師</div>
-                  <div class="text-lg font-black text-emerald-400 truncate">${item.subTeacher}</div>
+                  <div class="text-[11px] font-bold text-slate-500">負責代課老師</div>
+                  <div class="text-lg font-black text-emerald-700 truncate">${item.subTeacher}</div>
                 </div>
               </div>
             </div>
 
-            <div class="mt-2 pt-2 border-t border-slate-800/80 text-xs">
-              <div class="text-slate-300 truncate"><b class="text-amber-400">堂課：</b>${item.note}</div>
-              ${item.senBrief ? `<div class="text-indigo-300 truncate mt-0.5"><b class="text-indigo-400">🛡️ 班別提示：</b>${item.senBrief}</div>` : ""}
+            <!-- 底部堂課與 SEN 提示 -->
+            <div class="mt-2.5 pt-2 border-t border-slate-200/80 text-xs">
+              <div class="text-slate-700 truncate"><b class="text-slate-900">堂課：</b>${item.note}</div>
+              ${item.senBrief ? `<div class="text-blue-800 truncate mt-0.5"><b>🛡️ 交接提示：</b>${item.senBrief}</div>` : ""}
             </div>
           </div>
         `;
       }).join("");
 
-      // 渲染右側獲批請假老師名單
+      // 渲染右側請假老師名單
       const approvedLeaves = db.leaveRequests.filter(r => r.status === "approved");
       document.getElementById("tv-stat-absent").textContent = `${approvedLeaves.length}`;
       document.getElementById("tv-absent-list").innerHTML = approvedLeaves.map(r => `
-        <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 flex flex-col gap-1.5">
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 flex flex-col gap-1.5">
           <div class="flex items-start justify-between">
             <div>
-              <div class="text-base font-black text-white">${r.teacherName}</div>
-              <div class="text-[11px] text-slate-400">${r.subject}</div>
+              <div class="text-base font-black text-slate-800">${r.teacherName}</div>
+              <div class="text-[11px] text-slate-500">${r.subject}</div>
             </div>
-            <span class="px-2 py-0.5 rounded text-[11px] font-extrabold border ${r.leaveBadgeClass}">${r.leaveType}</span>
+            <span class="px-2 py-0.5 rounded-full text-[11px] font-bold border ${r.leaveBadgeClass}">${r.leaveType}</span>
           </div>
-          <div class="flex items-center justify-between text-[11px] pt-1.5 border-t border-slate-900 text-slate-400">
+          <div class="flex items-center justify-between text-[11px] pt-1.5 border-t border-slate-200 text-slate-500">
             <span>${r.approvedBy}</span>
-            <span class="text-amber-300 font-bold">代課 ${r.affectedLessons.length} 節</span>
+            <span class="text-blue-800 font-bold">共 ${r.affectedLessons.length} 節代課</span>
           </div>
         </div>
       `).join("");
     }
 
-    // 統一重新渲染所有視圖
+    // ==================== 4. 匯出 Excel / CSV 報表功能 ====================
+    function exportCSVReport() {
+      const db = getDB();
+      let csvContent = "\uFEFF"; // UTF-8 BOM 確保 Excel 正常顯示繁體中文
+      csvContent += "代課單編號,節數,時間,班別,科目,上課地點,請假老師,負責代課老師,AI適配度,電子簽收狀態,堂課指示\n";
+
+      db.substitutions.forEach(s => {
+        const row = [
+          s.id,
+          s.periodName,
+          s.timeRange,
+          s.className,
+          s.subject,
+          s.room,
+          s.absentTeacher,
+          s.subTeacher,
+          (s.matchScore || 95) + "%",
+          s.acknowledged ? `已簽收 (${s.ackTime})` : "待簽收",
+          `"${(s.note || "").replace(/"/g, '""')}"`
+        ];
+        csvContent += row.join(",") + "\n";
+      });
+
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", `SmartSchool_SLRS_代課及考勤報表_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
     function renderAllViews() {
-      initTeacherSelect();
+      initSelects();
       renderTeacherView();
       renderAdminView();
       renderTVView();
     }
 
-    // 時鐘與電視自動翻頁
     function updateClock() {
       const now = new Date();
       const weekdays = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
+      const timeStr = now.toTimeString().split(" ")[0];
       document.getElementById("tv-date").textContent = `${now.getFullYear()}年${now.getMonth() + 1}月${now.getDate()}日 (${weekdays[now.getDay()]})`;
-      document.getElementById("tv-clock").textContent = now.toTimeString().split(" ")[0];
+      document.getElementById("tv-clock").textContent = timeStr;
+      const headerClock = document.getElementById("header-clock");
+      if (headerClock) headerClock.textContent = timeStr;
     }
     setInterval(updateClock, 1000);
     updateClock();
 
-    // 支援網址參數 ?view=tv 直接進入電視看板模式
     const urlParams = new URLSearchParams(window.location.search);
     const initialView = urlParams.get("view");
     if (initialView && ["teacher", "admin", "tv"].includes(initialView)) {
