@@ -1,612 +1,162 @@
 <!DOCTYPE html>
 <html lang="zh-HK">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>仁濟醫院靚次伯紀念中學 — 智能代課與學習延續系統</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartSchool Admin - 教師代課面板</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Inter', 'Noto Sans TC', sans-serif;
-      background-color: #f4f7f4;
-      color: #0f172a;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .touch-btn { transition: all 0.15s ease; user-select: none; }
-    .touch-btn:active { transform: scale(0.97); }
-    .workload-bar-container { width: 100%; height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden; margin-top: 6px; display: flex; }
-    .workload-bar-fill { height: 100%; transition: width 0.5s ease; }
-    
-    /* Loading Spinner */
-    .loader { border: 3px solid #f3f3f3; border-top: 3px solid #6366f1; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-  </style>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="bg-slate-100 font-sans p-4 md:p-8">
 
-  <!-- ==================== SCHOOL HEADER BANNER ==================== -->
-  <header class="bg-[#b7e378] border-b-2 border-[#0f5e59] px-4 lg:px-6 py-3 shadow-sm sticky top-0 z-40">
-    <div class="max-w-[1440px] mx-auto flex flex-wrap items-center justify-between gap-3">
-      
-      <!-- School Crest & System Name -->
-      <div class="flex items-center gap-3">
-        <div class="w-11 h-11 rounded-full bg-white border-2 border-[#8c1d40] flex flex-col items-center justify-center shadow-sm shrink-0">
-          <span class="text-[7px] font-black text-[#1d4ed8] leading-none">YAN CHAI</span>
-          <span class="text-xs font-black text-[#8c1d40] leading-tight">仁濟</span>
-        </div>
-        <div>
-          <h1 class="text-sm sm:text-lg font-black text-slate-900 tracking-tight">
-            Yan Chai Hospital Lan Chi Pat Memorial Secondary School
-          </h1>
-          <p class="text-xs font-bold text-slate-700">
-            Smart Cover & Learning Continuity System · Autonomous GenAI Edition
-          </p>
-        </div>
+  <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
+    <!-- 頂部導航列 -->
+    <div class="bg-slate-900 text-white p-5 md:p-6 flex justify-between items-center">
+      <div>
+        <h1 class="text-xl md:text-2xl font-bold">我的代課任務面板</h1>
+        <p class="text-xs md:text-sm text-slate-400">BYOD 終端 - 支援 Local LLM 教案生成</p>
       </div>
-
-      <!-- Right System Status & Controls -->
-      <div class="flex items-center gap-2">
-        <div class="hidden sm:flex items-center gap-2 bg-white/90 border border-[#a3d962] px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700">
-          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span>2026-11-05 (Day A)</span>
-          <span class="text-slate-300">|</span>
-          <span id="live-clock" class="font-mono font-black text-slate-900">09:20:00</span>
-        </div>
-
-        <button onclick="openSettingsModal()" class="touch-btn bg-indigo-900 hover:bg-indigo-800 text-white font-black px-3 py-1.5 rounded-xl text-xs shadow-sm flex items-center gap-1.5">
-          <span>⚙️</span> <span class="hidden md:inline">GenAI Settings</span>
-        </button>
-
-        <button onclick="openExcelModal()" class="touch-btn bg-[#0f5e59] hover:bg-teal-900 text-white font-black px-3 py-1.5 rounded-xl text-xs shadow-sm flex items-center gap-1.5">
-          <span>📥</span> <span>Excel Data</span>
-        </button>
-
-        <button onclick="resetSystemData()" class="touch-btn bg-white hover:bg-rose-50 text-rose-700 border border-rose-200 font-black px-3 py-1.5 rounded-xl text-xs shadow-sm">
-          ↺ Reset
-        </button>
+      <div class="text-right">
+        <div class="text-sm font-bold">Mr. Cheung Wai Kit</div>
+        <div id="conn-status" class="text-xs text-amber-400 animate-pulse">● 連線中...</div>
       </div>
     </div>
 
-    <!-- ==================== 4-MODULE NAVIGATION BAR ==================== -->
-    <div class="max-w-[1440px] mx-auto mt-3 grid grid-cols-2 lg:grid-cols-4 gap-2">
-      <button id="tab-leave" onclick="switchModule('leave')" class="nav-tab rounded-xl px-3.5 py-2.5 text-left flex items-center justify-between border-2 border-[#0f5e59] bg-[#0f5e59] text-white shadow-sm">
-        <div>
-          <div class="text-xs font-black">1. Teacher Leave & GenAI Pack</div>
-          <div class="text-[11px] opacity-85 font-bold">教師請假及 AI 教學包</div>
-        </div>
-        <span class="text-base">📝</span>
-      </button>
-
-      <button id="tab-dispatch" onclick="switchModule('dispatch')" class="nav-tab rounded-xl px-3.5 py-2.5 text-left flex items-center justify-between border-2 border-white/80 bg-white/90 text-slate-800 hover:bg-white">
-        <div>
-          <div class="text-xs font-black">2. Smart Cover Dispatch</div>
-          <div class="text-[11px] text-slate-500 font-bold">校務處 AI 智能排代課</div>
-        </div>
-        <span id="badge-pending" class="bg-amber-400 text-slate-950 font-black text-xs px-2 py-0.5 rounded-full shadow-sm">1</span>
-      </button>
-
-      <button id="tab-classroom" onclick="switchModule('classroom')" class="nav-tab rounded-xl px-3.5 py-2.5 text-left flex items-center justify-between border-2 border-white/80 bg-white/90 text-slate-800 hover:bg-white">
-        <div>
-          <div class="text-xs font-black">3. Classroom & Quiz Hub</div>
-          <div class="text-[11px] text-slate-500 font-bold">代課老師監堂及學生測驗</div>
-        </div>
-        <span class="text-base">🏫</span>
-      </button>
-
-      <button id="tab-tv" onclick="switchModule('tv')" class="nav-tab rounded-xl px-3.5 py-2.5 text-left flex items-center justify-between border-2 border-white/80 bg-white/90 text-slate-800 hover:bg-white">
-        <div>
-          <div class="text-xs font-black">4. Staffroom TV Board</div>
-          <div class="text-[11px] text-slate-500 font-bold">教員室大電視即時公告</div>
-        </div>
-        <span class="text-base">📺</span>
-      </button>
-    </div>
-  </header>
-
-  <!-- ==================== MAIN WORKSPACE ==================== -->
-  <main class="max-w-[1440px] w-full mx-auto px-4 lg:px-6 py-5 flex-1 relative">
-
-    <!-- ==================== MODULE 1: TEACHER LEAVE & AI LEARNING PACK ==================== -->
-    <section id="mod-leave" class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
-      <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        <div class="bg-[#0f5e59] text-white px-5 py-3.5 flex flex-wrap items-center justify-between gap-2">
-          <div>
-            <h2 class="text-base sm:text-lg font-black">📝 Teacher Leave & Learning Continuity Form</h2>
-            <p class="text-xs text-teal-100 font-semibold">Applicant: Mr. Lau Ka Ho (LKH) — Creative Tech & Physics</p>
-          </div>
-          <button onclick="quickFillMorningSick()" class="touch-btn bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-3 py-1.5 rounded-xl text-xs shadow-sm">
-            ⚡ Quick Fill Sick Leave
-          </button>
-        </div>
-
-        <div class="p-5 flex flex-col gap-5">
-          <div>
-            <label class="text-xs font-black text-slate-600 uppercase block mb-2">1. Select Leave Category</label>
-            <div class="grid grid-cols-3 gap-2.5" id="leave-type-buttons"></div>
-          </div>
-
-          <div>
-            <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
-              <label class="text-xs font-black text-slate-600 uppercase">2. Affected Timetable & Live GenAI Pack</label>
-              <div id="ai-status" class="text-[10px] font-black px-2 py-0.5 rounded bg-slate-100 text-slate-500">API: Offline (Demo Mode)</div>
-            </div>
-
-            <!-- Custom Topic Input for LIVE GenAI -->
-            <div class="bg-indigo-50/80 border border-indigo-200 rounded-xl p-3 mb-3">
-              <div class="flex flex-col sm:flex-row gap-2 items-center">
-                <input id="ai-topic-input" type="text" placeholder="Enter Lesson Topic (e.g., Physics Snell's Law, History WW2)..." class="w-full text-xs font-bold bg-white border border-indigo-200 rounded-lg px-3 py-2.5 text-slate-800 focus:outline-none focus:border-indigo-500 shadow-inner" />
-                <button onclick="triggerLiveGenAIPack()" id="ai-btn" class="touch-btn shrink-0 bg-indigo-600 hover:bg-indigo-700 text-white font-black px-4 py-2.5 rounded-lg text-xs flex items-center justify-center gap-1.5 shadow-md w-full sm:w-auto">
-                  <span>✨</span> <span id="ai-btn-text">Generate AI Lesson</span>
-                </button>
-              </div>
-              <p class="text-[10px] text-indigo-400 font-bold mt-1.5 px-1">Powered by Google Gemini 1.5 Flash. Generates: Worksheet Title, SEN Note, Answer Key, & 5-Min Exit Quiz.</p>
-            </div>
-
-            <div id="leave-lessons-list" class="flex flex-col gap-3"></div>
-          </div>
-
-          <button onclick="submitLeaveApplication()" class="touch-btn w-full bg-[#0f5e59] hover:bg-teal-900 text-white font-black py-3.5 rounded-xl text-sm shadow-md flex items-center justify-center gap-2">
-            <span>🚀 Submit Leave & Sync to Dispatch Console</span>
-          </button>
-        </div>
-      </div>
-
-      <div class="lg:col-span-5 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        <div class="bg-slate-900 text-white px-5 py-3.5 flex items-center justify-between">
-          <div>
-            <h3 class="text-sm sm:text-base font-black">📋 Today's Leave & Cover Records</h3>
-            <p class="text-xs text-slate-300 font-bold">學校請假及代課批核紀錄</p>
-          </div>
-        </div>
-        <div id="leave-history-list" class="p-4 flex flex-col gap-3"></div>
-      </div>
-    </section>
-
-    <!-- ==================== MODULE 2: AI SMART COVER DISPATCH ==================== -->
-    <section id="mod-dispatch" class="hidden grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+    <!-- 任務列表區塊 -->
+    <div class="p-6 space-y-4">
       
-      <div class="lg:col-span-8 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        <div class="bg-[#0f5e59] text-white px-5 py-4 flex flex-col gap-2">
-          <div class="flex items-center justify-between">
-            <h2 class="text-base sm:text-lg font-black">🏛️ Smart Cover Dispatch Console</h2>
-            <span class="bg-amber-400 text-slate-950 font-black px-3 py-1 rounded-lg text-xs">🤖 Algorithm Scoring</span>
+      <!-- 動態任務卡片 -->
+      <div id="lesson-card" class="border-2 border-slate-200 rounded-xl p-5 bg-slate-50 relative overflow-hidden transition-all duration-300 hidden">
+        
+        <!-- 即時狀態標籤 -->
+        <div id="status-badge" class="absolute top-0 right-0 px-4 py-1.5 rounded-bl-xl font-bold text-xs shadow-sm">
+          載入中...
+        </div>
+
+        <div class="flex items-center gap-3 mb-4 mt-2">
+          <span class="bg-indigo-600 text-white px-3 py-1 rounded-lg font-mono font-bold text-sm">P.2 (09:15)</span>
+          <h2 class="text-lg font-bold text-slate-800">2C - 創意科技</h2>
+          <span class="text-sm text-slate-600 font-semibold px-2 py-0.5 rounded bg-slate-200">📍 Room 204</span>
+        </div>
+
+        <div class="text-sm text-slate-600 mb-4 border-b border-slate-200 pb-4">
+          原任教師：<span class="font-bold text-slate-800">Ms. Wong (病假)</span>
+        </div>
+
+        <!-- AI 生成教案區塊 -->
+        <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-4 mb-5">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="bg-indigo-600 text-white text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-wider">Local LLM Generated</span>
+            <span class="font-bold text-indigo-900 text-sm">AI 自動溫習教案 (根據最新教學進度)</span>
           </div>
-          <!-- ALGORITHM FORMULA VISUALIZATION FOR JUDGES -->
-          <div class="bg-teal-900/60 rounded-xl p-2.5 border border-teal-700/50 flex flex-wrap items-center gap-2 text-xs font-mono">
-            <span class="text-teal-200 font-black uppercase tracking-wider text-[10px]">Algorithm:</span>
-            <span class="text-white">Score =</span>
-            <span class="bg-blue-500/20 text-blue-200 px-1.5 py-0.5 rounded">FreeSlot(40)</span> <span class="text-teal-300">+</span>
-            <span class="bg-emerald-500/20 text-emerald-200 px-1.5 py-0.5 rounded">LabSafe(30)</span> <span class="text-teal-300">+</span>
-            <span class="bg-amber-500/20 text-amber-200 px-1.5 py-0.5 rounded">Equity: max(5, 25 - NetCover×8)</span>
+          <div class="text-xs md:text-sm text-indigo-800 space-y-1.5">
+            <p><strong>🎯 學習目標：</strong>Micro:bit 視角感應器複習 (防跟蹤書包前置知識)。</p>
+            <p><strong>📝 課堂任務：</strong>引導學生完成 Google Classroom《任務工作紙 Unit 2》。</p>
+            <p><strong>⚠️ SEN 提示：</strong>前排 2 位 SEN 學生容易焦慮，請允許他們分段完成任務。</p>
           </div>
         </div>
 
-        <div id="dispatch-queue-container" class="p-5 flex flex-col gap-4"></div>
-      </div>
-
-      <div class="lg:col-span-4 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        <div class="bg-amber-500 text-slate-950 px-5 py-3.5 flex items-center justify-between gap-2">
-          <div>
-            <h3 class="text-sm sm:text-base font-black">⚖️ Equity Analytics</h3>
-            <p class="text-xs font-bold opacity-85">Teacher Workload Distribution</p>
-          </div>
-          <button onclick="openExcelModal()" class="touch-btn bg-slate-900 text-white font-black px-2.5 py-1.5 rounded-lg text-xs flex gap-1">
-            <span>📥</span> Excel
-          </button>
-        </div>
-        <div id="dispatch-roster-list" class="p-4 flex flex-col gap-3"></div>
-      </div>
-    </section>
-
-    <!-- ==================== MODULE 3: CLASSROOM SUPERVISION HUB ==================== -->
-    <section id="mod-classroom" class="hidden grid-cols-1 lg:grid-cols-12 gap-5 items-start">
-      <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        <div class="bg-[#0f5e59] text-white px-5 py-3.5 flex flex-wrap items-center justify-between gap-2">
-          <div>
-            <h2 class="text-base sm:text-lg font-black">🏫 Substitute Teacher Hub</h2>
-            <p class="text-xs text-teal-100 font-semibold">Lesson Guide, SEN Tips & GenAI Answer Key</p>
-          </div>
-          <div id="classroom-duty-tabs" class="flex gap-1.5"></div>
-        </div>
-        <div id="classroom-detail-box" class="p-5 flex flex-col gap-4"></div>
-      </div>
-
-      <div class="lg:col-span-5 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        <div class="bg-indigo-900 text-white px-5 py-3.5 flex items-center justify-between">
-          <div>
-            <h3 class="text-sm sm:text-base font-black">🎯 5-Min Exit-Check Quiz</h3>
-            <p class="text-xs text-indigo-200 font-bold">Live Formative Assessment</p>
-          </div>
-          <span class="bg-indigo-700 text-amber-300 font-black px-2.5 py-1 rounded-lg text-xs">Live Sync</span>
-        </div>
-        <div id="student-quiz-box" class="p-5 flex flex-col gap-4"></div>
-      </div>
-    </section>
-
-    <!-- ==================== MODULE 4: STAFFROOM TV BOARD ==================== -->
-    <section id="mod-tv" class="hidden flex-col gap-5 bg-slate-950 text-white rounded-3xl p-6 border-2 border-slate-800 shadow-2xl">
-      <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
-        <div>
-          <div class="flex items-center gap-2">
-            <span class="w-3 h-3 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span class="text-xs font-black text-emerald-400 uppercase tracking-widest">STAFFROOM DIGITAL SIGNAGE</span>
-          </div>
-          <h2 class="text-xl sm:text-2xl font-black mt-1">Live Timetable & Cover Arrangements</h2>
-        </div>
-        <div class="bg-slate-900 border border-slate-800 px-4 py-2 rounded-2xl text-right">
-          <div class="text-xs text-slate-400 font-bold">2026-11-05 · DAY A</div>
-          <div class="text-lg font-mono font-black text-amber-400">LIVE SYNCED</div>
+        <!-- 動態操作按鈕區 -->
+        <div id="action-buttons" class="flex gap-3">
+          <!-- 按鈕會由 JavaScript 動態生成 -->
         </div>
       </div>
-      <div id="tv-duties-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
-    </section>
 
-  </main>
-
-  <!-- ==================== GEMINI API SETTINGS MODAL ==================== -->
-  <div id="settings-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden">
-      <div class="bg-indigo-900 text-white px-5 py-4 flex items-center justify-between">
-        <div>
-          <h3 class="text-base font-black">⚙️ GenAI Settings (For KIDE Demo)</h3>
-        </div>
-        <button onclick="closeSettingsModal()" class="touch-btn text-white font-black px-2">✕</button>
-      </div>
-      <div class="p-5 flex flex-col gap-4">
-        <label class="text-xs font-black text-slate-700">Google Gemini API Key (optional):</label>
-        <input type="password" id="gemini-api-key" placeholder="AIzaSy..." class="w-full text-xs font-mono bg-slate-50 border border-slate-300 rounded-lg px-3 py-2.5 text-slate-800 focus:outline-none focus:border-indigo-500" />
-        <p class="text-[10px] text-slate-500 font-bold">If no key is provided, the system falls back to lightning-fast offline demo mode. API keys are stored locally in your browser session only.</p>
-        <button onclick="saveSettings()" class="touch-btn bg-indigo-600 hover:bg-indigo-700 text-white font-black py-2.5 rounded-lg text-xs">Save Settings</button>
-      </div>
     </div>
   </div>
 
-  <!-- ==================== EXCEL MODAL (Hidden by default) ==================== -->
-  <div id="excel-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <!-- Same as previous version, omitted full markup for brevity but keeping core functions below -->
-    <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl overflow-hidden p-5 flex flex-col gap-4">
-      <div class="flex justify-between items-center"><h3 class="font-black text-lg">📥 Simulate Excel Import</h3><button onclick="closeExcelModal()" class="font-black">✕</button></div>
-      <p class="text-xs font-bold text-slate-600">Simulate syncing timetable from School WebSAMS (Adds Mr. Wong WKM).</p>
-      <button onclick="simulateExcelImport()" class="touch-btn bg-emerald-600 text-white font-black p-4 rounded-xl">⚡ 1-Tap Sync School Excel</button>
-    </div>
-  </div>
-
-  <!-- ==================== TOAST NOTIFICATION ==================== -->
-  <div id="toast" class="hidden fixed top-20 right-5 z-50 bg-slate-900 text-white font-black px-5 py-3.5 rounded-2xl shadow-2xl border-2 border-emerald-400 text-xs max-w-md">Action Completed</div>
-
-  <!-- ==================== JAVASCRIPT SYSTEM ==================== -->
   <script>
-    let activeModule = "leave";
-    let selectedClassroomDutyId = "DUTY-2";
-    let geminiKey = ""; 
-
-    // Initial Real-World State
-    const DEFAULT_STATE = {
-      draft: {
-        leaveType: "OFFICIAL",
-        lessons: [
-          {
-            periodOrder: 2, periodName: "P2", timeRange: "09:15–09:55", className: "3C", subject: "Physics", room: "Rm 401 (Lab)", requiresLab: true, selected: false,
-            packTitle: "Refraction of Light (Offline Demo)", senTip: "Provide visual aid.", answerKey: "Light bends.", quizQ: "Does light bend?", quizOptions: ["Yes", "No", "Maybe"], correctIdx: 0
-          },
-          {
-            periodOrder: 5, periodName: "P5", timeRange: "11:35–12:15", className: "2C", subject: "Creative Tech", room: "Rm 206 (STEM)", requiresLab: true, selected: true,
-            packTitle: "Smart Backpack Logic (Offline Demo)", senTip: "Keep volume low.", answerKey: "5s delay prevents false alarm.", quizQ: "Why 5 seconds?", quizOptions: ["Battery", "Filter noise", "Broken"], correctIdx: 1
-          }
-        ]
-      },
-      teachers: [
-        { id: "T02", code: "LKH", nameEn: "Mr. Lau Ka Ho", dept: "Physics", labOk: true, busyPeriods: [2, 4, 5], onLeave: false, netCover: +1 },
-        { id: "T03", code: "CWK", nameEn: "Mr. Cheung Wai Kit", dept: "Maths", labOk: true, busyPeriods: [4], onLeave: false, netCover: 0 },
-        { id: "T04", code: "HSF", nameEn: "Ms. Ho Shuk Fan", dept: "English", labOk: false, busyPeriods: [1, 5], onLeave: false, netCover: +2 },
-        { id: "T01", code: "CTM", nameEn: "Mr. Chan Tai Man", dept: "ICT", labOk: true, busyPeriods: [1, 3], onLeave: true, netCover: -1 }
-      ],
-      requests: [
-        { id: "REQ-101", staffCode: "CTM", staffName: "Mr. Chan Tai Man", leaveType: "SICK", date: "2026-11-05", status: "APPROVED", lessonsCount: 1 }
-      ],
-      duties: [
-        {
-          id: "DUTY-2", periodOrder: 5, periodName: "P5", timeRange: "11:35–12:15", className: "2C", subject: "Creative Tech", room: "Rm 206 (STEM)",
-          coverName: "Mr. Cheung", absentName: "Mr. Lau", packTitle: "Smart Backpack Sensor & 5s Filter", senTip: "Group leaders distribute cards.",
-          answerKey: "Waiting 5 seconds filters out normal passers-by.", quizQ: "Why wait 5 seconds?", quizOptions: ["Save battery", "Filter passers-by", "Error"], correctIdx: 1, status: "ASSIGNED", totalStudents: 28, passedStudents: 26
-        }
-      ]
+    // ⚠️ 貼上你的 Firebase Config
+    const firebaseConfig = {
+      apiKey: "你的_API_KEY",
+      authDomain: "你的_PROJECT_ID.firebaseapp.com",
+      databaseURL: "你的_DATABASE_URL",
+      projectId: "你的_PROJECT_ID",
+      storageBucket: "你的_PROJECT_ID.appspot.com",
+      messagingSenderId: "你的_SENDER_ID",
+      appId: "你的_APP_ID"
     };
 
-    let state = JSON.parse(JSON.stringify(DEFAULT_STATE));
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const roomRef = db.ref('classrooms/rm204'); // 我們專注監聽 Room 204 的狀態
 
-    // UI Navigation
-    function switchModule(mod) {
-      activeModule = mod;
-      ["leave", "dispatch", "classroom", "tv"].forEach(m => {
-        const sec = document.getElementById(`mod-${m}`);
-        const tab = document.getElementById(`tab-${m}`);
-        if (m === mod) {
-          sec.classList.remove("hidden");
-          sec.classList.add(m === "tv" ? "flex" : "grid");
-          tab.className = "nav-tab rounded-xl px-3.5 py-2.5 text-left flex items-center justify-between border-2 border-[#0f5e59] bg-[#0f5e59] text-white shadow-sm";
-        } else {
-          sec.classList.add("hidden");
-          sec.classList.remove("flex", "grid");
-          tab.className = "nav-tab rounded-xl px-3.5 py-2.5 text-left flex items-center justify-between border-2 border-white/80 bg-white/90 text-slate-800 hover:bg-white";
-        }
+    const lessonCard = document.getElementById('lesson-card');
+    const statusBadge = document.getElementById('status-badge');
+    const actionButtons = document.getElementById('action-buttons');
+    const connStatus = document.getElementById('conn-status');
+
+    // 初始化假資料 (模擬校務處剛派發代課任務)
+    function initMockData() {
+      roomRef.set({
+        status: "PENDING", // PENDING -> ACKNOWLEDGED -> ARRIVED
+        className: "2C",
+        subject: "創意科技",
+        coverTeacher: "Mr. Cheung Wai Kit",
+        originalTeacher: "Ms. Wong",
+        period: "P.2"
       });
-      renderAll();
     }
 
-    // Modal Controls
-    function openSettingsModal() { document.getElementById("settings-modal").classList.remove("hidden"); }
-    function closeSettingsModal() { document.getElementById("settings-modal").classList.add("hidden"); }
-    function saveSettings() {
-      geminiKey = document.getElementById("gemini-api-key").value.trim();
-      const statusEl = document.getElementById("ai-status");
-      if (geminiKey) {
-        statusEl.textContent = "API: Connected (Live GenAI)";
-        statusEl.className = "text-[10px] font-black px-2 py-0.5 rounded bg-indigo-100 text-indigo-700";
-      } else {
-        statusEl.textContent = "API: Offline (Demo Mode)";
-        statusEl.className = "text-[10px] font-black px-2 py-0.5 rounded bg-slate-100 text-slate-500";
-      }
-      closeSettingsModal();
-      showToast("Settings Saved.");
-    }
-    function openExcelModal() { document.getElementById("excel-modal").classList.remove("hidden"); }
-    function closeExcelModal() { document.getElementById("excel-modal").classList.add("hidden"); }
-
-    // GEN-AI ENGINE
-    async function triggerLiveGenAIPack() {
-      const topic = (document.getElementById("ai-topic-input").value || "General Science").trim();
-      const btnText = document.getElementById("ai-btn-text");
-      const btnIco = document.getElementById("ai-btn").querySelector("span:first-child");
+    // 監聽 Firebase 資料庫變動 (雲端即時同步魔法)
+    roomRef.on('value', (snapshot) => {
+      const data = snapshot.val();
       
-      btnText.textContent = "Generating...";
-      btnIco.innerHTML = `<div class="loader"></div>`;
-
-      if (!geminiKey) {
-        // Offline Fallback for Demo Safety
-        setTimeout(() => {
-          state.draft.lessons.forEach(l => {
-            l.selected = true;
-            l.packTitle = `✨ Offline Generated: ${topic} (40m Worksheet)`;
-            l.senTip = "Provide a quiet environment and visual aids.";
-            l.answerKey = "The main concept relies on critical thinking.";
-            l.quizQ = `What is the key takeaway regarding ${topic}?`;
-            l.quizOptions = ["It is complex", "It is foundational", "Not applicable"];
-            l.correctIdx = 1;
-          });
-          finalizeGeneration();
-        }, 800);
+      if (!data) {
+        initMockData(); // 如果資料庫是空的，先寫入預設資料
         return;
       }
 
-      // Live Gemini API Call requiring JSON output
-      const prompt = `You are an expert AI teaching assistant for a secondary school. A teacher is taking sudden leave. The substitute needs a 40-minute learning continuity pack for the topic: "${topic}".
-      Provide the response strictly in JSON format. Do not use markdown blocks. Use exactly these keys:
-      {
-        "packTitle": "Catchy title for the 40m worksheet (string)",
-        "senTip": "1 practical sentence tip for supporting SEN students in this topic (string)",
-        "answerKey": "1 sentence explaining the core concept for the substitute teacher (string)",
-        "quizQ": "A multiple-choice question to test mastery at the end of class (string)",
-        "quizOptions": ["Option A", "Option B", "Option C"],
-        "correctIdx": 0 // 0, 1, or 2 indicating correct option
-      }`;
+      // 顯示卡片並更新連線狀態
+      lessonCard.classList.remove('hidden');
+      connStatus.className = 'text-xs text-emerald-400';
+      connStatus.innerText = '● 雲端同步中';
 
-      try {
-        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`, {
-          method: "POST", headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: { responseMimeType: "application/json" }
-          })
-        });
-        const data = await res.json();
-        const genText = data.candidates[0].content.parts[0].text;
-        const aiData = JSON.parse(genText);
-
-        state.draft.lessons.forEach(l => {
-          l.selected = true;
-          l.packTitle = "✨ AI: " + aiData.packTitle;
-          l.senTip = aiData.senTip;
-          l.answerKey = aiData.answerKey;
-          l.quizQ = aiData.quizQ;
-          l.quizOptions = aiData.quizOptions;
-          l.correctIdx = aiData.correctIdx;
-        });
-        finalizeGeneration("✨ Real-time GenAI Pack Created via Gemini API!");
-      } catch (err) {
-        console.error(err);
-        finalizeGeneration("⚠️ API Error: Used Offline Fallback.");
-      }
-    }
-
-    function finalizeGeneration(msg = "✨ AI Pack Generated!") {
-      const btnText = document.getElementById("ai-btn-text");
-      const btnIco = document.getElementById("ai-btn").querySelector("span:first-child");
-      btnText.textContent = "Generate AI Lesson";
-      btnIco.innerHTML = `✨`;
-      renderAll();
-      showToast(msg);
-    }
-
-    function toggleDraftLesson(idx) { state.draft.lessons[idx].selected = !state.draft.lessons[idx].selected; renderAll(); }
-    function selectLeaveType(type) { state.draft.leaveType = type; renderAll(); }
-    function quickFillMorningSick() {
-      state.draft.leaveType = "SICK";
-      state.draft.lessons.forEach(l => l.selected = true);
-      renderAll(); showToast("⚡ Auto-filled Morning Sick Leave");
-    }
-
-    function submitLeaveApplication() {
-      const selected = state.draft.lessons.filter(l => l.selected);
-      if (selected.length === 0) return showToast("⚠️ Select at least 1 lesson.");
-      
-      const bestCandidate = getBestAICandidate(selected[0].periodOrder, selected[0].requiresLab);
-      state.requests.unshift({
-        id: "REQ-" + (101 + state.requests.length),
-        staffCode: "LKH", staffName: "Mr. Lau Ka Ho", leaveType: state.draft.leaveType, date: "2026-11-05", status: "PENDING",
-        lessons: selected.map(l => ({ ...l, selectedCandidateId: bestCandidate ? bestCandidate.id : "T03" }))
-      });
-      showToast("🚀 Leave Submitted! Syncing to Dispatch...");
-      setTimeout(() => switchModule("dispatch"), 800);
-    }
-
-    // ALGORITHM SCORING
-    function evaluateCandidate(teacher, periodOrder, requiresLab) {
-      if (teacher.id === "T02") return { valid: false, score: 0, reason: "Applicant" };
-      if (teacher.onLeave) return { valid: false, score: 0, reason: "⛔ On Leave" };
-      if (teacher.busyPeriods.includes(periodOrder)) return { valid: false, score: 0, reason: `⛔ Clash (P${periodOrder})` };
-      if (requiresLab && !teacher.labOk) return { valid: false, score: 0, reason: "⛔ No Lab Safety" };
-
-      const equityScore = Math.max(5, 25 - (teacher.netCover * 8));
-      const totalScore = Math.min(99, 40 + (requiresLab ? 30 : 25) + equityScore);
-      return { valid: true, score: totalScore, reason: `✅ Free (+40) · Lab (+30) · Equity(+${equityScore})` };
-    }
-
-    function getBestAICandidate(periodOrder, requiresLab) {
-      const scored = state.teachers.filter(t => t.id !== "T02").map(t => ({ teacher: t, ev: evaluateCandidate(t, periodOrder, requiresLab) })).filter(x => x.ev.valid).sort((a, b) => b.ev.score - a.ev.score);
-      return scored.length > 0 ? scored[0].teacher : state.teachers[1];
-    }
-
-    function selectCandidateForLesson(reqId, lIdx, tId) {
-      state.requests.find(r => r.id === reqId).lessons[lIdx].selectedCandidateId = tId;
-      renderAll();
-    }
-
-    function approvePendingRequest(reqId) {
-      const req = state.requests.find(r => r.id === reqId);
-      req.status = "APPROVED";
-      req.lessons.forEach(les => {
-        const teacher = state.teachers.find(t => t.id === les.selectedCandidateId);
-        teacher.netCover += 1;
+      // 根據狀態渲染 UI
+      if (data.status === 'PENDING') {
+        lessonCard.className = 'border-2 border-amber-300 rounded-xl p-5 bg-amber-50 relative overflow-hidden transition-all duration-300';
+        statusBadge.className = 'absolute top-0 right-0 px-4 py-1.5 rounded-bl-xl font-bold text-xs shadow-sm bg-amber-500 text-white animate-pulse';
+        statusBadge.innerText = '待簽收 (Pending)';
         
-        const newDutyId = "DUTY-" + (state.duties.length + 1);
-        state.duties.push({
-          id: newDutyId, periodOrder: les.periodOrder, periodName: les.periodName, timeRange: les.timeRange, className: les.className, subject: les.subject, room: les.room,
-          coverName: teacher.nameEn, absentName: "Mr. Lau", packTitle: les.packTitle, senTip: les.senTip, answerKey: les.answerKey, quizQ: les.quizQ, quizOptions: les.quizOptions, correctIdx: les.correctIdx,
-          status: "ASSIGNED", totalStudents: 28, passedStudents: 0 // Initialize at 0 for live demo
-        });
-        selectedClassroomDutyId = newDutyId;
-      });
-      renderAll(); showToast("✓ Cover Dispatched & Synced to TV.");
-    }
-
-    function simulateExcelImport() {
-      if (!state.teachers.some(t => t.code === "WKM")) {
-        state.teachers.splice(1, 0, { id: "T05", code: "WKM", nameEn: "Mr. Wong", dept: "Science", labOk: true, busyPeriods: [1, 2], onLeave: false, netCover: -1 });
-      }
-      state.requests.forEach(r => { if (r.status === "PENDING") (r.lessons || []).forEach(l => l.selectedCandidateId = "T05"); });
-      closeExcelModal(); switchModule("dispatch"); showToast("📥 Excel Synced! Workload Analytics Updated.");
-    }
-
-    // CLASSROOM FUNCTIONS
-    function selectClassroomDuty(dutyId) { selectedClassroomDutyId = dutyId; renderAll(); }
-    function submitStudentQuizAnswer(dutyId, optIdx) {
-      const duty = state.duties.find(d => d.id === dutyId);
-      duty.totalStudents = Math.max(28, duty.totalStudents + 1);
-      if (optIdx === duty.correctIdx) { duty.passedStudents += 1; showToast("🎉 Correct! Live Tracker updated."); }
-      else { showToast("⚠️ Incorrect. Displaying answer key."); }
-      renderAll();
-    }
-    function completeClassroomDuty(dutyId) {
-      state.duties.find(d => d.id === dutyId).status = "COMPLETED";
-      renderAll(); showToast("✓ Lesson signed off.");
-    }
-
-    // MASTER RENDER
-    function renderAll() {
-      const pendingReqs = state.requests.filter(r => r.status === "PENDING");
-      document.getElementById("badge-pending").textContent = pendingReqs.length;
-
-      // Mod 1: Leave Buttons
-      const types = [{ id: "OFFICIAL", label: "Official Duty", d: "Competition" }, { id: "SICK", label: "Sick Leave", d: "Medical" }, { id: "TRAINING", label: "Training", d: "EDB" }];
-      document.getElementById("leave-type-buttons").innerHTML = types.map(t => `
-        <button onclick="selectLeaveType('${t.id}')" class="touch-btn p-3 rounded-xl border-2 text-left ${state.draft.leaveType === t.id ? 'border-[#0f5e59] bg-teal-50' : 'border-slate-200 bg-white'}">
-          <div class="text-xs font-black">${t.label}</div><div class="text-[10px] text-slate-500">${t.d}</div>
-        </button>`).join("");
-
-      document.getElementById("leave-lessons-list").innerHTML = state.draft.lessons.map((les, idx) => `
-        <div onclick="toggleDraftLesson(${idx})" class="cursor-pointer rounded-xl p-3 border-2 flex flex-col gap-2 ${les.selected ? 'border-[#0f5e59] bg-emerald-50/40' : 'border-slate-200 bg-slate-50 opacity-75'}">
-          <div class="flex items-center gap-2"><input type="checkbox" ${les.selected ? 'checked' : ''} class="accent-[#0f5e59]" /><span class="font-black text-xs sm:text-sm">${les.periodName} · ${les.className} ${les.subject}</span></div>
-          <div class="text-[11px] font-bold text-[#0f5e59] pl-6">📦 ${les.packTitle}</div>
-        </div>`).join("");
-
-      document.getElementById("leave-history-list").innerHTML = state.requests.map(r => `
-        <div class="bg-slate-50 border rounded-xl p-3 flex justify-between">
-          <div><div class="text-xs font-black">${r.id} · ${r.staffName}</div><div class="text-[10px] text-slate-500">${r.date}</div></div>
-          <span class="text-xs font-black ${r.status==='APPROVED'?'text-emerald-700':'text-amber-600'}">${r.status}</span>
-        </div>`).join("");
-
-      // Mod 2: Dispatch
-      const dispatchBox = document.getElementById("dispatch-queue-container");
-      if (pendingReqs.length === 0) dispatchBox.innerHTML = `<div class="bg-emerald-50 border-2 border-emerald-300 rounded-2xl p-6 text-center font-black text-emerald-950">✅ All Leave Dispatched. TV Board Synced.</div>`;
-      else dispatchBox.innerHTML = pendingReqs.map(req => `
-        <div class="border-2 border-amber-400 rounded-2xl p-4 flex flex-col gap-3">
-          <div class="flex justify-between items-center"><h3 class="font-black text-sm">${req.staffName} Request</h3><button onclick="approvePendingRequest('${req.id}')" class="bg-emerald-600 text-white font-black px-4 py-2 rounded-xl text-xs">✓ Approve Cover</button></div>
-          ${req.lessons.map((les, lIdx) => `
-            <div class="bg-slate-50 rounded-xl p-3">
-              <div class="font-black text-xs">${les.periodName} · ${les.className}</div>
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-2 mt-2">
-                ${state.teachers.filter(t=>t.id!=="T02").map(t => {
-                  const ev = evaluateCandidate(t, les.periodOrder, les.requiresLab);
-                  return `<div onclick="${ev.valid?`selectCandidateForLesson('${req.id}',${lIdx},'${t.id}')`:''}" class="rounded-xl p-2 border-2 text-xs ${ev.valid ? (les.selectedCandidateId===t.id ? 'border-emerald-500 bg-emerald-50':'border-slate-200 cursor-pointer') : 'border-rose-100 bg-rose-50 opacity-60'}">
-                    <div class="flex justify-between font-black"><span>${t.code}</span><span>${ev.valid?`Score: ${ev.score}`:'Blocked'}</span></div>
-                    <div class="text-[10px] mt-1 ${ev.valid?'text-emerald-800':'text-rose-600'}">${ev.reason}</div>
-                  </div>`;
-                }).join("")}
-              </div>
-            </div>`).join("")}
-        </div>`).join("");
-
-      // NEW: Equity Chart Roster
-      document.getElementById("dispatch-roster-list").innerHTML = state.teachers.map(t => {
-        // Calculate bar width (assuming range -3 to +3 for visuals, normalize to 0-100%)
-        const visualNet = Math.max(-3, Math.min(3, t.netCover));
-        const fillPercent = ((visualNet + 3) / 6) * 100;
-        const color = t.netCover <= 0 ? '#10b981' : '#f59e0b'; // Green if fair/under, Orange if overworked
-        return `
-        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs">
-          <div class="flex justify-between font-black text-slate-900"><span>${t.code} (${t.nameEn})</span><span>Net: ${t.netCover>0?'+':''}${t.netCover}</span></div>
-          <div class="workload-bar-container"><div class="workload-bar-fill" style="width: ${fillPercent}%; background-color: ${color}"></div></div>
-          <div class="text-[10px] font-bold text-slate-500 mt-1">Lab: ${t.labOk?'Yes':'No'} · Busy: P${t.busyPeriods.join(',P')}</div>
-        </div>`;
-      }).join("");
-
-      // Mod 3 & 4: Classroom and TV
-      document.getElementById("classroom-duty-tabs").innerHTML = state.duties.map(d => `<button onclick="selectClassroomDuty('${d.id}')" class="touch-btn px-3 py-1 rounded-lg text-xs font-black ${selectedClassroomDutyId===d.id?'bg-amber-400 text-slate-950':'bg-white/15 text-white'}">${d.periodName} · ${d.className}</button>`).join("");
-      
-      const duty = state.duties.find(d => d.id === selectedClassroomDutyId);
-      if (duty) {
-        document.getElementById("classroom-detail-box").innerHTML = `
-          <div class="font-black text-[#0f5e59] text-xs">${duty.periodName} · ${duty.className} ${duty.subject}</div>
-          <div class="bg-emerald-50 rounded-xl p-3 flex flex-col gap-2">
-            <div class="text-sm font-black">${duty.packTitle}</div>
-            <div class="text-xs font-bold bg-white p-2 rounded border">💡 SEN Tip: ${duty.senTip}</div>
-            <div class="text-xs font-bold bg-white p-2 rounded border">🔑 Key: ${duty.answerKey}</div>
-          </div>
-          <button onclick="completeClassroomDuty('${duty.id}')" class="bg-[#0f5e59] text-white font-black py-2 rounded-xl text-xs">✓ Complete Lesson</button>`;
+        actionButtons.innerHTML = `
+          <button onclick="updateStatus('ACKNOWLEDGED')" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 rounded-xl shadow-lg transition transform hover:-translate-y-0.5">
+            1. 無聲確認簽收 (Acknowledge)
+          </button>
+        `;
+      } 
+      else if (data.status === 'ACKNOWLEDGED') {
+        lessonCard.className = 'border-2 border-sky-300 rounded-xl p-5 bg-sky-50 relative overflow-hidden transition-all duration-300';
+        statusBadge.className = 'absolute top-0 right-0 px-4 py-1.5 rounded-bl-xl font-bold text-xs shadow-sm bg-sky-600 text-white';
+        statusBadge.innerText = '已簽收 (Acknowledged)';
         
-        document.getElementById("student-quiz-box").innerHTML = `
-          <div class="font-black text-sm text-indigo-900">${duty.quizQ}</div>
-          <div class="flex flex-col gap-2 mt-2">
-            ${duty.quizOptions.map((opt, i) => `<button onclick="submitStudentQuizAnswer('${duty.id}', ${i})" class="touch-btn p-3 rounded-xl border-2 border-slate-200 text-left font-bold text-xs">${opt}</button>`).join("")}
-          </div>
-          <div class="mt-4 font-black text-indigo-700 text-xs text-right">Mastery Sync: ${duty.passedStudents}/${duty.totalStudents} Passed</div>`;
+        actionButtons.innerHTML = `
+          <button onclick="updateStatus('ARRIVED')" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl shadow-lg transition transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
+            2. 已到達課室，打卡到班 (Sign-in)
+          </button>
+        `;
       }
+      else if (data.status === 'ARRIVED') {
+        lessonCard.className = 'border-2 border-emerald-400 rounded-xl p-5 bg-emerald-50/50 relative overflow-hidden transition-all duration-300';
+        statusBadge.className = 'absolute top-0 right-0 px-4 py-1.5 rounded-bl-xl font-bold text-xs shadow-sm bg-emerald-600 text-white shadow-md';
+        statusBadge.innerText = '✓ 上課中 (Arrived)';
+        
+        actionButtons.innerHTML = `
+          <div class="flex-1 bg-slate-200 text-slate-600 font-bold py-3 rounded-xl text-center border border-slate-300">
+            打卡完成，安心上課
+          </div>
+          <button onclick="updateStatus('PENDING')" class="px-4 py-3 bg-slate-800 text-white text-xs rounded-xl hover:bg-slate-700">
+            🔄 重設示範 (Reset Demo)
+          </button>
+        `;
+      }
+    });
 
-      document.getElementById("tv-duties-grid").innerHTML = state.duties.map(d => `
-        <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
-          <div class="flex justify-between font-black text-xs text-amber-400"><span>${d.periodName}</span><span>${d.status}</span></div>
-          <div class="text-lg font-black text-white mt-1">Class ${d.className} · ${d.subject}</div>
-          <div class="text-xs font-bold text-slate-400 mt-1">Cover: <span class="text-emerald-400">${d.coverName}</span></div>
-        </div>`).join("");
+    // 將狀態寫回 Firebase
+    function updateStatus(newStatus) {
+      roomRef.update({ status: newStatus });
     }
-
-    // Utilities
-    function resetSystemData() { state = JSON.parse(JSON.stringify(DEFAULT_STATE)); switchModule("leave"); showToast("↺ System Reset."); }
-    function showToast(msg) { const t = document.getElementById("toast"); t.textContent = msg; t.classList.remove("hidden"); setTimeout(() => t.classList.add("hidden"), 2800); }
-    setInterval(() => { const el = document.getElementById("live-clock"); if (el) el.textContent = new Date().toTimeString().split(" ")[0]; }, 1000);
-    switchModule("leave");
   </script>
 </body>
 </html>
