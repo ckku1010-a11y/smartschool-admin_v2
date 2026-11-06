@@ -2,12 +2,12 @@
 <html lang="zh-HK">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>仁濟醫院靚次伯紀念中學 - 教職員請假及代課管理系統 (WebSAMS / SmartSLRS)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>仁濟醫院靚次伯紀念中學 - 智能請假及代課管理系統 (WebSAMS / SmartSLRS)</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Noto+Sans+HK:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700;800&family=Noto+Sans+HK:wght@400;500;700;900&display=swap" rel="stylesheet">
 
   <style>
     :root {
@@ -22,6 +22,7 @@
       background-color: var(--lcp-bg-soft);
       color: #1e293b;
       min-height: 100vh;
+      overflow-x: hidden;
     }
 
     .lcp-header-banner {
@@ -36,13 +37,12 @@
         -1.5px -1.5px 0 #ffffff,
          1.5px -1.5px 0 #ffffff,
         -1.5px  1.5px 0 #ffffff,
-         1.5px  1.5px 0 #ffffff,
-         0px    2px   4px rgba(0, 0, 0, 0.18);
+         1.5px  1.5px 0 #ffffff;
     }
 
     .lcp-main-navbar {
       background-color: var(--lcp-green-bar);
-      box-shadow: 0 2px 6px rgba(68, 120, 0, 0.16);
+      box-shadow: 0 2px 6px rgba(68, 120, 0, 0.15);
     }
 
     .lcp-section-underline {
@@ -55,13 +55,13 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 20px;
-      height: 20px;
+      width: 18px;
+      height: 18px;
       background-color: var(--lcp-orange-accent);
       color: #ffffff;
       border-radius: 4px;
       font-weight: 900;
-      font-size: 12px;
+      font-size: 11px;
       line-height: 1;
       flex-shrink: 0;
     }
@@ -71,44 +71,35 @@
       border: 1px solid #cbd5e1;
     }
 
+    /* Hide scrollbar for clean iPad horizontal nav if needed */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
     @keyframes soft-pulse {
       0%, 100% { opacity: 1; }
-      50% { opacity: 0.65; }
+      50% { opacity: 0.55; }
     }
-    .pulse-badge {
-      animation: soft-pulse 1.8s infinite ease-in-out;
+    .pulse-dot {
+      animation: soft-pulse 1.6s infinite ease-in-out;
     }
   </style>
 </head>
 <body class="flex flex-col min-h-screen text-slate-800">
 
   <!-- ==========================================================================
-       1. TOP SCHOOL BANNER (Official YCHLCP Bright Theme + WebSAMS Status Bar)
+       1. COMPACT SINGLE-ROW SCHOOL HEADER (Auto School Calendar & Live HK Time)
        ========================================================================== -->
   <header id="app-top-header" class="lcp-header-banner border-b border-lime-300">
-    <svg class="absolute left-0 top-0 h-full w-64 opacity-35 pointer-events-none" viewBox="0 0 240 100" preserveAspectRatio="none">
-      <polygon points="0,0 150,0 90,100 0,100" fill="#ffffff" opacity="0.45"/>
-      <g stroke="#ffffff" stroke-width="1.2" fill="none">
-        <line x1="12" y1="12" x2="95" y2="28" />
-        <line x1="95" y1="28" x2="55" y2="85" />
-        <line x1="12" y1="12" x2="55" y2="85" />
-        <circle cx="95" cy="28" r="3" fill="#ffffff" />
-      </g>
-    </svg>
-
-    <div class="max-w-7xl mx-auto px-4 py-2.5 relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-2">
-      <!-- School Crest & Title -->
-      <div class="flex items-center gap-3">
-        <div class="relative w-12 h-14 md:w-14 md:h-16 flex-shrink-0 flex items-center justify-center">
-          <img
-            id="custom-logo-img"
-            src="logo.png"
-            alt="校徽"
-            class="w-full h-full object-contain hidden"
-            onload="this.classList.remove('hidden'); document.getElementById('default-logo-svg').classList.add('hidden');"
-            onerror="this.classList.add('hidden'); document.getElementById('default-logo-svg').classList.remove('hidden');"
-          />
-          <svg id="default-logo-svg" viewBox="0 0 100 115" class="w-full h-full drop-shadow">
+    <div class="max-w-7xl mx-auto px-3 sm:px-4 py-2 relative z-10 flex items-center justify-between gap-2">
+      <!-- Left: School Crest & Name -->
+      <div class="flex items-center gap-2.5 min-w-0">
+        <div class="w-10 h-11 sm:w-12 sm:h-14 flex-shrink-0 flex items-center justify-center">
+          <svg viewBox="0 0 100 115" class="w-full h-full drop-shadow-sm">
             <path d="M50 4 L92 18 L92 56 C92 84 50 108 50 108 C50 108 8 84 8 56 L8 18 Z" fill="#ffffff" stroke="#1e3a8a" stroke-width="4"/>
             <path d="M50 10 L86 22 L86 55 C86 79 50 100 50 100 C50 100 14 79 14 55 L14 22 Z" fill="#ffffff" stroke="#dc2626" stroke-width="2.5"/>
             <circle cx="50" cy="54" r="20" fill="#eff6ff" stroke="#1e3a8a" stroke-width="2.5"/>
@@ -118,126 +109,97 @@
           </svg>
         </div>
 
-        <div>
-          <div class="flex flex-wrap items-center gap-2">
-            <h1 class="text-lg sm:text-xl md:text-2xl font-black tracking-wide lcp-title-stroke leading-none">
+        <div class="min-w-0">
+          <div class="flex items-center gap-2 flex-wrap">
+            <h1 class="text-base sm:text-xl font-black tracking-wide lcp-title-stroke truncate">
               仁濟醫院靚次伯紀念中學
             </h1>
-            <span class="bg-[#2b5400] text-white text-[11px] font-bold px-2 py-0.5 rounded shadow-sm">
-              WebSAMS 教職員請假、代課編排及教學進度系統 (SLRS v4.0)
+            <span class="hidden sm:inline-block bg-[#2b5400] text-white text-[10px] font-bold px-2 py-0.5 rounded whitespace-nowrap">
+              WebSAMS 請假及代課系統
             </span>
           </div>
-          <p class="text-xs sm:text-sm font-extrabold tracking-tight lcp-title-stroke mt-0.5">
+          <p class="text-[11px] sm:text-xs font-extrabold tracking-tight lcp-title-stroke truncate">
             Yan Chai Hospital Lan Chi Pat Memorial Secondary School
           </p>
         </div>
       </div>
 
-      <!-- Right System Control Bar: Academic Date, Active Period Simulator & Language -->
-      <div class="flex flex-wrap items-center gap-2 self-end lg:self-center">
-        <!-- Academic Calendar & SoW Week Badge -->
-        <div class="bg-white/95 border border-lime-600/60 px-2.5 py-1 rounded-lg text-[11px] font-bold text-slate-700 shadow-sm flex items-center gap-1.5">
-          <span>🗓️</span>
-          <span id="academic-date-display">2026-11-06 (Fri)</span>
-          <span class="bg-lime-100 text-[#2b5400] font-black px-1.5 py-0.2 rounded border border-lime-300">Term 1 · Week 10</span>
-        </div>
-
-        <!-- Current Period / Time Selector (Controls "This Lesson & Next Lesson" on TV & Door Monitor) -->
-        <div class="bg-white border-2 border-[#68b800] px-2.5 py-1 rounded-lg text-[11px] font-bold text-[#2b5400] shadow-sm flex items-center gap-1.5">
-          <span>🕒 當前課節 Current Period:</span>
-          <select
-            id="global-active-period"
-            onchange="handleActivePeriodChange(this.value)"
-            class="bg-lime-50 text-[#2b5400] font-black px-1.5 py-0.5 rounded border border-lime-400 outline-none cursor-pointer text-[11px]"
-          >
-            <option value="P1">P1 (08:30-09:10)</option>
-            <option value="P2" selected>P2 (09:10-09:50) [現在 Now]</option>
-            <option value="P3">P3 (10:10-10:50)</option>
-            <option value="P4">P4 (10:50-11:30)</option>
-            <option value="P5">P5 (11:50-12:30)</option>
-            <option value="P6">P6 (12:30-13:10)</option>
-            <option value="P7">P7 (14:20-15:00)</option>
-            <option value="P8">P8 (15:00-15:40)</option>
-          </select>
-        </div>
-
-        <!-- Cycle Day Selector -->
-        <div class="bg-white/95 border border-lime-600/60 px-2.5 py-1 rounded-lg text-[11px] font-bold text-slate-700 shadow-sm flex items-center gap-1">
-          <span>循環日:</span>
-          <select
-            id="global-cycle-day"
-            onchange="handleCycleDayChange(this.value)"
-            class="bg-lime-100 text-slate-900 font-black px-1.5 py-0.5 rounded border-0 outline-none cursor-pointer text-[11px]"
-          >
-            <option value="DAY 1">DAY 1</option>
-            <option value="DAY 2" selected>DAY 2</option>
-            <option value="DAY 3">DAY 3</option>
-            <option value="DAY 4">DAY 4</option>
-            <option value="DAY 5">DAY 5</option>
-            <option value="DAY 6">DAY 6</option>
-          </select>
+      <!-- Right: 100% Automatic School Calendar & Live Hong Kong Time Status Bar -->
+      <div class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+        <div class="bg-white/95 border border-lime-600/50 px-2.5 py-1 rounded-lg shadow-sm flex items-center gap-2 text-xs whitespace-nowrap">
+          <div class="flex items-center gap-1">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 pulse-dot"></span>
+            <span id="auto-header-date" class="font-bold text-slate-700">2026-11-06</span>
+          </div>
+          <span class="text-slate-300">|</span>
+          <span id="auto-header-cycle" class="font-black text-[#2b5400] bg-lime-100 px-1.5 py-0.5 rounded">DAY 2</span>
+          <span class="hidden md:inline text-slate-300">|</span>
+          <span id="auto-header-period-badge" class="hidden md:inline-block font-black text-white bg-[#68b800] px-2 py-0.5 rounded">
+            本節 P4
+          </span>
+          <span id="auto-header-clock" class="font-mono font-black text-slate-900 bg-slate-100 px-1.5 py-0.5 rounded">
+            10:55:00
+          </span>
         </div>
       </div>
     </div>
   </header>
 
   <!-- ==========================================================================
-       2. MAIN NAVIGATION BAR (#68b800) - Role & Terminal Switcher
+       2. SINGLE-LINE IPAD & COMPUTER NAVIGATION BAR (No Wrapping / Overlapping)
        ========================================================================== -->
   <nav id="app-main-nav" class="lcp-main-navbar text-white sticky top-0 z-40">
-    <div class="max-w-7xl mx-auto px-4">
-      <div class="flex flex-wrap items-center justify-between py-2 gap-2">
+    <div class="max-w-7xl mx-auto px-3 sm:px-4">
+      <div class="flex items-center justify-between py-1.5 gap-2 overflow-x-auto no-scrollbar">
 
-        <!-- Role Switcher Tabs -->
-        <div class="flex flex-wrap items-center gap-1.5">
+        <div class="flex items-center gap-1 sm:gap-1.5 flex-nowrap">
           <button
             onclick="logoutToLoginScreen()"
             id="nav-tab-login"
-            class="px-2.5 py-1.5 rounded-lg text-xs font-black transition bg-white text-[#2b5400] shadow-sm"
+            class="px-2.5 py-1.5 rounded-lg text-xs font-black transition bg-white text-[#2b5400] shadow-sm whitespace-nowrap"
           >
-            🏠 內聯網登入 Login
+            🏠 登入首頁
           </button>
           <button
             onclick="loginAsRole('ckku')"
             id="nav-tab-ckku"
-            class="px-2.5 py-1.5 rounded-lg text-xs font-bold transition bg-black/15 hover:bg-white/20 text-white"
+            class="px-2.5 py-1.5 rounded-lg text-xs font-bold transition bg-black/15 hover:bg-white/20 text-white whitespace-nowrap"
           >
-            👨‍🏫 科任請假 (周嘉權 CKKU)
-          </button>
-          <button
-            onclick="loginAsRole('vp_admin')"
-            id="nav-tab-vp"
-            class="px-2.5 py-1.5 rounded-lg text-xs font-bold transition bg-black/15 hover:bg-white/20 text-white"
-          >
-            ✅ 校務處代課編排及進度庫 (WebSAMS Admin)
+            👨‍🏫 科任請假 (CKKU)
           </button>
           <button
             onclick="loginAsRole('tmchan')"
             id="nav-tab-tmchan"
-            class="px-2.5 py-1.5 rounded-lg text-xs font-bold transition bg-black/15 hover:bg-white/20 text-white"
+            class="px-2.5 py-1.5 rounded-lg text-xs font-bold transition bg-black/15 hover:bg-white/20 text-white whitespace-nowrap"
           >
-            📋 代課教師全日表 (陳大文 TMCHAN)
+            📋 代課全日表 (TMCHAN)
+          </button>
+          <button
+            onclick="loginAsRole('vp_admin')"
+            id="nav-tab-vp"
+            class="px-2.5 py-1.5 rounded-lg text-xs font-bold transition bg-black/15 hover:bg-white/20 text-white whitespace-nowrap"
+          >
+            ✅ 校務處管理 (WebSAMS)
           </button>
           <button
             onclick="loginAsRole('staffroom_tv')"
             id="nav-tab-tv"
-            class="px-2.5 py-1.5 rounded-lg text-xs font-bold transition bg-black/15 hover:bg-white/20 text-white"
+            class="px-2.5 py-1.5 rounded-lg text-xs font-bold transition bg-black/15 hover:bg-white/20 text-white whitespace-nowrap"
           >
-            📺 教員室看板 (本節+下一節)
+            📺 教員室看板 (本節+下節)
           </button>
           <button
             onclick="loginAsRole('door_monitor')"
             id="nav-tab-door"
-            class="px-2.5 py-1.5 rounded-lg text-xs font-bold transition bg-black/15 hover:bg-white/20 text-white"
+            class="px-2.5 py-1.5 rounded-lg text-xs font-bold transition bg-black/15 hover:bg-white/20 text-white whitespace-nowrap"
           >
-            🖥️ 課室門外小型螢幕 (Small Monitor)
+            🖥️ 課室門外螢幕 (極簡版)
           </button>
         </div>
 
-        <!-- Signed-in Identity Pill -->
-        <div id="nav-user-pill" class="hidden xl:flex items-center gap-1.5 bg-black/20 px-3 py-1 rounded-lg text-xs">
-          <span>👤</span>
-          <span id="nav-user-name" class="font-bold text-yellow-200">未登入</span>
+        <div id="nav-user-pill" class="hidden lg:flex items-center gap-1.5 bg-black/20 px-2.5 py-1 rounded-lg text-xs whitespace-nowrap flex-shrink-0">
+          <span class="w-2 h-2 rounded-full bg-yellow-300"></span>
+          <span id="nav-user-name" class="font-bold text-yellow-100">未登入</span>
         </div>
 
       </div>
@@ -245,78 +207,74 @@
   </nav>
 
   <!-- ==========================================================================
-       3. MAIN CONTENT AREA
+       3. MAIN WORKSPACE CONTAINER
        ========================================================================== -->
-  <main class="max-w-7xl mx-auto w-full px-4 py-4 flex-1 space-y-4">
+  <main class="max-w-7xl mx-auto w-full px-3 sm:px-4 py-4 flex-1 space-y-4">
 
-    <!-- System Toast Notification -->
-    <div id="system-toast" class="hidden rounded-xl p-3 border shadow-sm flex items-center justify-between transition-all">
-      <div class="flex items-center gap-2">
-        <span id="system-toast-icon" class="text-base">✅</span>
-        <p id="system-toast-text" class="text-xs sm:text-sm font-bold"></p>
+    <!-- System Toast -->
+    <div id="system-toast" class="hidden rounded-xl p-2.5 border shadow-sm flex items-center justify-between transition-all">
+      <div class="flex items-center gap-2 min-w-0">
+        <span id="system-toast-icon" class="text-sm flex-shrink-0">✅</span>
+        <p id="system-toast-text" class="text-xs font-bold truncate"></p>
       </div>
-      <button onclick="hideSystemToast()" class="text-xs font-bold px-2 py-0.5 rounded hover:bg-black/5">✕</button>
+      <button onclick="hideSystemToast()" class="text-xs font-bold px-2 py-0.5 rounded hover:bg-black/5 flex-shrink-0">✕</button>
     </div>
 
     <!-- ========================================================================
-         SCREEN A: INTRANET LOGIN & SYSTEM OVERVIEW (Default Landing Page)
+         SCREEN A: LOGIN & QUICK ROLE LAUNCHER
          ======================================================================== -->
     <section id="screen-login" class="space-y-4">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
 
-        <!-- Left 5 Cols: WebSAMS / eClass System Architecture Summary -->
-        <div class="lg:col-span-5 bg-white rounded-xl p-5 shadow-sm border border-lime-300 space-y-4">
+        <!-- Left 5 Cols: System Highlights -->
+        <div class="lg:col-span-5 bg-white rounded-xl p-5 shadow-sm border border-lime-300 space-y-3.5">
           <div class="flex items-center gap-2">
             <span class="lcp-orange-arrow">↘</span>
-            <h2 class="text-base sm:text-lg font-black text-slate-900 lcp-section-underline">
-              系統核心革新與 WebSAMS 對接流程
+            <h2 class="text-base font-black text-slate-900 lcp-section-underline">
+              智能校曆定位及 iPad / 電腦雙端優化設計
             </h2>
           </div>
 
-          <div class="space-y-3 text-xs leading-relaxed text-slate-700">
+          <div class="space-y-2.5 text-xs leading-relaxed text-slate-700">
             <div class="p-3 rounded-lg bg-[#f4fae8] border border-lime-300">
-              <div class="font-black text-[#2b5400]">1. 教員室分欄看板（支援多名教師同時請假）</div>
+              <div class="font-black text-[#2b5400]">1. 全自動香港時間 (HKT) 與校曆循環日追蹤</div>
               <p class="mt-0.5 text-slate-600">
-                左欄獨立列出<strong>「今日請假教職員名單」</strong>；右欄根據實時鐘號<strong>只顯示「本節課堂」及「下一節課堂」</strong>代課安排，多位老師同時請假亦絕不爆版。教師個人帳號則保留完整全日課表檢視。
+                系統自動讀取香港標準時間及學校校曆，自動判定今日為 <strong>DAY 2 (Term 1 · Week 10)</strong> 及當前課節，無須人工切換時段。
               </p>
             </div>
 
             <div class="p-3 rounded-lg bg-[#f4fae8] border border-lime-300">
-              <div class="font-black text-[#2b5400]">2. 自動追蹤教學進度表 (SoW) 並輸出 Word 工作紙連答案</div>
+              <div class="font-black text-[#2b5400]">2. 課室門外螢幕極簡顯示 (Ultra-Minimalist Door Sign)</div>
               <p class="mt-0.5 text-slate-600">
-                無須系統建議課題。若請假老師未填寫課題，AI 自動根據<strong>當日日期（Week 10）及班別科目</strong>查閱學校《各科教學進度表資料庫 (Scheme of Work)》，自動生成<strong>40分鐘溫習工作紙 / 小測連教師評分答案 (.doc Word 檔)</strong>供下載列印或派發。
+                專為課室門外 iPad / 小型螢幕設計，只顯示最關鍵資訊：<strong>「CKKU 周嘉權 請假 ➔ TMCHAN 陳大文 代課」</strong>及一鍵到班打卡，字體清晰無重疊。
               </p>
             </div>
 
             <div class="p-3 rounded-lg bg-[#f4fae8] border border-lime-300">
-              <div class="font-black text-[#2b5400]">3. 課室門外小型螢幕專屬介面 (Small Monitor Kiosk)</div>
+              <div class="font-black text-[#2b5400]">3. 自動對應教學進度表 (SoW) 生成 Word 試卷連答案</div>
               <p class="mt-0.5 text-slate-600">
-                專為課室及特別室門外 7"–10" 小型螢幕設計，單頁無捲軸同時顯示<strong>「本節課堂」與「下一節課堂」</strong>、代課老師姓名及一鍵到班觸控打卡。
+                教師請假免填課題，AI 自動按當日校曆周次檢索《教學進度表》生成 40 分鐘 Word (`.doc`) 溫習工作紙 / 小測連答案。
               </p>
             </div>
           </div>
         </div>
 
-        <!-- Right 7 Cols: Intranet Sign-In & Quick Role Switcher -->
+        <!-- Right 7 Cols: Intranet Sign-In & Role Cards -->
         <div class="lg:col-span-7 bg-white rounded-xl p-5 shadow-md border-2 border-[#68b800] space-y-4">
-          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
             <div class="flex items-center gap-2">
               <span class="lcp-orange-arrow">↘</span>
               <div>
-                <h2 class="text-base sm:text-lg font-black text-slate-900">
-                  教職員內聯網登入 Staff Intranet Sign In
-                </h2>
-                <p class="text-[11px] text-slate-500">
-                  使用學校帳號 (@lcp.edu.hk) 登入或點擊下方角色快速進入介面
-                </p>
+                <h2 class="text-base font-black text-slate-900">教職員內聯網登入 Staff Intranet Sign In</h2>
+                <p class="text-[11px] text-slate-500">支援 iPad 及桌面電腦瀏覽器，點擊下方角色卡可直接進入</p>
               </div>
             </div>
-            <span class="text-[11px] font-mono bg-lime-100 text-lime-900 font-bold px-2.5 py-1 rounded border border-lime-300">
-              WebSAMS SSO
+            <span class="text-[11px] font-mono bg-lime-100 text-lime-900 font-bold px-2 py-0.5 rounded border border-lime-300">
+              SSO @lcp.edu.hk
             </span>
           </div>
 
-          <form onsubmit="submitLoginForm(event)" class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
+          <form onsubmit="submitLoginForm(event)" class="grid grid-cols-1 sm:grid-cols-12 gap-2.5 items-end">
             <div class="sm:col-span-5">
               <label class="block text-xs font-bold text-slate-700 mb-1">學校帳號 Account</label>
               <input
@@ -347,42 +305,17 @@
             </div>
           </form>
 
-          <!-- Role Switcher Cards -->
           <div class="pt-3 border-t border-slate-200 space-y-2">
-            <div class="text-xs font-black text-slate-700">⚡ 快速角色切換 Quick Role Switcher:</div>
+            <div class="text-xs font-black text-slate-700">⚡ 快速進入各端畫面 Quick Launch (iPad & PC Ready):</div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-              <button
-                type="button"
-                onclick="loginAsRole('ckku')"
-                class="text-left p-3 rounded-xl border-2 border-lime-400 bg-lime-50/70 hover:bg-lime-100 transition flex items-start justify-between gap-2"
-              >
-                <div>
-                  <div class="text-xs font-black text-lime-950">① 科任請假：周嘉權老師 (CKKU)</div>
-                  <div class="text-[11px] text-slate-600 mt-0.5">檢視全日時間表、免填課題自動按教學進度生成 Word 工作紙及答案</div>
-                </div>
-                <span class="text-[10px] bg-[#68b800] text-white px-2 py-0.5 rounded font-bold shrink-0">Teacher</span>
-              </button>
-
-              <button
-                type="button"
-                onclick="loginAsRole('tmchan')"
-                class="text-left p-3 rounded-xl border border-slate-300 bg-slate-50 hover:bg-lime-50 transition flex items-start justify-between gap-2"
-              >
-                <div>
-                  <div class="text-xs font-black text-slate-900">② 代課教師：陳大文老師 (TMCHAN)</div>
-                  <div class="text-[11px] text-slate-600 mt-0.5">檢視個人全日課表及代課節數、一鍵下載代課班別 Word 小測及答案</div>
-                </div>
-                <span class="text-[10px] bg-amber-600 text-white px-2 py-0.5 rounded font-bold shrink-0">Cover</span>
-              </button>
-
               <button
                 type="button"
                 onclick="loginAsRole('staffroom_tv')"
                 class="text-left p-3 rounded-xl border-2 border-emerald-500 bg-emerald-50/60 hover:bg-emerald-100/70 transition flex items-start justify-between gap-2"
               >
                 <div>
-                  <div class="text-xs font-black text-emerald-950">③ 教員室分欄看板 (Staffroom Live Board)</div>
-                  <div class="text-[11px] text-slate-600 mt-0.5">左欄：今日全體請假名單｜右欄：按時間僅顯示「本節及下一節」</div>
+                  <div class="text-xs font-black text-emerald-950">① 教員室分欄看板 (Staffroom Board)</div>
+                  <div class="text-[11px] text-slate-600 mt-0.5">左列全體請假名單｜右按香港時間自動顯示本節及下一節</div>
                 </div>
                 <span class="text-[10px] bg-emerald-700 text-white px-2 py-0.5 rounded font-bold shrink-0">TV Board</span>
               </button>
@@ -393,22 +326,46 @@
                 class="text-left p-3 rounded-xl border-2 border-sky-500 bg-sky-50/60 hover:bg-sky-100/70 transition flex items-start justify-between gap-2"
               >
                 <div>
-                  <div class="text-xs font-black text-sky-950">④ 課室門外小型螢幕 (Small Door Monitor)</div>
-                  <div class="text-[11px] text-slate-600 mt-0.5">專為課室門外小型螢幕設計，清晰顯示本節及下一節課堂與到班打卡</div>
+                  <div class="text-xs font-black text-sky-950">② 課室門外螢幕 (極簡代課顯示)</div>
+                  <div class="text-[11px] text-slate-600 mt-0.5">大字極簡顯示：CKKU 請假 ➔ TMCHAN 代課 及一鍵打卡</div>
                 </div>
-                <span class="text-[10px] bg-sky-700 text-white px-2 py-0.5 rounded font-bold shrink-0">Door Kiosk</span>
+                <span class="text-[10px] bg-sky-700 text-white px-2 py-0.5 rounded font-bold shrink-0">Door Screen</span>
+              </button>
+
+              <button
+                type="button"
+                onclick="loginAsRole('ckku')"
+                class="text-left p-3 rounded-xl border border-lime-400 bg-lime-50/70 hover:bg-lime-100 transition flex items-start justify-between gap-2"
+              >
+                <div>
+                  <div class="text-xs font-black text-lime-950">③ 科任請假：周嘉權老師 (CKKU)</div>
+                  <div class="text-[11px] text-slate-600 mt-0.5">個人全日時間表 (P1–P8)、免填課題自動出 Word 溫習卷連答案</div>
+                </div>
+                <span class="text-[10px] bg-[#68b800] text-white px-2 py-0.5 rounded font-bold shrink-0">Teacher</span>
+              </button>
+
+              <button
+                type="button"
+                onclick="loginAsRole('tmchan')"
+                class="text-left p-3 rounded-xl border border-slate-300 bg-slate-50 hover:bg-lime-50 transition flex items-start justify-between gap-2"
+              >
+                <div>
+                  <div class="text-xs font-black text-slate-900">④ 代課教師：陳大文老師 (TMCHAN)</div>
+                  <div class="text-[11px] text-slate-600 mt-0.5">檢視全日代課節數、下載各班 Word 試卷連答案及簽收</div>
+                </div>
+                <span class="text-[10px] bg-amber-600 text-white px-2 py-0.5 rounded font-bold shrink-0">Cover</span>
               </button>
 
               <button
                 type="button"
                 onclick="loginAsRole('vp_admin')"
-                class="sm:col-span-2 text-left p-3 rounded-xl border border-slate-300 bg-slate-50 hover:bg-lime-50 transition flex items-center justify-between gap-2"
+                class="sm:col-span-2 text-left p-2.5 rounded-xl border border-slate-300 bg-slate-50 hover:bg-lime-50 transition flex items-center justify-between gap-2"
               >
                 <div>
-                  <div class="text-xs font-black text-slate-900">⑤ 校務處及副校長管理台 (WebSAMS Admin & Scheme of Work DB)</div>
-                  <div class="text-[11px] text-slate-600 mt-0.5">審批多位老師請假、智能無衝突代課配額編排、檢視及管理《全校各科教學進度表資料庫 (SoW)》</div>
+                  <div class="text-xs font-black text-slate-900">⑤ 校務處管理台 (WebSAMS Admin & 教學進度庫 SoW)</div>
+                  <div class="text-[11px] text-slate-600">審批請假、智能無衝突派課、管理《全校各科教學進度表資料庫》</div>
                 </div>
-                <span class="text-[10px] bg-[#4d8a00] text-white px-2.5 py-1 rounded font-bold shrink-0">VP / Admin</span>
+                <span class="text-[10px] bg-[#4d8a00] text-white px-2.5 py-1 rounded font-bold shrink-0">Admin</span>
               </button>
             </div>
           </div>
@@ -418,36 +375,31 @@
     </section>
 
     <!-- ========================================================================
-         SCREEN B: TEACHER PORTAL (CKKU / TMCHAN)
-         - Teachers can always see their WHOLE DAY lessons (P1-P8)
-         - Compact WebSAMS table layout
-         - Auto SoW lookup when topic is left blank + MS Word (.doc) download
+         SCREEN B: TEACHER PORTAL (Full-Day Schedule Visible + Auto SoW Word File)
          ======================================================================== -->
     <section id="screen-teacher" class="hidden space-y-4">
 
-      <!-- Teacher Top Sub-navigation & Switcher -->
       <div class="bg-white rounded-xl p-2.5 shadow-sm border border-lime-300 flex flex-wrap items-center justify-between gap-2">
         <div class="flex flex-wrap items-center gap-1.5">
           <button
             onclick="switchTeacherSubTab('timetable-leave')"
             id="teacher-subtab-btn-leave"
-            class="px-3.5 py-1.5 rounded-lg text-xs font-black transition bg-[#68b800] text-white"
+            class="px-3 py-1.5 rounded-lg text-xs font-black transition bg-[#68b800] text-white"
           >
-            📅 個人全日課表及請假申請 (Full-Day Timetable & Leave)
+            📅 個人全日課表及請假申請 (Full-Day P1–P8)
           </button>
           <button
             onclick="switchTeacherSubTab('my-substitutions')"
             id="teacher-subtab-btn-sub"
-            class="px-3.5 py-1.5 rounded-lg text-xs font-black transition text-slate-700 hover:bg-lime-50 flex items-center gap-1.5"
+            class="px-3 py-1.5 rounded-lg text-xs font-black transition text-slate-700 hover:bg-lime-50 flex items-center gap-1.5"
           >
-            <span>📋 全日代課任務及下載工作紙 (Full-Day Cover Duties & Word Files)</span>
+            <span>📋 全日代課表及下載 Word 試卷</span>
             <span id="teacher-sub-count-badge" class="px-2 py-0.2 rounded-full text-[11px] bg-amber-500 text-white font-black">0</span>
           </button>
         </div>
 
-        <!-- Switch Teacher Account for Demo -->
-        <div class="flex items-center gap-2">
-          <span class="text-xs font-bold text-slate-600">檢視教師帳號 Teacher AC:</span>
+        <div class="flex items-center gap-1.5">
+          <span class="text-xs font-bold text-slate-600">教師帳號:</span>
           <select
             id="teacher-portal-account-select"
             onchange="switchActiveTeacherAccount(this.value)"
@@ -456,20 +408,20 @@
         </div>
       </div>
 
-      <!-- SUBVIEW B1: Teacher's 6-Day Full Timetable + Leave Application + Auto SoW Word Generator -->
-      <div id="teacher-subview-leave" class="grid grid-cols-1 xl:grid-cols-12 gap-4 items-start">
+      <!-- SUBVIEW B1: Teacher Full Timetable + Leave Request -->
+      <div id="teacher-subview-leave" class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
 
-        <!-- Left 7 Cols: Full 6-Day Timetable (Whole Day P1-P8 always visible to Teacher) -->
-        <div class="xl:col-span-7 bg-white rounded-xl p-4 shadow-sm border border-lime-300 space-y-3">
-          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
+        <!-- Left 7 Cols: Full 6-Day Timetable -->
+        <div class="lg:col-span-7 bg-white rounded-xl p-4 shadow-sm border border-lime-300 space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2">
             <div class="flex items-center gap-2">
               <span class="lcp-orange-arrow">↘</span>
               <div>
                 <h2 id="timetable-owner-title" class="text-sm sm:text-base font-black text-slate-900">
-                  個人循環周全日時間表 Full-Day Timetable (P1–P8)
+                  個人全日時間表 Full-Day Timetable (P1–P8)
                 </h2>
                 <p class="text-[11px] text-slate-500">
-                  教師帳號可隨時檢視全日所有課節（點擊 DAY 1–DAY 6 欄位可載入當日課節申請請假）
+                  教師帳號可檢視全日完整課節（系統已自動鎖定今日校曆循環日）
                 </p>
               </div>
             </div>
@@ -480,13 +432,13 @@
             <table class="w-full text-center border-collapse websams-table text-xs">
               <thead>
                 <tr class="bg-[#eef8dc] text-[#2b5400] font-black">
-                  <th class="p-2 w-28 text-left">課節 Period (全日)</th>
-                  <th onclick="selectLeaveDay('DAY 1')" id="th-DAY-1" class="p-2 cursor-pointer hover:bg-lime-200">DAY 1</th>
-                  <th onclick="selectLeaveDay('DAY 2')" id="th-DAY-2" class="p-2 cursor-pointer hover:bg-lime-200">DAY 2</th>
-                  <th onclick="selectLeaveDay('DAY 3')" id="th-DAY-3" class="p-2 cursor-pointer hover:bg-lime-200">DAY 3</th>
-                  <th onclick="selectLeaveDay('DAY 4')" id="th-DAY-4" class="p-2 cursor-pointer hover:bg-lime-200">DAY 4</th>
-                  <th onclick="selectLeaveDay('DAY 5')" id="th-DAY-5" class="p-2 cursor-pointer hover:bg-lime-200">DAY 5</th>
-                  <th onclick="selectLeaveDay('DAY 6')" id="th-DAY-6" class="p-2 cursor-pointer hover:bg-lime-200">DAY 6</th>
+                  <th class="p-2 w-24 text-left">課節 Period</th>
+                  <th onclick="selectLeaveDay('DAY 1')" id="th-DAY-1" class="p-1.5 cursor-pointer hover:bg-lime-200">DAY 1</th>
+                  <th onclick="selectLeaveDay('DAY 2')" id="th-DAY-2" class="p-1.5 cursor-pointer hover:bg-lime-200">DAY 2</th>
+                  <th onclick="selectLeaveDay('DAY 3')" id="th-DAY-3" class="p-1.5 cursor-pointer hover:bg-lime-200">DAY 3</th>
+                  <th onclick="selectLeaveDay('DAY 4')" id="th-DAY-4" class="p-1.5 cursor-pointer hover:bg-lime-200">DAY 4</th>
+                  <th onclick="selectLeaveDay('DAY 5')" id="th-DAY-5" class="p-1.5 cursor-pointer hover:bg-lime-200">DAY 5</th>
+                  <th onclick="selectLeaveDay('DAY 6')" id="th-DAY-6" class="p-1.5 cursor-pointer hover:bg-lime-200">DAY 6</th>
                 </tr>
               </thead>
               <tbody id="teacher-timetable-tbody" class="bg-white"></tbody>
@@ -494,21 +446,20 @@
           </div>
         </div>
 
-        <!-- Right 5 Cols: Leave Form & Auto Scheme-of-Work Word Worksheet Generator -->
-        <div class="xl:col-span-5 bg-white rounded-xl p-4 shadow-sm border-2 border-[#68b800] space-y-3.5">
-          <div class="flex items-center gap-2 border-b border-slate-100 pb-2.5">
+        <!-- Right 5 Cols: Leave Submission + Auto SoW Word Worksheet -->
+        <div class="lg:col-span-5 bg-white rounded-xl p-4 shadow-sm border-2 border-[#68b800] space-y-3">
+          <div class="flex items-center gap-2 border-b border-slate-100 pb-2">
             <span class="lcp-orange-arrow">↘</span>
             <div>
               <h3 class="text-sm sm:text-base font-black text-slate-900">
-                提交請假申請及自動生成 Word 溫習工作紙/小測
+                提交請假申請及自動生成 Word 試卷連答案
               </h3>
               <p class="text-[11px] text-slate-500">
-                如不填寫課題，系統自動按當日日期 (Week 10) 查閱《教學進度表 SoW》生成附答案之 Word 試卷
+                免填課題：AI 自動按今日校曆 (Week 10) 查閱《教學進度表》出題
               </p>
             </div>
           </div>
 
-          <!-- Leave Day & WebSAMS Leave Code -->
           <div class="grid grid-cols-2 gap-2.5">
             <div>
               <label class="block text-[11px] font-bold text-slate-700 mb-1">請假循環日 Cycle Day</label>
@@ -518,7 +469,7 @@
                 class="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 text-xs font-black bg-lime-50 text-lime-950"
               >
                 <option value="DAY 1">DAY 1</option>
-                <option value="DAY 2" selected>DAY 2</option>
+                <option value="DAY 2" selected>DAY 2 (今日 Today)</option>
                 <option value="DAY 3">DAY 3</option>
                 <option value="DAY 4">DAY 4</option>
                 <option value="DAY 5">DAY 5</option>
@@ -527,92 +478,72 @@
             </div>
 
             <div>
-              <label class="block text-[11px] font-bold text-slate-700 mb-1">WebSAMS 請假代碼 Leave Code</label>
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">WebSAMS 請假類別</label>
               <select id="leave-form-reason" class="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 text-xs font-bold bg-white">
-                <option value="[OD] 公假 / 帶隊活動 Official Duty">[OD] 公假 / 帶隊活動 Official Duty</option>
+                <option value="[OD] 公假 Official Duty">[OD] 公假 Official Duty</option>
                 <option value="[SL] 病假 Sick Leave">[SL] 病假 Sick Leave</option>
-                <option value="[TR] 教師進修研討會 Training / Seminar">[TR] 進修研討會 Training</option>
+                <option value="[TR] 進修研討會 Seminar">[TR] 進修研討會 Seminar</option>
                 <option value="[PL] 事假 Personal Leave">[PL] 事假 Personal Leave</option>
               </select>
             </div>
           </div>
 
-          <!-- Affected Lessons on Selected Day (With Auto SoW Topic Matched Badge) -->
           <div>
             <label class="block text-[11px] font-bold text-slate-700 mb-1">
-              當日需代課課節及資料庫教學進度配對 Affected Lessons & Auto SoW Tracking:
+              當日受影響課節及自動配對之《教學進度表 SoW》課題:
             </label>
-            <div id="leave-affected-lessons-list" class="space-y-1.5 max-h-48 overflow-y-auto pr-1"></div>
+            <div id="leave-affected-lessons-list" class="space-y-1.5 max-h-44 overflow-y-auto pr-1"></div>
           </div>
 
-          <!-- AI 40-Min Worksheet / Short Test Generator (No Topic Suggestions, Auto SoW Tracking) -->
-          <div class="p-3 rounded-xl bg-[#f4fae8] border border-[#68b800] space-y-2.5">
-            <div class="flex flex-wrap items-center justify-between gap-1">
-              <div class="text-xs font-black text-[#2b5400] flex items-center gap-1">
-                <span>📄 40分鐘代課工作紙 / 小測連答案 (Word .doc)</span>
-              </div>
-              <span id="sow-tracking-status-badge" class="text-[10px] font-black bg-emerald-100 text-emerald-900 px-2 py-0.5 rounded border border-emerald-300">
-                ⚡ 已自動連結教學進度庫 (Auto SoW)
+          <!-- Auto SoW Word Generator Box -->
+          <div class="p-3 rounded-xl bg-[#f4fae8] border border-[#68b800] space-y-2">
+            <div class="flex items-center justify-between gap-1">
+              <span class="text-xs font-black text-[#2b5400]">📄 40分鐘代課溫習工作紙 / 小測 (.doc)</span>
+              <span id="sow-tracking-status-badge" class="text-[10px] font-black bg-emerald-100 text-emerald-900 px-2 py-0.5 rounded border border-emerald-300 whitespace-nowrap">
+                ⚡ 自動追蹤 Week 10 進度
               </span>
             </div>
 
             <div>
               <label class="block text-[11px] font-bold text-slate-700 mb-1">
-                自訂課題進度 Optional Custom Topic（<span class="text-[#2b5400] font-black">留空即自動按學校資料庫 2026-11-06 Week 10 教學進度表生成溫習工作紙/小測</span>）：
+                自訂課題（<span class="text-[#2b5400] font-black">留空即自動按學校資料庫 Week 10 教學進度生成溫習卷連答案</span>）：
               </label>
-              <div class="flex gap-1.5">
-                <input
-                  type="text"
-                  id="leave-progress-input"
-                  value=""
-                  placeholder="留空 = 自動讀取該班科目 Week 10 教學進度表 (Scheme of Work) 生成溫習卷..."
-                  oninput="refreshWorksheetPreviewFromForm()"
-                  class="flex-1 px-2.5 py-1.5 rounded-lg border border-lime-500 text-xs font-bold bg-white"
-                />
-                <button
-                  type="button"
-                  onclick="document.getElementById('leave-progress-input').value=''; refreshWorksheetPreviewFromForm();"
-                  class="px-2.5 py-1.5 rounded-lg bg-white hover:bg-lime-100 border border-lime-400 text-[11px] font-bold text-slate-700 shrink-0"
-                  title="清空並使用學校資料庫進度"
-                >
-                  自動讀取 SoW
-                </button>
-              </div>
+              <input
+                type="text"
+                id="leave-progress-input"
+                value=""
+                placeholder="留空 = 自動讀取該班科目 Week 10 教學進度表 (Scheme of Work)..."
+                oninput="refreshWorksheetPreviewFromForm()"
+                class="w-full px-2.5 py-1.5 rounded-lg border border-lime-500 text-xs font-bold bg-white"
+              />
             </div>
 
-            <!-- Document Type Selector: Revision Worksheet vs Short Test -->
-            <div class="flex items-center justify-between gap-2 text-xs">
-              <span class="text-[11px] font-bold text-slate-700">試卷模式 Paper Format:</span>
-              <div class="flex items-center gap-2">
-                <label class="flex items-center gap-1 cursor-pointer text-[11px] font-bold">
-                  <input type="radio" name="doc-mode-radio" value="Revision Worksheet & Short Quiz" checked onchange="refreshWorksheetPreviewFromForm()" class="text-[#68b800]" />
-                  <span>溫習工作紙連小測 (Worksheet + Quiz)</span>
+            <div class="flex items-center justify-between gap-2 pt-0.5">
+              <div class="flex items-center gap-2 text-[11px] font-bold">
+                <label class="flex items-center gap-1 cursor-pointer">
+                  <input type="radio" name="doc-mode-radio" value="Revision Worksheet & Short Quiz" checked onchange="refreshWorksheetPreviewFromForm()" />
+                  <span>工作紙連小測</span>
                 </label>
-                <label class="flex items-center gap-1 cursor-pointer text-[11px] font-bold">
-                  <input type="radio" name="doc-mode-radio" value="40-Minute Revision Short Test" onchange="refreshWorksheetPreviewFromForm()" class="text-[#68b800]" />
-                  <span>40分鐘單元小測 (Short Test)</span>
+                <label class="flex items-center gap-1 cursor-pointer">
+                  <input type="radio" name="doc-mode-radio" value="40-Minute Revision Short Test" onchange="refreshWorksheetPreviewFromForm()" />
+                  <span>單元小測</span>
                 </label>
               </div>
+
+              <button
+                type="button"
+                onclick="downloadPreviewWordFromForm()"
+                class="text-[11px] font-black bg-blue-700 hover:bg-blue-800 text-white px-2.5 py-1 rounded shadow-sm transition whitespace-nowrap"
+              >
+                📥 下載 Word (.doc)
+              </button>
             </div>
 
-            <!-- Compact Preview of Generated Worksheet + Answer Key -->
-            <div>
-              <div class="flex items-center justify-between mb-1">
-                <span class="text-[11px] font-bold text-slate-700">Word 試卷及教師答案預覽 (Preview with Answer Key):</span>
-                <button
-                  type="button"
-                  onclick="downloadPreviewWordFromForm()"
-                  class="text-[11px] font-black bg-blue-700 hover:bg-blue-800 text-white px-2.5 py-1 rounded shadow-sm transition flex items-center gap-1"
-                >
-                  <span>📥 下載 Word 試卷連答案 (.doc)</span>
-                </button>
-              </div>
-              <textarea
-                id="leave-generated-classwork"
-                rows="6"
-                class="w-full p-2 rounded-lg border border-slate-300 text-[11px] text-slate-800 leading-snug bg-white font-mono"
-              ></textarea>
-            </div>
+            <textarea
+              id="leave-generated-classwork"
+              rows="5"
+              class="w-full p-2 rounded-lg border border-slate-300 text-[11px] text-slate-800 leading-snug bg-white font-mono"
+            ></textarea>
           </div>
 
           <button
@@ -621,46 +552,43 @@
             class="w-full py-2.5 rounded-xl font-black text-white text-xs sm:text-sm shadow-md transition hover:opacity-95"
             style="background-color: var(--lcp-green-bar);"
           >
-            📨 提交請假申請並附上 Word 溫習工作紙/小測連答案 Submit Leave & Word Paper
+            📨 提交請假申請並附上 Word 試卷連答案
           </button>
         </div>
 
       </div>
 
-      <!-- SUBVIEW B2: Whole-Day Substitution Schedule & Compact Table for Teachers -->
+      <!-- SUBVIEW B2: Teacher Full-Day Substitution Table (All Periods P1-P8) -->
       <div id="teacher-subview-substitutions" class="hidden space-y-4">
-        <div class="bg-white rounded-xl p-5 shadow-sm border border-lime-300 space-y-4">
-          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
+        <div class="bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-lime-300 space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
             <div class="flex items-center gap-2">
               <span class="lcp-orange-arrow">↘</span>
               <div>
-                <h2 class="text-base sm:text-lg font-black text-slate-900">
-                  全日代課時間表及 Word 工作紙下載 Full-Day Substitution Schedule (All Periods P1–P8)
+                <h2 class="text-sm sm:text-base font-black text-slate-900">
+                  全日代課時間表及 Word 工作紙下載 (Teacher Full-Day View: P1–P8)
                 </h2>
-                <p class="text-xs text-slate-500">
-                  教師帳號可一覽全日所有課節之代課安排、點擊下載該堂 Word 溫習工作紙連答案 (.doc)，並完成簽收及到班打卡
+                <p class="text-[11px] text-slate-500">
+                  教師帳號可隨時檢視全日所有代課安排、下載附答案之 Word 工作紙 (.doc) 並簽收打卡
                 </p>
               </div>
             </div>
-            <div class="flex items-center gap-2">
-              <label class="flex items-center gap-1.5 text-xs font-bold text-[#2b5400] bg-[#eef8dc] px-3 py-1.5 rounded-lg border border-lime-300 cursor-pointer">
-                <input type="checkbox" id="filter-my-duties-only" onchange="renderTeacherAssignedSubstitutions()" class="rounded text-[#68b800]" />
-                <span>只顯示指派給我的代課 Show My Assigned Duties Only</span>
-              </label>
-            </div>
+            <label class="flex items-center gap-1.5 text-xs font-bold text-[#2b5400] bg-[#eef8dc] px-3 py-1 rounded-lg border border-lime-300 cursor-pointer">
+              <input type="checkbox" id="filter-my-duties-only" onchange="renderTeacherAssignedSubstitutions()" class="rounded text-[#68b800]" />
+              <span>只顯示本人的代課節數</span>
+            </label>
           </div>
 
-          <!-- Compact WebSAMS Full-Day Substitution Table -->
           <div class="overflow-x-auto rounded-xl border border-lime-300">
             <table class="w-full text-left border-collapse websams-table text-xs">
               <thead>
-                <tr class="bg-[#eef8dc] text-[#2b5400] font-black">
-                  <th class="p-2.5">課節及時間 Period</th>
-                  <th class="p-2.5">班別、科目及課室 Class & Room</th>
-                  <th class="p-2.5">請假原任老師 Absent Teacher</th>
-                  <th class="p-2.5">指派代課老師 Cover Teacher</th>
-                  <th class="p-2.5">教學進度庫 (SoW) 課題及 Word 試卷連答案</th>
-                  <th class="p-2.5 text-center">狀態及打卡操作 Status & Action</th>
+                <tr class="bg-[#eef8dc] text-[#2b5400] font-black whitespace-nowrap">
+                  <th class="p-2.5">課節 Period</th>
+                  <th class="p-2.5">班別及課室</th>
+                  <th class="p-2.5">請假原任老師</th>
+                  <th class="p-2.5">指派代課老師</th>
+                  <th class="p-2.5">教學進度庫 (SoW) Word 試卷連答案</th>
+                  <th class="p-2.5 text-center">狀態及打卡</th>
                 </tr>
               </thead>
               <tbody id="teacher-assigned-duties-tbody" class="bg-white divide-y divide-slate-200"></tbody>
@@ -672,9 +600,7 @@
     </section>
 
     <!-- ========================================================================
-         SCREEN C: WEBSAMS ADMIN / VICE PRINCIPAL PORTAL
-         1. Multi-Teacher Leave Approval & Conflict-Free Cover Assignment
-         2. School Scheme of Work (SoW) Database & Teacher Timetable Inspector
+         SCREEN C: WEBSAMS ADMIN PORTAL
          ======================================================================== -->
     <section id="screen-admin" class="hidden space-y-4">
 
@@ -683,23 +609,23 @@
           <button
             onclick="switchAdminSubTab('approval')"
             id="admin-subtab-btn-approval"
-            class="px-3.5 py-1.5 rounded-lg text-xs font-black transition bg-[#68b800] text-white"
+            class="px-3 py-1.5 rounded-lg text-xs font-black transition bg-[#68b800] text-white"
           >
-            ✅ 請假批核、代課編排及每日代課表 (WebSAMS Cover Assignment)
+            ✅ 請假批核及代課編排 (WebSAMS)
           </button>
           <button
             onclick="switchAdminSubTab('sow')"
             id="admin-subtab-btn-sow"
-            class="px-3.5 py-1.5 rounded-lg text-xs font-black transition text-slate-700 hover:bg-lime-50"
+            class="px-3 py-1.5 rounded-lg text-xs font-black transition text-slate-700 hover:bg-lime-50"
           >
-            📚 各科教學進度表資料庫 (Scheme of Work DB - AI 自動對期追蹤)
+            📚 各科教學進度表資料庫 (Scheme of Work DB)
           </button>
           <button
             onclick="switchAdminSubTab('database')"
             id="admin-subtab-btn-database"
-            class="px-3.5 py-1.5 rounded-lg text-xs font-black transition text-slate-700 hover:bg-lime-50"
+            class="px-3 py-1.5 rounded-lg text-xs font-black transition text-slate-700 hover:bg-lime-50"
           >
-            🗂️ 教師時間表及代課配額庫 (Timetable & Quota DB)
+            🗂️ 教師時間表資料庫
           </button>
         </div>
 
@@ -707,55 +633,37 @@
           onclick="resetAllSystemData()"
           class="text-xs font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 px-3 py-1 rounded-lg transition"
         >
-          ↺ 重置預設3位請假教師示範資料 Reset Demo
+          ↺ 重置預設資料
         </button>
       </div>
 
-      <!-- SUBVIEW C1: Multi-Teacher Leave Approval & WebSAMS Cover Assignment -->
       <div id="admin-subview-approval" class="space-y-4">
-        <!-- WebSAMS Teacher Cover Quota Summary Bar -->
         <div class="bg-white rounded-xl p-4 shadow-sm border border-lime-300">
-          <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
-            <div class="text-xs font-black text-[#2b5400] flex items-center gap-1.5">
-              <span>📊 WebSAMS 教職員代課配額及當日空堂統計帳本 (Staff Substitution Quota & Availability Ledger)</span>
-            </div>
-            <span class="text-[11px] text-slate-500">系統優先推薦「當節空堂」且「本學期累計代課節數最少」之同科/同級教師</span>
+          <div class="text-xs font-black text-[#2b5400] mb-2">
+            📊 WebSAMS 教職員代課配額及今日空堂統計 (Staff Substitution Quota Ledger)
           </div>
           <div id="admin-quota-ledger-bar" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2"></div>
         </div>
-
         <div id="admin-leave-requests-container" class="space-y-4"></div>
       </div>
 
-      <!-- SUBVIEW C2: School Scheme of Work (SoW) Database Inspector -->
       <div id="admin-subview-sow" class="hidden space-y-4">
-        <div class="bg-white rounded-xl p-5 shadow-sm border-2 border-[#68b800] space-y-4">
-          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
-            <div class="flex items-center gap-2">
-              <span class="lcp-orange-arrow">↘</span>
-              <div>
-                <h3 class="text-base sm:text-lg font-black text-slate-900">
-                  全校各科教學進度表資料庫 School Scheme of Work (SoW) Database (2026–2027 Term 1)
-                </h3>
-                <p class="text-xs text-slate-500">
-                  當請假教師未輸入課題時，AI 自動根據當日日期（<strong>2026-11-06 · Week 10</strong>）檢索以下資料庫，自動出題生成 Word 溫習工作紙/小測連答案
-                </p>
-              </div>
+        <div class="bg-white rounded-xl p-4 sm:p-5 shadow-sm border-2 border-[#68b800] space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
+            <div>
+              <h3 class="text-base font-black text-slate-900">全校各科教學進度表資料庫 Scheme of Work (SoW) Database</h3>
+              <p class="text-xs text-slate-500">系統自動按今日香港日期 (Term 1 · Week 10) 檢索各班教學進度並生成 Word 溫習卷連答案</p>
             </div>
-            <span class="px-3 py-1 rounded-lg bg-lime-100 text-[#2b5400] text-xs font-black border border-lime-400">
-              📅 系統當前追蹤周次 Current Tracked Week: Week 10 (Nov 2 – Nov 6, 2026)
-            </span>
           </div>
-
           <div class="overflow-x-auto rounded-xl border border-lime-300">
             <table class="w-full text-left border-collapse websams-table text-xs">
               <thead>
                 <tr class="bg-[#eef8dc] text-[#2b5400] font-black">
-                  <th class="p-2.5">科目及級別代碼 Subject Key</th>
-                  <th class="p-2.5">適用班別 Classes</th>
-                  <th class="p-2.5">Week 1–8 已教課題 (Prior Topics for Revision)</th>
-                  <th class="p-2.5">Week 9–10 當前教學進度 (Current SoW Topic - Nov 2026)</th>
-                  <th class="p-2.5 text-center">測試自動生成 Word 試卷</th>
+                  <th class="p-2.5">科目 Subject</th>
+                  <th class="p-2.5">班別 Classes</th>
+                  <th class="p-2.5">Week 1–8 已教溫習範圍</th>
+                  <th class="p-2.5">Week 9–10 當前進度 (Auto-Tracked)</th>
+                  <th class="p-2.5 text-center">下載 Word 範本</th>
                 </tr>
               </thead>
               <tbody id="sow-database-tbody" class="bg-white divide-y divide-slate-200"></tbody>
@@ -764,29 +672,21 @@
         </div>
       </div>
 
-      <!-- SUBVIEW C3: Teacher Timetable Inspector & Import -->
       <div id="admin-subview-database" class="hidden space-y-4">
-        <div class="bg-white rounded-xl p-5 shadow-sm border border-lime-300 space-y-4">
-          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
-            <div class="flex items-center gap-2">
-              <span class="lcp-orange-arrow">↘</span>
-              <div>
-                <h3 class="text-base font-black text-slate-900">全校教師 6-Day 時間表檢視及即時修改 Timetable Inspector</h3>
-                <p class="text-xs text-slate-500">修改任何課節後，WebSAMS 無衝突代課配對器會即時更新空堂狀態</p>
-              </div>
-            </div>
+        <div class="bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-lime-300 space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
+            <h3 class="text-base font-black text-slate-900">全校教師 6-Day 時間表檢視及修改</h3>
             <select
               id="admin-inspect-teacher-select"
               onchange="renderAdminTimetableInspector()"
-              class="px-3 py-1.5 rounded-lg border border-[#68b800] bg-lime-50 text-xs font-black text-lime-950"
+              class="px-3 py-1 rounded-lg border border-[#68b800] bg-lime-50 text-xs font-black text-lime-950"
             ></select>
           </div>
-
           <div class="overflow-x-auto">
             <table class="w-full text-center border-collapse websams-table text-xs">
               <thead>
                 <tr class="bg-[#eef8dc] text-[#2b5400] font-black">
-                  <th class="p-2 w-28 text-left">課節 Period</th>
+                  <th class="p-2 w-24 text-left">課節</th>
                   <th class="p-2">DAY 1</th>
                   <th class="p-2">DAY 2</th>
                   <th class="p-2">DAY 3</th>
@@ -804,96 +704,117 @@
     </section>
 
     <!-- ========================================================================
-         SCREEN D: STAFFROOM LIVE BOARD (SEPARATED TWO-PANEL LAYOUT)
-         - Panel 1 (Left): Today's Absent Teachers Summary List (handles multiple absent teachers cleanly)
-         - Panel 2 (Right): According to Current Time, ONLY shows THIS LESSON and NEXT LESSON!
+         SCREEN D: STAFFROOM LIVE BOARD (iPad & PC Optimized, Zero Overlap)
+         - Left Panel: Today's Absent Teachers List
+         - Right Panel: Auto-Synced to Hong Kong Time (Current Lesson & Next Lesson ONLY)
          ======================================================================== -->
-    <section id="screen-staffroom-tv" class="hidden space-y-4">
+    <section id="screen-staffroom-tv" class="hidden space-y-3">
 
       <div class="bg-white border-2 border-[#68b800] shadow-md rounded-xl overflow-hidden">
-        <!-- Top Official Green Header Bar -->
-        <div class="bg-[#68b800] text-white px-5 py-2.5 flex flex-wrap items-center justify-between gap-2">
-          <div class="flex items-center gap-2 text-xs sm:text-sm font-black tracking-wide">
+        <!-- Top Green Banner -->
+        <div class="bg-[#68b800] text-white px-4 py-2.5 flex flex-wrap items-center justify-between gap-2">
+          <div class="flex items-center gap-2 text-xs sm:text-sm font-black">
             <span>📺</span>
-            <span>仁濟醫院靚次伯紀念中學 · 教員室實時請假及代課電子看板 (Staffroom Live Substitution Board)</span>
+            <span>教員室實時請假及代課電子看板 Staffroom Live Substitution Board</span>
           </div>
-          <div class="flex flex-wrap items-center gap-2">
+
+          <div class="flex items-center gap-2">
             <button
               type="button"
               onclick="toggleTvFullDayMode()"
               id="tv-mode-toggle-btn"
-              class="bg-black/25 hover:bg-black/40 text-white px-2.5 py-1 rounded text-[11px] font-bold transition"
+              class="bg-black/25 hover:bg-black/40 text-white px-2.5 py-1 rounded text-[11px] font-bold transition whitespace-nowrap"
             >
-              🔍 切換為全日課節檢視 (Show Full Day P1–P8)
+              🔍 展開全日 (Full Day)
             </button>
-            <span class="bg-white/20 px-2.5 py-0.5 rounded text-xs font-bold">
-              循環日: <strong id="tv-cycle-day-label" class="text-yellow-200">DAY 2</strong>
+            <span class="bg-white/20 px-2.5 py-0.5 rounded text-xs font-bold whitespace-nowrap">
+              校曆: <strong id="tv-cycle-day-label" class="text-yellow-200">DAY 2</strong>
             </span>
-            <span class="bg-white text-[#2b5400] px-2.5 py-0.5 rounded text-xs font-mono font-black" id="tv-live-clock">
-              09:20:00
+            <span class="bg-white text-[#2b5400] px-2.5 py-0.5 rounded text-xs font-mono font-black whitespace-nowrap" id="tv-live-clock">
+              10:55:00
             </span>
           </div>
         </div>
 
-        <!-- Main Split Body: Left (Today's Absent Teachers) + Right (Current Lesson & Next Lesson ONLY) -->
-        <div class="p-4 bg-[#f8fcf2] grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+        <!-- Split Layout Optimized for iPad (md:grid-cols-12) and Desktop -->
+        <div class="p-3 sm:p-4 bg-[#f8fcf2] grid grid-cols-1 md:grid-cols-12 gap-3.5 items-start">
 
-          <!-- LEFT PANEL (4 Cols): Today's Absent Teachers List -->
-          <div class="lg:col-span-4 bg-white rounded-xl border-2 border-lime-300 shadow-sm overflow-hidden">
-            <div class="bg-[#eef8dc] px-4 py-2.5 border-b border-lime-300 flex items-center justify-between">
+          <!-- LEFT PANEL (4 Cols): Today's Absent Staff Summary -->
+          <div class="md:col-span-4 bg-white rounded-xl border-2 border-lime-300 shadow-sm overflow-hidden">
+            <div class="bg-[#eef8dc] px-3.5 py-2 border-b border-lime-300 flex items-center justify-between">
               <div class="flex items-center gap-1.5">
                 <span class="lcp-orange-arrow">↘</span>
-                <h3 class="text-sm font-black text-[#2b5400]">
-                  今日請假 / 公假教職員 Absent Staff
+                <h3 class="text-xs sm:text-sm font-black text-[#2b5400]">
+                  今日請假教職員 Absent Staff
                 </h3>
               </div>
-              <span id="tv-absent-teacher-count" class="px-2 py-0.5 rounded-full text-xs font-black bg-[#68b800] text-white">
+              <span id="tv-absent-teacher-count" class="px-2 py-0.5 rounded-full text-[11px] font-black bg-[#68b800] text-white whitespace-nowrap">
                 3 人
               </span>
             </div>
 
-            <div class="p-3 space-y-2.5" id="tv-absent-teachers-list">
-              <!-- Dynamically rendered compact cards for each absent teacher -->
-            </div>
+            <div class="p-2.5 space-y-2" id="tv-absent-teachers-list"></div>
 
-            <!-- Status Counters Footer -->
-            <div class="bg-slate-50 px-3 py-2.5 border-t border-slate-200 grid grid-cols-3 gap-2 text-center">
+            <!-- Pure CSS Dot Status Summary (No Emoji Overlap) -->
+            <div class="bg-slate-50 px-2.5 py-2 border-t border-slate-200 grid grid-cols-3 gap-1.5 text-center">
               <div class="p-1.5 rounded bg-rose-50 border border-rose-200">
-                <div class="text-[10px] font-bold text-rose-800">🔴 待簽收</div>
-                <div id="tv-stat-pending" class="text-base font-black text-rose-700">0</div>
+                <div class="flex items-center justify-center gap-1 text-[10px] font-bold text-rose-800 whitespace-nowrap">
+                  <span class="w-2 h-2 rounded-full bg-rose-600 inline-block"></span>待簽收
+                </div>
+                <div id="tv-stat-pending" class="text-sm font-black text-rose-700">0</div>
               </div>
               <div class="p-1.5 rounded bg-amber-50 border border-amber-200">
-                <div class="text-[10px] font-bold text-amber-900">🟡 已簽收</div>
-                <div id="tv-stat-ack" class="text-base font-black text-amber-700">0</div>
+                <div class="flex items-center justify-center gap-1 text-[10px] font-bold text-amber-900 whitespace-nowrap">
+                  <span class="w-2 h-2 rounded-full bg-amber-500 inline-block"></span>已簽收
+                </div>
+                <div id="tv-stat-ack" class="text-sm font-black text-amber-700">0</div>
               </div>
               <div class="p-1.5 rounded bg-emerald-50 border border-emerald-200">
-                <div class="text-[10px] font-bold text-emerald-900">🟢 已到班</div>
-                <div id="tv-stat-arrived" class="text-base font-black text-emerald-700">0</div>
+                <div class="flex items-center justify-center gap-1 text-[10px] font-bold text-emerald-900 whitespace-nowrap">
+                  <span class="w-2 h-2 rounded-full bg-emerald-600 inline-block"></span>已到班
+                </div>
+                <div id="tv-stat-arrived" class="text-sm font-black text-emerald-700">0</div>
               </div>
             </div>
           </div>
 
-          <!-- RIGHT PANEL (8 Cols): Time-Filtered Current Period & Next Period Live Board -->
-          <div class="lg:col-span-8 space-y-4">
+          <!-- RIGHT PANEL (8 Cols): Auto-Tracked Current Lesson & Next Lesson -->
+          <div class="md:col-span-8 space-y-3">
 
-            <!-- Time Filter Control Banner -->
-            <div class="bg-white rounded-xl px-4 py-2.5 border border-lime-300 shadow-sm flex flex-wrap items-center justify-between gap-2">
-              <div class="flex items-center gap-2">
-                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 pulse-badge"></span>
-                <span class="text-xs font-black text-slate-800">
-                  實時時段過濾模式 Time-Aware Filter：僅顯示「本節課堂」及「下一節課堂」代課安排
+            <!-- Auto HKT Status Banner -->
+            <div class="bg-white rounded-xl px-3.5 py-2 border border-lime-300 shadow-sm flex flex-wrap items-center justify-between gap-2">
+              <div class="flex items-center gap-2 text-xs font-bold text-slate-700">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 pulse-dot flex-shrink-0"></span>
+                <span id="tv-auto-sync-status-text">
+                  已按香港標準時間 (HKT) 及校曆自動鎖定：本節課堂 及 下一節課堂
                 </span>
               </div>
-              <div class="flex items-center gap-1.5 text-xs">
-                <span class="font-bold text-slate-500">切換時段測試:</span>
+
+              <!-- Subtle Demo Override Toggle (Only if testing outside school hours) -->
+              <div class="flex items-center gap-1.5 text-[11px]">
+                <button
+                  type="button"
+                  onclick="document.getElementById('demo-time-override-bar').classList.toggle('hidden')"
+                  class="text-slate-500 hover:text-[#2b5400] font-bold px-2 py-0.5 rounded bg-slate-100 hover:bg-lime-100 transition whitespace-nowrap"
+                >
+                  ⚙️ 測試時段模擬
+                </button>
+              </div>
+            </div>
+
+            <!-- Hidden-by-default Demo Time Override Bar -->
+            <div id="demo-time-override-bar" class="hidden bg-amber-50 border border-amber-300 rounded-xl px-3.5 py-2 flex flex-wrap items-center justify-between gap-2 text-xs">
+              <span class="font-bold text-amber-900">🛠️ 演示測試模式（預設自動跟隨香港時間 HKT）：</span>
+              <div class="flex items-center gap-1 flex-wrap">
+                <button type="button" onclick="setClockModeAuto()" id="btn-clock-auto" class="px-2 py-0.5 rounded font-black bg-[#68b800] text-white text-[11px]">
+                  🕒 自動香港時間 (Auto HKT)
+                </button>
                 <div id="tv-period-quick-pills" class="flex items-center gap-1"></div>
               </div>
             </div>
 
-            <!-- Container for THIS LESSON and NEXT LESSON tables -->
-            <div id="tv-time-filtered-container" class="space-y-4">
-              <!-- Dynamically rendered by JS -->
-            </div>
+            <!-- Current Lesson & Next Lesson Tables -->
+            <div id="tv-time-filtered-container" class="space-y-3"></div>
 
           </div>
 
@@ -903,54 +824,50 @@
     </section>
 
     <!-- ========================================================================
-         SCREEN E: SMALL CLASSROOM DOOR MONITOR (WebApp Kiosk for Outside Classroom)
-         - Designed specifically for a compact 7"-10" monitor outside the classroom
-         - Shows ONLY This Lesson & Next Lesson for the selected classroom
-         - Includes One-Tap Check-In & Word Worksheet status
+         SCREEN E: ULTRA-MINIMALIST CLASSROOM OUTSIDE MONITOR (iPad / Small Screen)
+         - Strictly minimum glanceable information:
+           e.g., "3B CL_B1" | "CKKU 周嘉權 請假" -> "TMCHAN 陳大文 代課"
+         - Zero overlapping, extra-large typography for iPad & Small Monitor
          ======================================================================== -->
     <section id="screen-door-monitor" class="hidden space-y-3">
 
-      <!-- Control Bar (Can be hidden in fullscreen kiosk mode) -->
-      <div id="kiosk-control-bar" class="bg-white rounded-xl p-3 shadow-sm border border-lime-300 flex flex-wrap items-center justify-between gap-2">
+      <!-- Compact Room Selector Bar (Hidden when Fullscreen Kiosk is active) -->
+      <div id="kiosk-control-bar" class="bg-white rounded-xl px-4 py-2.5 shadow-sm border border-lime-300 flex flex-wrap items-center justify-between gap-2">
         <div class="flex items-center gap-2">
           <span class="lcp-orange-arrow">↘</span>
-          <div>
-            <h2 class="text-sm sm:text-base font-black text-slate-900">
-              課室門外小型螢幕專屬介面 Classroom Outside Small Monitor WebApp
-            </h2>
-            <p class="text-[11px] text-slate-500">
-              專為課室門外小型螢幕 (7"–10") 設計，無須捲動，同屏顯示「本節課堂」與「下一節課堂」及到班觸控打卡
-            </p>
-          </div>
+          <span class="text-xs sm:text-sm font-black text-slate-900">
+            課室門外小型螢幕 / iPad 電子門牌 (極簡高對比模式 Minimalist Door Sign)
+          </span>
         </div>
 
-        <div class="flex flex-wrap items-center gap-2">
-          <span class="text-xs font-bold text-slate-700">選擇課室門牌 Room:</span>
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold text-slate-700">課室 Room:</span>
           <select
             id="door-monitor-room-select"
             onchange="renderSmallDoorMonitor()"
-            class="px-3 py-1.5 rounded-lg border-2 border-[#68b800] bg-[#f4fae8] text-xs font-black text-[#2b5400]"
+            class="px-3 py-1 rounded-lg border-2 border-[#68b800] bg-[#f4fae8] text-xs font-black text-[#2b5400]"
           >
-            <option value="207" selected>Room 207 電腦室 (Computer Room 207)</option>
-            <option value="201">Room 201 課室 (2A Classroom)</option>
-            <option value="401">Room 401 課室 (4A Classroom)</option>
-            <option value="302">Room 302 課室 (3B Classroom)</option>
-            <option value="221">Room 221 電腦室 (Computer Room 221)</option>
+            <option value="207" selected>Room 207 (電腦室)</option>
+            <option value="201">Room 201 (2A 課室)</option>
+            <option value="302">Room 302 (3B 課室)</option>
+            <option value="401">Room 401 (4A 課室)</option>
+            <option value="407">Room 407 (4C 課室)</option>
+            <option value="221">Room 221 (電腦室)</option>
           </select>
 
           <button
             type="button"
             onclick="toggleKioskFullscreen()"
-            class="px-3 py-1.5 rounded-lg bg-[#2b5400] hover:bg-lime-900 text-white text-xs font-black transition shadow-sm"
+            class="px-3 py-1 rounded-lg bg-[#2b5400] hover:bg-lime-900 text-white text-xs font-black transition whitespace-nowrap"
           >
-            ⛶ 全螢幕小型螢幕模式 (Fullscreen Kiosk)
+            ⛶ 全螢幕模式 (iPad Kiosk)
           </button>
         </div>
       </div>
 
-      <!-- Compact 7"-10" Monitor Frame -->
+      <!-- Minimalist Door Monitor Frame -->
       <div id="small-monitor-kiosk-frame" class="max-w-4xl mx-auto bg-white rounded-2xl border-4 border-[#68b800] shadow-lg overflow-hidden">
-        <!-- Rendered dynamically by renderSmallDoorMonitor() -->
+        <!-- Dynamically rendered by renderSmallDoorMonitor() -->
       </div>
 
     </section>
@@ -958,28 +875,28 @@
   </main>
 
   <!-- ==========================================================================
-       4. WORKSHEET & ANSWER KEY MODAL (View & Download Word .doc File)
+       4. WORKSHEET & ANSWER KEY PREVIEW MODAL
        ========================================================================== -->
   <div id="worksheet-modal" class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-3xl w-full p-5 shadow-2xl border-2 border-[#68b800] space-y-3 max-h-[90vh] flex flex-col">
       <div class="flex items-center justify-between border-b border-lime-200 pb-2.5">
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2 min-w-0">
           <span class="lcp-orange-arrow">↘</span>
-          <div>
-            <h3 id="modal-worksheet-title" class="text-base font-black text-slate-900">
+          <div class="min-w-0">
+            <h3 id="modal-worksheet-title" class="text-sm sm:text-base font-black text-slate-900 truncate">
               40分鐘溫習工作紙 / 小測連答案預覽
             </h3>
-            <p id="modal-worksheet-subtitle" class="text-xs text-slate-500"></p>
+            <p id="modal-worksheet-subtitle" class="text-xs text-slate-500 truncate"></p>
           </div>
         </div>
-        <button onclick="closeWorksheetModal()" class="text-xs font-black px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-200">✕ 關閉</button>
+        <button onclick="closeWorksheetModal()" class="text-xs font-black px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-200 flex-shrink-0">✕</button>
       </div>
 
-      <div id="modal-worksheet-body" class="flex-1 overflow-y-auto p-4 rounded-xl bg-slate-50 border border-slate-200 font-mono text-xs whitespace-pre-wrap leading-relaxed text-slate-800"></div>
+      <div id="modal-worksheet-body" class="flex-1 overflow-y-auto p-3.5 rounded-xl bg-slate-50 border border-slate-200 font-mono text-xs whitespace-pre-wrap leading-relaxed text-slate-800"></div>
 
       <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100">
         <span class="text-[11px] font-bold text-[#2b5400]">
-          💡 點擊右側按鈕即可下載 Microsoft Word (.doc) 檔案（內含學生試卷及獨立一頁之教師評分答案 Answer Key）
+          💡 點擊下載即可取得 Microsoft Word (.doc) 試卷連獨立一頁之教師答案
         </span>
         <div class="flex items-center gap-2">
           <button
@@ -987,14 +904,14 @@
             id="modal-download-word-btn"
             class="px-4 py-2 rounded-xl bg-blue-700 hover:bg-blue-800 text-white text-xs font-black shadow-sm transition"
           >
-            📄 下載 Word 工作紙連答案 (.doc)
+            📄 下載 Word 試卷連答案 (.doc)
           </button>
           <button
             type="button"
             onclick="closeWorksheetModal()"
             class="px-4 py-2 rounded-xl bg-[#68b800] text-white text-xs font-black"
           >
-            完成 Done
+            關閉
           </button>
         </div>
       </div>
@@ -1002,321 +919,263 @@
   </div>
 
   <!-- ==========================================================================
-       5. CORE APPLICATION LOGIC, SOW DATABASE & MS WORD (.DOC) GENERATOR
+       5. CORE LOGIC: AUTO HK TIME, SCHOOL CALENDAR, SOW DB & MINIMALIST UI
        ========================================================================== -->
   <script>
     // =========================================================================
-    // 1. PERIOD SLOTS & SCHOOL SCHEME OF WORK (SoW) DATABASE (2026-2027 Term 1)
+    // 1. SCHOOL BELL SCHEDULE & AUTOMATIC HONG KONG TIME / CALENDAR ENGINE
     // =========================================================================
     const PERIOD_SLOTS = [
-      { id: 'P1', short: 'P1', time: '08:30-09:10', label: '第1節 P1 (08:30-09:10)' },
-      { id: 'P2', short: 'P2', time: '09:10-09:50', label: '第2節 P2 (09:10-09:50)' },
-      { id: 'P3', short: 'P3', time: '10:10-10:50', label: '第3節 P3 (10:10-10:50)' },
-      { id: 'P4', short: 'P4', time: '10:50-11:30', label: '第4節 P4 (10:50-11:30)' },
-      { id: 'P5', short: 'P5', time: '11:50-12:30', label: '第5節 P5 (11:50-12:30)' },
-      { id: 'P6', short: 'P6', time: '12:30-13:10', label: '第6節 P6 (12:30-13:10)' },
-      { id: 'P7', short: 'P7', time: '14:20-15:00', label: '第7節 P7 (14:20-15:00)' },
-      { id: 'P8', short: 'P8', time: '15:00-15:40', label: '第8節 P8 (15:00-15:40)' }
+      { id: 'P1', short: 'P1', time: '08:30-09:10', startMin: 8 * 60 + 30, endMin: 9 * 60 + 10, label: '第1節 P1 (08:30-09:10)' },
+      { id: 'P2', short: 'P2', time: '09:10-09:50', startMin: 9 * 60 + 10, endMin: 9 * 60 + 50, label: '第2節 P2 (09:10-09:50)' },
+      { id: 'P3', short: 'P3', time: '10:10-10:50', startMin: 10 * 60 + 10, endMin: 10 * 60 + 50, label: '第3節 P3 (10:10-10:50)' },
+      { id: 'P4', short: 'P4', time: '10:50-11:30', startMin: 10 * 60 + 50, endMin: 11 * 60 + 30, label: '第4節 P4 (10:50-11:30)' },
+      { id: 'P5', short: 'P5', time: '11:50-12:30', startMin: 11 * 60 + 50, endMin: 12 * 60 + 30, label: '第5節 P5 (11:50-12:30)' },
+      { id: 'P6', short: 'P6', time: '12:30-13:10', startMin: 12 * 60 + 30, endMin: 13 * 60 + 10, label: '第6節 P6 (12:30-13:10)' },
+      { id: 'P7', short: 'P7', time: '14:20-15:00', startMin: 14 * 60 + 20, endMin: 15 * 60 + 0,  label: '第7節 P7 (14:20-15:00)' },
+      { id: 'P8', short: 'P8', time: '15:00-15:40', startMin: 15 * 60 + 0,  endMin: 15 * 60 + 40, label: '第8節 P8 (15:00-15:40)' }
     ];
 
     const CYCLE_DAYS = ['DAY 1', 'DAY 2', 'DAY 3', 'DAY 4', 'DAY 5', 'DAY 6'];
-    const STORAGE_KEY = 'ychlcp_websams_slrs_v4';
+    const STORAGE_KEY = 'ychlcp_websams_slrs_v5';
 
-    // School Scheme of Work (SoW) Database tracked by Date (Current: 2026-11-06, Term 1 Week 10)
+    // Get current Date/Time components in Hong Kong Time (Asia/Hong_Kong)
+    function getHongKongTimeParts() {
+      const now = new Date();
+      const hkStr = now.toLocaleString('en-US', { timeZone: 'Asia/Hong_Kong' });
+      const hkDate = new Date(hkStr);
+      const yyyy = hkDate.getFullYear();
+      const mm = String(hkDate.getMonth() + 1).padStart(2, '0');
+      const dd = String(hkDate.getDate()).padStart(2, '0');
+      const hh = String(hkDate.getHours()).padStart(2, '0');
+      const min = String(hkDate.getMinutes()).padStart(2, '0');
+      const ss = String(hkDate.getSeconds()).padStart(2, '0');
+      const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      const dow = dayNames[hkDate.getDay()];
+      const totalMinutes = hkDate.getHours() * 60 + hkDate.getMinutes();
+
+      return {
+        dateStr: `${yyyy}-${mm}-${dd} (${dow})`,
+        timeStr: `${hh}:${min}:${ss}`,
+        shortTimeStr: `${hh}:${min}`,
+        totalMinutes,
+        hkDate
+      };
+    }
+
+    // Automatically map Hong Kong time to current Period (P1-P8)
+    function detectPeriodFromHKMinutes(totalMin) {
+      if (totalMin < 9 * 60 + 10) return 'P1';        // Before 09:10 -> P1
+      if (totalMin < 10 * 60 + 10) return 'P2';       // 09:10 - 10:09 -> P2 (includes recess before P3)
+      if (totalMin < 10 * 60 + 50) return 'P3';       // 10:10 - 10:49 -> P3
+      if (totalMin < 11 * 60 + 50) return 'P4';       // 10:50 - 11:49 -> P4 (includes recess before P5)
+      if (totalMin < 12 * 60 + 30) return 'P5';       // 11:50 - 12:29 -> P5
+      if (totalMin < 14 * 60 + 20) return 'P6';       // 12:30 - 14:19 -> P6 (includes lunch before P7)
+      if (totalMin < 15 * 60 + 0) return 'P7';        // 14:20 - 14:59 -> P7
+      if (totalMin <= 16 * 60 + 0) return 'P8';       // 15:00 - 16:00 -> P8
+      // After 16:00 (after school hours), default to P3 so live boards remain populated during evening testing
+      return 'P3';
+    }
+
+    // School Calendar Lookup: Auto-determines Cycle Day (DAY 1 - DAY 6) from HK Date
+    function detectCycleDayFromSchoolCalendar(hkDate) {
+      // School Calendar mapping (Nov 6, 2026 = DAY 2)
+      const dateKey = `${hkDate.getFullYear()}-${String(hkDate.getMonth() + 1).padStart(2, '0')}-${String(hkDate.getDate()).padStart(2, '0')}`;
+      const calendarMap = {
+        '2026-11-05': 'DAY 1',
+        '2026-11-06': 'DAY 2',
+        '2026-11-09': 'DAY 3',
+        '2026-11-10': 'DAY 4',
+        '2026-11-11': 'DAY 5',
+        '2026-11-12': 'DAY 6'
+      };
+      return calendarMap[dateKey] || 'DAY 2';
+    }
+
+    // =========================================================================
+    // 2. SCHOOL SCHEME OF WORK (SoW) DATABASE
+    // =========================================================================
     const SCHEME_OF_WORK_DB = {
       'F3_CL': {
         key: 'F3_CL',
-        subjectName: 'F.3 Computer Literacy (初中電腦科 CL)',
+        subjectName: 'F.3 Computer Literacy (電腦科 CL)',
         classes: '3A, 3B, 3C',
-        priorTopics: 'Weeks 1–8: Spreadsheet Addressing ($A$1), SUM/AVERAGE/MAX/MIN & Data Sorting',
-        currentWeekTopic: 'Week 9–10 (Nov 2026): Logical Functions (IF, AND) & Lookup Functions (VLOOKUP) in Spreadsheets',
+        priorTopics: 'Weeks 1–8: Spreadsheet Addressing ($A$1), SUM/AVERAGE/MAX/MIN',
+        currentWeekTopic: 'Week 9–10: Logical (IF, AND) & Lookup Functions (VLOOKUP)',
         questions: {
           mc: [
             {
-              q: '1. Which of the following spreadsheet formulas correctly checks if the value in cell B2 is at least 50, returning "Pass" if true and "Fail" otherwise?',
-              options: ['A. =IF(B2>=50, "Pass", "Fail")', 'B. =IF(B2>50, "Fail", "Pass")', 'C. =VLOOKUP(B2, 50, "Pass")', 'D. =CHECK(B2>=50, "Pass", "Fail")'],
+              q: '1. Which formula checks if cell B2 is at least 50, returning "Pass" if true and "Fail" otherwise?',
+              options: ['A. =IF(B2>=50, "Pass", "Fail")', 'B. =IF(B2>50, "Fail", "Pass")', 'C. =VLOOKUP(B2, 50, "Pass")', 'D. =CHECK(B2>=50)'],
               ans: 'A',
               exp: '=IF(condition, value_if_true, value_if_false) checks B2>=50.'
             },
             {
-              q: '2. When copying a VLOOKUP formula down a column, which cell reference format prevents the lookup table range from shifting?',
+              q: '2. Which cell reference prevents the VLOOKUP table range from shifting when dragged down?',
               options: ['A. A2:D20', 'B. $A$2:$D$20', 'C. #A2:#D20', 'D. &A2:&D20'],
               ans: 'B',
-              exp: 'Absolute cell referencing ($A$2:$D$20) locks both column and row coordinates.'
+              exp: 'Absolute cell referencing ($A$2:$D$20) locks column and row coordinates.'
             },
             {
-              q: '3. In =VLOOKUP(E2, $A$2:$C$15, 3, FALSE), what does the parameter "3" represent?',
-              options: ['A. Row number 3', 'B. The 3rd column of the table_array $A$2:$C$15', 'C. Round to 3 decimal places', 'D. Search 3 times'],
+              q: '3. In =VLOOKUP(E2, $A$2:$C$15, 3, FALSE), what does "3" represent?',
+              options: ['A. Row 3', 'B. The 3rd column of $A$2:$C$15', 'C. 3 decimal places', 'D. Search 3 times'],
               ans: 'B',
-              exp: 'col_index_num = 3 returns the corresponding value from Column C (the 3rd column of A:C).'
+              exp: 'col_index_num = 3 returns the value from the 3rd column of A:C.'
             },
             {
-              q: '4. What is the fourth parameter (range_lookup) in VLOOKUP set to when we require an EXACT match for a Student ID?',
+              q: '4. What is the 4th parameter in VLOOKUP set to when we require an EXACT match?',
               options: ['A. TRUE', 'B. FALSE', 'C. 1', 'D. AUTO'],
               ans: 'B',
-              exp: 'FALSE (or 0) forces VLOOKUP to find an exact match.'
-            },
-            {
-              q: '5. If cell C4 contains 78 and cell D4 contains 85, what is the result of =IF(C4>=80, "Distinction", IF(D4>=80, "Merit", "Credit"))?',
-              options: ['A. Distinction', 'B. Merit', 'C. Credit', 'D. #VALUE!'],
-              ans: 'B',
-              exp: 'C4>=80 is False (78<80), so it evaluates the nested IF: D4>=80 is True (85>=80), returning "Merit".'
+              exp: 'FALSE forces VLOOKUP to find an exact match.'
             }
           ],
           fill: [
-            { q: '1. The ____________ function counts the number of cells within a range that meet a single specified criterion (e.g., ">60").', ans: 'COUNTIF' },
-            { q: '2. In a VLOOKUP table array, the lookup value must always be located in the ____________ column of the selected range.', ans: 'first (or leftmost)' },
-            { q: '3. If VLOOKUP cannot find a matching value when FALSE is specified, it returns the error code ____________.', ans: '#N/A' },
-            { q: '4. An address like $B4 is called a ____________ cell reference because only the column is locked.', ans: 'mixed' }
+            { q: '1. The ____________ function counts cells within a range that meet a criterion.', ans: 'COUNTIF' },
+            { q: '2. In VLOOKUP, the lookup value must be in the ____________ column of the table array.', ans: 'first (leftmost)' },
+            { q: '3. If VLOOKUP cannot find an exact match, it returns the error ____________.', ans: '#N/A' }
           ],
           structured: [
             {
-              q: 'Question 1 (6 marks): A school Tuck Shop spreadsheet stores Item Code in A2:A50, Item Name in B2:B50, and Unit Price in C2:C50. In cell F2, a cashier enters an Item Code.\n(a) Write a formula in cell G2 to display the corresponding Item Name using an exact match. (3 marks)\n(b) Write a formula in cell H2 that displays "Discount Eligible" if the Unit Price in C2 is $25 or above, and "Regular Price" otherwise. (3 marks)',
-              ans: '(a) =VLOOKUP(F2, $A$2:$C$50, 2, FALSE)  [1m for VLOOKUP, 1m for $A$2:$C$50, 1m for col 2 & FALSE]\n(b) =IF(C2>=25, "Discount Eligible", "Regular Price")  [1m for C2>=25, 1m for true branch, 1m for false branch]'
-            },
-            {
-              q: 'Question 2 (6 marks): Class 3C exam scores are stored in cells D2:D35.\n(a) Write a formula to find the highest score in the class. (2 marks)\n(b) Write a formula to count how many students scored 50 or above. (2 marks)\n(c) Explain why relative cell references (e.g., A2:C50) cause errors when a VLOOKUP formula is dragged down. (2 marks)',
-              ans: '(a) =MAX(D2:D35) [2m]\n(b) =COUNTIF(D2:D35, ">=50") [2m]\n(c) Because the table range shifts downward by one row for each row dragged (e.g., becoming A3:C51), omitting top records. [2m]'
+              q: 'Question 1 (6 marks): Item Codes are stored in A2:A50, Item Names in B2:B50, and Prices in C2:C50.\n(a) Write a formula in G2 to look up the Item Name for the code in F2. (3 marks)\n(b) Write a formula in H2 to display "Discount" if C2 >= 25, else "Regular". (3 marks)',
+              ans: '(a) =VLOOKUP(F2, $A$2:$C$50, 2, FALSE) [3m]\n(b) =IF(C2>=25, "Discount", "Regular") [3m]'
             }
           ]
         }
       },
       'F2_CL': {
         key: 'F2_CL',
-        subjectName: 'F.2 Computer Literacy (初中電腦科 CL)',
+        subjectName: 'F.2 Computer Literacy (電腦科 CL)',
         classes: '2A',
-        priorTopics: 'Weeks 1–8: Computer Hardware, Binary Numbers & File Management',
-        currentWeekTopic: 'Week 9–10 (Nov 2026): Python Programming Fundamentals — Variables, Data Types & if-else Selection',
+        priorTopics: 'Weeks 1–8: Hardware, Binary Numbers & File Management',
+        currentWeekTopic: 'Week 9–10: Python Variables, Data Types & if-else Selection',
         questions: {
           mc: [
             {
               q: '1. Which of the following is a valid variable name in Python?',
               options: ['A. 2nd_score', 'B. student_score', 'C. student-score', 'D. class'],
               ans: 'B',
-              exp: 'Variable names cannot start with a digit, contain hyphens, or use reserved keywords.'
+              exp: 'Variable names cannot start with digits or contain hyphens.'
             },
             {
-              q: '2. What is the data type of the value returned by input("Enter age: ") in Python?',
-              options: ['A. int', 'B. float', 'C. str (String)', 'D. bool'],
-              ans: 'C',
-              exp: 'input() always returns a string (str) unless converted with int() or float().'
-            },
-            {
-              q: '3. Which operator is used to test equality between two values in a Python if statement?',
+              q: '2. What operator tests equality in a Python if statement?',
               options: ['A. =', 'B. ==', 'C. !=', 'D. <>'],
               ans: 'B',
-              exp: '== checks equality, while = is the assignment operator.'
-            },
-            {
-              q: '4. What is the output of print(17 // 5) in Python?',
-              options: ['A. 3.4', 'B. 3', 'C. 2', 'D. 4'],
-              ans: 'B',
-              exp: '// is integer (floor) division: 17 divided by 5 gives quotient 3.'
-            },
-            {
-              q: '5. How does Python define the block of code inside an if statement?',
-              options: ['A. Curly braces { }', 'B. Indentation (4 spaces)', 'C. Parentheses ( )', 'D. BEGIN and END'],
-              ans: 'B',
-              exp: 'Python uses consistent indentation to group statements into blocks.'
+              exp: '== checks equality.'
             }
           ],
           fill: [
-            { q: '1. To convert a string input into a whole number in Python, we use the ____________() function.', ans: 'int' },
-            { q: '2. Every if, elif, and else header line in Python must end with a ____________ symbol (:).', ans: 'colon' },
-            { q: '3. The ____________ operator (%) calculates the remainder of a division.', ans: 'modulus (or remainder)' },
-            { q: '4. In an if-elif-else structure, ____________ stands for "else if".', ans: 'elif' }
+            { q: '1. To convert a string input into an integer in Python, use ____________().', ans: 'int' },
+            { q: '2. Every if header line in Python must end with a ____________ (:).', ans: 'colon' }
           ],
           structured: [
             {
-              q: 'Question 1 (6 marks): Write a complete Python program that asks the user to input a temperature in Celsius (as an integer). If the temperature is 30 or above, print "Hot Weather Warning"; otherwise, print "Normal Temperature".',
-              ans: 'temp = int(input("Enter temperature: "))  [2m]\nif temp >= 30:  [2m]\n    print("Hot Weather Warning")  [1m]\nelse:\n    print("Normal Temperature")  [1m]'
-            },
-            {
-              q: 'Question 2 (6 marks): Identify and correct THREE syntax/logic errors in the following code:\nscore = input("Enter mark: ")\nif score = 50\nprint("Pass")',
-              ans: 'Error 1: Missing int() conversion -> score = int(input("Enter mark: ")) [2m]\nError 2: Used = instead of == (or >=) and missing colon -> if score >= 50: [2m]\nError 3: Missing indentation before print("Pass") -> indent by 4 spaces [2m]'
+              q: 'Question 1 (6 marks): Write a Python program that inputs temperature (int) and prints "Hot" if >= 30, else "Normal".',
+              ans: 't = int(input("Temp: "))\nif t >= 30:\n    print("Hot")\nelse:\n    print("Normal")'
             }
           ]
         }
       },
       'F2_CT': {
         key: 'F2_CT',
-        subjectName: 'F.2 Creative Technology (創意科技科 CT)',
+        subjectName: 'F.2 Creative Technology (創科科 CT)',
         classes: '2C',
-        priorTopics: 'Weeks 1–8: Microcontroller Pins, Digital vs Analog Signals & LED Output',
-        currentWeekTopic: 'Week 9–10 (Nov 2026): Smart IoT Sensors, Input-Process-Output (IPO) Logic & Flowchart Design',
+        priorTopics: 'Weeks 1–8: Microcontroller Pins & Digital/Analog Signals',
+        currentWeekTopic: 'Week 9–10: Smart IoT Sensors, IPO Model & Flowchart Logic',
         questions: {
           mc: [
             {
-              q: '1. In the Input-Process-Output (IPO) model of a Smart Backpack Anti-Tracking System, which component acts as the INPUT?',
-              options: ['A. Piezo Buzzer', 'B. AI Vision Camera / Ultrasonic Sensor', 'C. OLED Display', 'D. Vibration Motor'],
+              q: '1. In the IPO model, which component acts as an INPUT?',
+              options: ['A. Buzzer', 'B. Ultrasonic / Vision Sensor', 'C. OLED Screen', 'D. Motor'],
               ans: 'B',
-              exp: 'Sensors and cameras capture environmental data as Input.'
+              exp: 'Sensors capture environmental input.'
             },
             {
-              q: '2. In a standard program flowchart, which geometric shape represents a Decision (Condition Check)?',
-              options: ['A. Rectangle', 'B. Diamond (Rhombus)', 'C. Oval', 'D. Parallelogram'],
+              q: '2. Which flowchart shape represents a Decision (Condition)?',
+              options: ['A. Rectangle', 'B. Diamond', 'C. Oval', 'D. Circle'],
               ans: 'B',
-              exp: 'A diamond shape represents a Yes/No or True/False decision branch.'
-            },
-            {
-              q: '3. Which device is used to process sensor readings and execute program logic in an IoT prototype?',
-              options: ['A. Microcontroller (e.g., ESP32 / Micro:bit)', 'B. Resistor', 'C. Breadboard', 'D. Jumper Wire'],
-              ans: 'A',
-              exp: 'The microcontroller is the processing unit (Process stage).'
-            },
-            {
-              q: '4. What type of signal is produced by a simple push button (Pressed vs Released)?',
-              options: ['A. Digital signal (HIGH / LOW)', 'B. Analog continuous wave', 'C. Ultrasonic wave', 'D. Radio frequency'],
-              ans: 'A',
-              exp: 'A push button has only two states: HIGH (1) or LOW (0), which is a digital signal.'
-            },
-            {
-              q: '5. Why do we connect a current-limiting resistor in series with an LED?',
-              options: ['A. To increase battery voltage', 'B. To prevent excessive current from burning out the LED', 'C. To store Wi-Fi passwords', 'D. To measure temperature'],
-              ans: 'B',
-              exp: 'A resistor limits current flow to protect the LED.'
+              exp: 'A diamond represents a True/False condition.'
             }
           ],
           fill: [
-            { q: '1. The three stages of the IPO model stand for Input, ____________, and Output.', ans: 'Process' },
-            { q: '2. In a flowchart, a rectangle represents a ____________ or action step.', ans: 'process (or instruction)' },
-            { q: '3. An ultrasonic sensor measures distance by sending out high-frequency ____________ waves and timing the echo.', ans: 'sound (or ultrasonic)' },
-            { q: '4. An I2C 0.96-inch OLED screen requires four pins: VCC, GND, SCL, and ____________.', ans: 'SDA' }
+            { q: '1. IPO stands for Input, ____________, and Output.', ans: 'Process' },
+            { q: '2. A push button produces a ____________ signal (HIGH / LOW).', ans: 'digital' }
           ],
           structured: [
             {
-              q: 'Question 1 (6 marks): A smart classroom energy-saving system turns on the cooling fan when the temperature sensor reads above 28°C AND the motion sensor detects students in the room.\n(a) State the Input, Process, and Output of this system. (3 marks)\n(b) Write the decision condition using a logical operator (AND / OR). (3 marks)',
-              ans: '(a) Input: Temperature sensor & Motion (PIR) sensor [1m]; Process: Microcontroller compares readings [1m]; Output: Cooling fan relay turns ON [1m].\n(b) IF (Temperature > 28) AND (Motion == Detected) THEN Turn Fan ON ELSE Turn Fan OFF [3m].'
-            },
-            {
-              q: 'Question 2 (6 marks): Describe the step-by-step flowchart logic for an Automatic Smart Doorbell that sounds a buzzer and displays "Visitor Waiting" on an OLED screen when a visitor stands within 50 cm for more than 3 seconds.',
-              ans: '1. Start -> Read distance (cm) from sensor [2m]\n2. Decision: Is distance < 50 cm continuously for >= 3 seconds? [2m]\n3. If YES -> Sound buzzer & Display "Visitor Waiting" on OLED; If NO -> Keep buzzer OFF -> Loop back [2m]'
+              q: 'Question 1 (6 marks): State the Input, Process, and Output of an automatic classroom fan system triggered when temp > 28°C.',
+              ans: 'Input: Temperature sensor; Process: Microcontroller compares temp > 28; Output: Fan relay ON.'
             }
           ]
         }
       },
       'F2_ENG': {
         key: 'F2_ENG',
-        subjectName: 'F.2–F.3 English Language (英國語文科 ENG)',
+        subjectName: 'F.2–F.3 English Language (英文科 ENG)',
         classes: '2A, 3B, 5A',
-        priorTopics: 'Weeks 1–8: Simple Past vs Present Perfect Tense & Skimming/Scanning Skills',
-        currentWeekTopic: 'Week 9–10 (Nov 2026): Conditional Sentences (Type 1 & Type 2) & Smart Technology Vocabulary',
+        priorTopics: 'Weeks 1–8: Simple Past vs Present Perfect Tense',
+        currentWeekTopic: 'Week 9–10: Conditional Sentences (Type 1 & Type 2)',
         questions: {
           mc: [
             {
-              q: '1. If it ____________ heavily tomorrow morning, the inter-school football match will be postponed.',
+              q: '1. If it ____________ heavily tomorrow, the match will be cancelled.',
               options: ['A. rain', 'B. rains', 'C. rained', 'D. will rain'],
               ans: 'B',
-              exp: 'Type 1 Conditional uses Simple Present tense ("rains") in the if-clause.'
+              exp: 'Type 1 Conditional uses Simple Present in the if-clause.'
             },
             {
-              q: '2. If I ____________ you, I would back up my project files to the cloud drive immediately.',
+              q: '2. If I ____________ you, I would revise early for the quiz.',
               options: ['A. am', 'B. was', 'C. were', 'D. be'],
               ans: 'C',
-              exp: 'Type 2 Conditional uses "If I were you" for hypothetical advice.'
-            },
-            {
-              q: '3. Which word best replaces "cut down on" in: "Students should cut down on screen time before bed"?',
-              options: ['A. reduce', 'B. increase', 'C. expand', 'D. invent'],
-              ans: 'A',
-              exp: '"Cut down on" means to reduce.'
-            },
-            {
-              q: '4. What would you do if you ____________ your Octopus card on the way to school?',
-              options: ['A. lose', 'B. lost', 'C. have lost', 'D. will lose'],
-              ans: 'B',
-              exp: 'Type 2 Conditional: "would + verb" pairs with Simple Past ("lost") in the if-clause.'
-            },
-            {
-              q: '5. You will not pass the practical test ____________ you practise writing the formulas carefully.',
-              options: ['A. if', 'B. unless', 'C. because', 'D. although'],
-              ans: 'B',
-              exp: '"Unless" means "if ... not".'
+              exp: 'Type 2 Conditional uses "If I were you".'
             }
           ],
           fill: [
-            { q: '1. If she studies hard this week, she ____________ (get) a high mark in the short test.', ans: 'will get' },
-            { q: '2. If humans ____________ (have) wings, we would not need to take the MTR.', ans: 'had' },
-            { q: '3. Artificial Intelligence has greatly improved the ____________ (efficient) of school administration.', ans: 'efficiency' },
-            { q: '4. Please remember to hand ____________ your completed worksheet to the class monitor.', ans: 'in' }
+            { q: '1. If she studies hard, she ____________ (get) a good result.', ans: 'will get' },
+            { q: '2. You will not pass ____________ (if / unless) you practise carefully.', ans: 'unless' }
           ],
           structured: [
             {
-              q: 'Question 1 (6 marks): Rewrite the following sentences using Conditional Sentences (Type 1 or Type 2):\n(a) Hurry up, or you will miss the school bus. (Start with: If you do not...)\n(b) Leo does not have a laptop, so he cannot join the coding competition. (Start with: If Leo had...)\n(c) Keep quiet in the library, or the librarian will ask you to leave. (Use: unless)',
-              ans: '(a) If you do not hurry up, you will miss the school bus. [2m]\n(b) If Leo had a laptop, he would/could join the coding competition. [2m]\n(c) The librarian will ask you to leave unless you keep quiet in the library. [2m]'
-            },
-            {
-              q: 'Question 2 (6 marks): Short Writing — Write 3 complete sentences advising a Form 1 student on how to use technology responsibly at school (using "If...", "should", and "must not").',
-              ans: 'Award 2 marks per grammatically sound sentence (e.g., "If you use the computer room, you must not install unauthorized games. You should protect your password carefully..."). [6m]'
+              q: 'Question 1 (6 marks): Rewrite using "If": Hurry up, or you will miss the bus.',
+              ans: 'If you do not hurry up, you will miss the bus. [6m]'
             }
           ]
         }
       },
       'F4_CHIN': {
         key: 'F4_CHIN',
-        subjectName: 'F.4 Chinese Language & OLE (中國語文科 / 其他學習經歷)',
+        subjectName: 'F.4 Chinese Language & OLE (中文科 / OLE)',
         classes: '4A, 4C',
-        priorTopics: '第1–8周：文言虛詞辨析、論說文論點與論據結構',
-        currentWeekTopic: '第9–10周 (2026年11月)：議論文論證手法（舉例、對比、比喻論證）及指定文言篇章溫習',
+        priorTopics: '第1–8周：文言虛詞辨析、論說文結構',
+        currentWeekTopic: '第9–10周：議論文論證手法（舉例、對比、比喻論證）',
         questions: {
           mc: [
             {
-              q: '1. 下列哪一項屬於議論文中的「正反對比論證」？',
-              options: [
-                'A. 引用孔子名言說明勤學的重要',
-                'B. 以「滴水穿石」比喻持之以恆的精神',
-                'C. 並列六國破滅「弊在賂秦」與燕趙「義不賂秦」的不同結局',
-                'D. 詳述李白生平事跡'
-              ],
-              ans: 'C',
-              exp: '透過正反兩方面的事理或結果互相對照，突顯中心論點，屬於對比論證。'
-            },
-            {
-              q: '2. 《論仁、論孝、論君子》中，「不仁者不可以久處約，不可以長處樂」的「約」字解作甚麼？',
-              options: ['A. 約束', 'B. 貧困、窮困', 'C. 約定', 'D. 節儉'],
+              q: '1. 《論仁、論孝、論君子》中，「不仁者不可以久處約」的「約」字解作：',
+              options: ['A. 約束', 'B. 貧困', 'C. 約定', 'D. 節儉'],
               ans: 'B',
-              exp: '「約」指貧困、困頓的處境，與「樂」（安樂）相對。'
+              exp: '「約」指貧困處境。'
             },
             {
-              q: '3. 「君子坦蕩蕩，小人長戚戚」運用了哪種修辭及論證手法？',
-              options: ['A. 對偶、對比', 'B. 借代、誇張', 'C. 頂真、層遞', 'D. 反問、設問'],
+              q: '2. 「君子坦蕩蕩，小人長戚戚」運用了哪種論證手法？',
+              options: ['A. 對比論證', 'B. 比喻論證', 'C. 引用論證', 'D. 類比論證'],
               ans: 'A',
-              exp: '句式結構對稱（對偶），並把君子與小人的心境作鮮明對比。'
-            },
-            {
-              q: '4. 在議論文結構中，用來證明「論點」是否成立的史實、數據或事例稱為甚麼？',
-              options: ['A. 論題', 'B. 論據', 'C. 論證', 'D. 結論'],
-              ans: 'B',
-              exp: '論據是用來支持論點的材料（包括事實論據與道理論據）。'
-            },
-            {
-              q: '5. 「今由與求也，相夫子，遠人不服而不能來也」中，「相」字的意思是：',
-              options: ['A. 互相', 'B. 輔佐、協助', 'C. 觀察', 'D. 宰相'],
-              ans: 'B',
-              exp: '「相」讀作去聲，解作輔佐。'
+              exp: '把君子與小人的心境作正反對比。'
             }
           ],
           fill: [
-            { q: '1. 議論文的三要素包括：論點、____________ 和論證。', ans: '論據' },
-            { q: '2. 《論語》中：「克己復禮為仁。一日克己復禮，天下歸仁焉。」其中「克」字解作 ____________。', ans: '克制（或戰勝）' },
-            { q: '3. 用具體淺顯的事物來說明抽象深奧道理的論證手法，稱為 ____________ 論證。', ans: '比喻' },
-            { q: '4. 「君子求諸己，小人求諸人」中，「諸」字相當於現代漢語的「____________」。', ans: '之於' }
+            { q: '1. 議論文三要素包括：論點、____________ 和論證。', ans: '論據' },
+            { q: '2. 「克己復禮為仁」中，「克」字解作 ____________。', ans: '克制（或戰勝）' }
           ],
           structured: [
             {
-              q: '第一題（6分）：試說明「舉例論證」與「比喻論證」在說理效果上的分別，並各舉一例說明。',
-              ans: '舉例論證：列舉真實史實或生活事例，增強文章說服力與真實感（3分）；比喻論證：化抽象為具體，令道理生動易懂（3分）。'
-            },
-            {
-              q: '第二題（6分）：孔子認為「君子成人之美，不成人之惡」。試結合校園生活，寫出一段約80字短文，說明同學之間應如何實踐這一原則。',
-              ans: '能準確解釋句意（成全別人的好事，不助長別人的壞事，2分），並結合校園實例（如勸阻違規、協助同學解難，4分）。'
+              q: '第一題（6分）：試說明「舉例論證」與「比喻論證」的分別。',
+              ans: '舉例論證以真實事例增強說服力（3分）；比喻論證化抽象為具體，淺顯易懂（3分）。'
             }
           ]
         }
       }
     };
 
-    // Match any timetable cell (e.g., "3C CL_C1 207", "2C CT_G1 221", "2A ENG 201") to the SoW Database
     function matchSchemeOfWorkByCell(rawCell) {
       const cell = (rawCell || '').toUpperCase();
       if (cell.includes('2C') && cell.includes('CT')) return SCHEME_OF_WORK_DB['F2_CT'];
@@ -1326,155 +1185,80 @@
       return SCHEME_OF_WORK_DB['F2_ENG'];
     }
 
-    // =========================================================================
-    // 2. GENERATE 40-MIN WORKSHEET / SHORT TEST + ANSWER KEY (TEXT & .DOC WORD)
-    // =========================================================================
     function generateWorksheetAndAnswerKeyText(rawCell, customTopicInput, paperMode = 'Revision Worksheet & Short Quiz', absentTeacherName = '') {
       const sowEntry = matchSchemeOfWorkByCell(rawCell);
       const isAutoTracked = !customTopicInput || customTopicInput.trim() === '';
       const effectiveTopic = isAutoTracked
-        ? `${sowEntry.currentWeekTopic} [Auto-Tracked via School SoW DB: 2026-11-06 Week 10]`
-        : `${customTopicInput.trim()} [Aligned with ${sowEntry.subjectName}]`;
+        ? `${sowEntry.currentWeekTopic} [Auto-Tracked via School SoW DB]`
+        : `${customTopicInput.trim()}`;
 
-      const mcSection = sowEntry.questions.mc.map(item =>
-        `${item.q}\n   ${item.options.join('    ')}`
-      ).join('\n\n');
-
+      const mcSection = sowEntry.questions.mc.map(item => `${item.q}\n   ${item.options.join('   ')}`).join('\n\n');
       const fillSection = sowEntry.questions.fill.map(item => item.q).join('\n');
       const structSection = sowEntry.questions.structured.map(item => item.q).join('\n\n');
 
       const mcAns = sowEntry.questions.mc.map((item, i) => `Q${i + 1}: ${item.ans} (${item.exp})`).join('\n');
-      const fillAns = sowEntry.questions.fill.map((item, i) => `Q${i + 1}: ${item.ans}`).join('  |  ');
-      const structAns = sowEntry.questions.structured.map((item, i) => `[Q${i + 1} Marking Scheme]\n${item.ans}`).join('\n\n');
+      const fillAns = sowEntry.questions.fill.map((item, i) => `Q${i + 1}: ${item.ans}`).join(' | ');
+      const structAns = sowEntry.questions.structured.map((item, i) => `[Q${i + 1}] ${item.ans}`).join('\n');
 
       return [
-        `====================================================================`,
+        `================================================================`,
         `YAN CHAI HOSPITAL LAN CHI PAT MEMORIAL SECONDARY SCHOOL`,
         `40-MINUTE ${paperMode.toUpperCase()} (WITH ANSWER KEY)`,
-        `====================================================================`,
+        `================================================================`,
         `Class & Subject : ${rawCell || sowEntry.subjectName}`,
-        `Date / Week     : 2026-11-06 (Term 1 · Week 10) | Time Allowed: 40 Minutes`,
-        `SoW Topic       : ${effectiveTopic}`,
-        `Prior Revision  : ${sowEntry.priorTopics}`,
-        `--------------------------------------------------------------------`,
-        `Name: ______________________  Class: ______ (    )  Marks: ______ / 25`,
-        `--------------------------------------------------------------------`,
-        ``,
-        `SECTION A: MULTIPLE CHOICE QUESTIONS (5 marks, 1 mark each)`,
+        `Date / Calendar : 2026-11-06 (Term 1 · Week 10 · DAY 2)`,
+        `Tracked Topic   : ${effectiveTopic}`,
+        `----------------------------------------------------------------`,
+        `SECTION A: MULTIPLE CHOICEInit`,
         `${mcSection}`,
         ``,
-        `SECTION B: FILL IN THE BLANKS & CONCEPT CHECK (8 marks, 2 marks each)`,
+        `SECTION B: FILL IN THE BLANKS`,
         `${fillSection}`,
         ``,
-        `SECTION C: STRUCTURED & PRACTICAL QUESTIONS (12 marks)`,
+        `SECTION C: STRUCTURED QUESTIONS`,
         `${structSection}`,
         ``,
-        `==================== [PAGE BREAK - TEACHER COPY] ====================`,
-        `CONFIDENTIAL: TEACHER'S ANSWER KEY & MARKING SCHEME`,
-        `(For Cover Teacher Classroom Checking / Self-Assessment)`,
-        `--------------------------------------------------------------------`,
-        `[Section A - Multiple Choice Answers (5 marks)]`,
+        `================ [TEACHER'S ANSWER KEY & MARKING] ================`,
         `${mcAns}`,
-        ``,
-        `[Section B - Fill in the Blanks Answers (8 marks)]`,
-        `${fillAns}`,
-        ``,
-        `[Section C - Structured Questions Marking Scheme (12 marks)]`,
+        `Fill-in-blanks: ${fillAns}`,
         `${structAns}`
       ].join('\n');
     }
 
-    // Export Genuine Microsoft Word (.doc) File with Student Paper + Page Break + Answer Key
     function downloadWordDocFile(rawCell, customTopic, paperMode, absentTeacherName) {
       const sowEntry = matchSchemeOfWorkByCell(rawCell);
-      const isAuto = !customTopic || customTopic.trim() === '';
-      const topicTitle = isAuto ? sowEntry.currentWeekTopic : customTopic.trim();
+      const topicTitle = (!customTopic || customTopic.trim() === '') ? sowEntry.currentWeekTopic : customTopic.trim();
 
-      const mcHtml = sowEntry.questions.mc.map(item => `
-        <p style="margin:6pt 0 2pt 0; font-weight:bold;">${item.q}</p>
-        <p style="margin:0 0 6pt 14pt;">${item.options.join('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')}</p>
-      `).join('');
+      const mcHtml = sowEntry.questions.mc.map(item => `<p><strong>${item.q}</strong><br/>${item.options.join('&nbsp;&nbsp;&nbsp;&nbsp;')}</p>`).join('');
+      const fillHtml = sowEntry.questions.fill.map(item => `<p>${item.q}</p>`).join('');
+      const structHtml = sowEntry.questions.structured.map(item => `<p><strong>${item.q}</strong></p><div style="border:1pt solid #888;height:55pt;margin-bottom:8pt;"></div>`).join('');
 
-      const fillHtml = sowEntry.questions.fill.map(item => `
-        <p style="margin:6pt 0;">${item.q}</p>
-      `).join('');
-
-      const structHtml = sowEntry.questions.structured.map(item => `
-        <p style="margin:8pt 0 4pt 0; font-weight:bold; white-space:pre-line;">${item.q}</p>
-        <div style="border:1pt solid #94a3b8; height:65pt; margin-bottom:10pt; padding:4pt; color:#94a3b8; font-size:9pt;">[Answer Box / 答题區]</div>
-      `).join('');
-
-      const mcAnsHtml = sowEntry.questions.mc.map((item, idx) => `
-        <li><strong>Q${idx + 1}: ${item.ans}</strong> — ${item.exp}</li>
-      `).join('');
-
-      const fillAnsHtml = sowEntry.questions.fill.map((item, idx) => `
-        <li><strong>Q${idx + 1}:</strong> ${item.ans}</li>
-      `).join('');
-
-      const structAnsHtml = sowEntry.questions.structured.map((item, idx) => `
-        <p style="margin:6pt 0; white-space:pre-line;"><strong>Question ${idx + 1}:</strong><br/>${item.ans}</p>
-      `).join('');
+      const mcAnsHtml = sowEntry.questions.mc.map((item, idx) => `<li><strong>Q${idx + 1}: ${item.ans}</strong> — ${item.exp}</li>`).join('');
+      const fillAnsHtml = sowEntry.questions.fill.map((item, idx) => `<li><strong>Q${idx + 1}:</strong> ${item.ans}</li>`).join('');
+      const structAnsHtml = sowEntry.questions.structured.map((item, idx) => `<p><strong>Q${idx + 1}:</strong> ${item.ans}</p>`).join('');
 
       const wordHtml = `
         <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-        <head>
-          <meta charset="utf-8">
-          <title>${rawCell} - 40-Min Worksheet & Answer Key</title>
-          <style>
-            body { font-family: 'Times New Roman', 'PMingLiU', 'Noto Sans HK', serif; font-size: 11pt; color: #000000; line-height: 1.4; }
-            h1 { font-size: 15pt; text-align: center; margin: 0; font-weight: bold; }
-            h2 { font-size: 12pt; text-align: center; margin: 2pt 0 8pt 0; }
-            .info-table { width: 100%; border-collapse: collapse; margin-bottom: 10pt; }
-            .info-table td { border: 1pt solid #000; padding: 5pt 8pt; font-size: 10pt; }
-            .section-hdr { background-color: #eef8dc; border: 1pt solid #4d8a00; padding: 4pt 8pt; font-weight: bold; margin-top: 10pt; }
-            .page-break { page-break-before: always; }
-          </style>
-        </head>
-        <body>
-          <h1>仁濟醫院靚次伯紀念中學<br/>YAN CHAI HOSPITAL LAN CHI PAT MEMORIAL SECONDARY SCHOOL</h1>
-          <h2>${paperMode} (40-Minute Classwork / Short Test)</h2>
-
-          <table class="info-table">
-            <tr>
-              <td><strong>Class &amp; Subject 班別及科目:</strong> ${rawCell}</td>
-              <td><strong>Date 日期:</strong> 2026-11-06 (Term 1 Week 10)</td>
-              <td><strong>Time Allowed 時限:</strong> 40 Mins</td>
-            </tr>
-            <tr>
-              <td colspan="2"><strong>Scheme of Work Topic 課題進度:</strong> ${topicTitle}</td>
-              <td><strong>Subject Teacher 原任老師:</strong> ${absentTeacherName || 'Subject Teacher'}</td>
-            </tr>
-            <tr>
-              <td><strong>Student Name 學生姓名:</strong> ____________________</td>
-              <td><strong>Class &amp; No. 班別學號:</strong> ________ ( &nbsp;&nbsp;&nbsp; )</td>
-              <td><strong>Score 得分:</strong> _________ / 25</td>
-            </tr>
-          </table>
-
-          <div class="section-hdr">SECTION A: MULTIPLE CHOICE QUESTIONS 選擇題 (5 marks, 1 mark each)</div>
+        <head><meta charset="utf-8"><title>${rawCell} Worksheet</title></head>
+        <body style="font-family:'Times New Roman','Noto Sans HK',serif;font-size:11pt;">
+          <h2 style="text-align:center;margin:0;">仁濟醫院靚次伯紀念中學 YAN CHAI HOSPITAL LAN CHI PAT MEMORIAL SECONDARY SCHOOL</h2>
+          <h3 style="text-align:center;margin:4pt 0 10pt 0;">${paperMode} (40-Minute Classwork)</h3>
+          <p><strong>Class &amp; Subject:</strong> ${rawCell} &nbsp;|&nbsp; <strong>Topic:</strong> ${topicTitle} &nbsp;|&nbsp; <strong>Teacher:</strong> ${absentTeacherName}</p>
+          <p><strong>Name:</strong> ____________________ &nbsp;&nbsp; <strong>Class &amp; No.:</strong> ______ ( &nbsp;&nbsp; ) &nbsp;&nbsp; <strong>Marks:</strong> _____ / 25</p>
+          <hr/>
+          <h4>SECTION A: MULTIPLE CHOICE QUESTIONS</h4>
           ${mcHtml}
-
-          <div class="section-hdr">SECTION B: FILL IN THE BLANKS 填充及概念題 (8 marks, 2 marks each)</div>
+          <h4>SECTION B: FILL IN THE BLANKS</h4>
           ${fillHtml}
-
-          <div class="section-hdr">SECTION C: STRUCTURED &amp; PRACTICAL QUESTIONS 結構及應用題 (12 marks)</div>
+          <h4>SECTION C: STRUCTURED QUESTIONS</h4>
           ${structHtml}
-
-          <div class="page-break"></div>
-          <h1>[TEACHER'S MARKING SCHEME &amp; ANSWER KEY 教師評分參考及答案]</h1>
-          <h2>For Cover Teacher / Post-Lesson Checking (${rawCell} — ${topicTitle})</h2>
-
-          <div class="section-hdr">Section A — Multiple Choice Answers (5 marks)</div>
-          <ul>${mcAnsHtml}</ul>
-
-          <div class="section-hdr">Section B — Fill in the Blanks Answers (8 marks)</div>
-          <ul>${fillAnsHtml}</ul>
-
-          <div class="section-hdr">Section C — Structured Questions Marking Scheme (12 marks)</div>
-          ${structAnsHtml}
-        </body>
-        </html>
+          <br style="page-break-before:always;"/>
+          <h2>[TEACHER'S ANSWER KEY &amp; MARKING SCHEME 教師評分答案]</h2>
+          <p><strong>Class:</strong> ${rawCell} — ${topicTitle}</p>
+          <h4>Section A Answers</h4><ul>${mcAnsHtml}</ul>
+          <h4>Section B Answers</h4><ul>${fillAnsHtml}</ul>
+          <h4>Section C Marking Scheme</h4>${structAnsHtml}
+        </body></html>
       `;
 
       const blob = new Blob(['\ufeff', wordHtml], { type: 'application/msword;charset=utf-8' });
@@ -1482,33 +1266,36 @@
       const a = document.createElement('a');
       const safeName = (rawCell || 'Classwork').replace(/[^a-zA-Z0-9_-]/g, '_');
       a.href = url;
-      a.download = `YCHLCP_40Min_Worksheet_With_Answers_${safeName}_Week10.doc`;
+      a.download = `YCHLCP_40Min_Worksheet_${safeName}.doc`;
       document.body.appendChild(a);
       a.click();
       a.remove();
       URL.revokeObjectURL(url);
-      showSystemToast(`📄 已成功匯出並下載 Word 工作紙連答案：YCHLCP_40Min_Worksheet_With_Answers_${safeName}_Week10.doc`, 'success');
+      showSystemToast(`📄 已下載 Word 試卷連答案：YCHLCP_40Min_Worksheet_${safeName}.doc`, 'success');
     }
 
     // =========================================================================
-    // 3. DEFAULT SCHOOL DATABASE (Pre-loaded with 3 Absent Teachers on DAY 2!)
+    // 3. DEFAULT DATABASE (3 Absent Teachers across P1-P7 on DAY 2)
     // =========================================================================
     function createDefaultDatabase() {
+      const hkNow = getHongKongTimeParts();
+      const autoDay = detectCycleDayFromSchoolCalendar(hkNow.hkDate);
+      const autoPeriod = detectPeriodFromHKMinutes(hkNow.totalMinutes);
+
       return {
-        currentCycleDay: 'DAY 2',
-        activePeriodId: 'P2', // Default active period = P2 (09:10-09:50), so P2 is Current & P3 is Next
+        currentCycleDay: autoDay,
+        activePeriodId: autoPeriod,
+        clockMode: 'auto', // 'auto' follows real Asia/Hong_Kong time automatically
         tvShowFullDay: false,
         teachers: {
           CKKU: {
             code: 'CKKU',
             name: '周嘉權老師 Mr. CHAU KA KUEN',
-            shortName: '周嘉權 (CKKU)',
-            email: 'ckku@lcp.edu.hk',
-            subjects: ['ICT', 'CL', 'CT'],
+            shortName: 'CKKU 周嘉權',
             subQuotaUsed: 1,
             timetable: {
               'DAY 1': { P1: '', P2: '', P3: '3A CL_A2 207', P4: '3A CL_A2 207', P5: '5A Reading 505', P6: '', P7: '', P8: '' },
-              'DAY 2': { P1: '3C CL_C1 207', P2: '3C CL_C1 207', P3: '3B CL_B1 207', P4: '3B CL_B1 207', P5: '', P6: '', P7: '2C CT_G1 221', P8: '' },
+              'DAY 2': { P1: '3C CL_C1 207', P2: '3C CL_C1 207', P3: '3B CL_B1 207', P4: '3B CL_B1 207', P5: '2A CL_G2 207', P6: '', P7: '2C CT_G1 221', P8: '' },
               'DAY 3': { P1: '', P2: '', P3: '2A CL_G2 221', P4: '2A CL_G2 221', P5: '', P6: '', P7: '', P8: '' },
               'DAY 4': { P1: '', P2: '3B CL_B1 207', P3: '', P4: '', P5: '2C CT_G1 221', P6: '2C CT_G1 221', P7: '', P8: '' },
               'DAY 5': { P1: '', P2: '', P3: '3C CL_C1 207', P4: '', P5: '4C OLE 407', P6: '4C OLE 407', P7: '', P8: '' },
@@ -1518,15 +1305,13 @@
           TMCHAN: {
             code: 'TMCHAN',
             name: '陳大文老師 Mr. CHAN TAI MAN',
-            shortName: '陳大文 (TMCHAN)',
-            email: 'tmchan@lcp.edu.hk',
-            subjects: ['ICT', 'CL', 'MATH'],
+            shortName: 'TMCHAN 陳大文',
             subQuotaUsed: 2,
             timetable: {
-              'DAY 1': { P1: '1A MATH 101', P2: '1A MATH 101', P3: '', P4: '', P5: '2B MATH 202', P6: '', P7: '', P8: '' },
-              'DAY 2': { P1: '', P2: '', P3: '', P4: '', P5: '1A MATH 101', P6: '1A MATH 101', P7: '', P8: '' },
-              'DAY 3': { P1: '2B MATH 202', P2: '', P3: '', P4: '', P5: '', P6: '', P7: '1A MATH 101', P8: '' },
-              'DAY 4': { P1: '', P2: '', P3: '2B MATH 202', P4: '2B MATH 202', P5: '', P6: '', P7: '', P8: '' },
+              'DAY 1': { P1: '1A MATH 101', P2: '1A MATH 101', P3: '', P4: '', P5: '', P6: '', P7: '', P8: '' },
+              'DAY 2': { P1: '', P2: '', P3: '', P4: '', P5: '', P6: '1A MATH 101', P7: '', P8: '' },
+              'DAY 3': { P1: '2B MATH 202', P2: '', P3: '', P4: '', P5: '', P6: '', P7: '', P8: '' },
+              'DAY 4': { P1: '', P2: '', P3: '2B MATH 202', P4: '', P5: '', P6: '', P7: '', P8: '' },
               'DAY 5': { P1: '1A MATH 101', P2: '', P3: '', P4: '', P5: '', P6: '', P7: '', P8: '' },
               'DAY 6': { P1: '', P2: '', P3: '2B MATH 202', P4: '', P5: '', P6: '', P7: '', P8: '' }
             }
@@ -1534,9 +1319,7 @@
           SMLI: {
             code: 'SMLI',
             name: '李淑敏老師 Ms. LI SHUK MAN',
-            shortName: '李淑敏 (SMLI)',
-            email: 'smli@lcp.edu.hk',
-            subjects: ['ENG', 'Reading'],
+            shortName: 'SMLI 李淑敏',
             subQuotaUsed: 2,
             timetable: {
               'DAY 1': { P1: '2A ENG 201', P2: '', P3: '', P4: '', P5: '', P6: '3B ENG 302', P7: '', P8: '' },
@@ -1550,9 +1333,7 @@
           KHWONG: {
             code: 'KHWONG',
             name: '黃家豪老師 Mr. WONG KA HO',
-            shortName: '黃家豪 (KHWONG)',
-            email: 'khwong@lcp.edu.hk',
-            subjects: ['CT', 'SCI'],
+            shortName: 'KHWONG 黃家豪',
             subQuotaUsed: 3,
             timetable: {
               'DAY 1': { P1: '', P2: '1C SCI 103', P3: '', P4: '', P5: '', P6: '', P7: '', P8: '' },
@@ -1566,9 +1347,7 @@
           MYCHEUNG: {
             code: 'MYCHEUNG',
             name: '張美儀老師 Ms. CHEUNG MEI YI',
-            shortName: '張美儀 (MYCHEUNG)',
-            email: 'mycheung@lcp.edu.hk',
-            subjects: ['CHIN', 'OLE'],
+            shortName: 'MYCHEUNG 張美儀',
             subQuotaUsed: 1,
             timetable: {
               'DAY 1': { P1: '', P2: '', P3: '4A CHIN 401', P4: '', P5: '', P6: '', P7: '', P8: '' },
@@ -1582,9 +1361,7 @@
           WKLAM: {
             code: 'WKLAM',
             name: '林偉強老師 Mr. LAM WAI KEUNG',
-            shortName: '林偉強 (WKLAM)',
-            email: 'wklam@lcp.edu.hk',
-            subjects: ['ENG', 'CHIN', 'HIST'],
+            shortName: 'WKLAM 林偉強',
             subQuotaUsed: 1,
             timetable: {
               'DAY 1': { P1: '', P2: '', P3: '', P4: '2B HIST 202', P5: '', P6: '', P7: '', P8: '' },
@@ -1596,56 +1373,56 @@
             }
           }
         },
-        // 3 Absent Teachers pre-loaded on DAY 2 to prove the new Split GUI handles multiple absent teachers cleanly!
         leaveRequests: [
           {
-            id: 'REQ-2026-101',
+            id: 'REQ-101',
             teacherCode: 'CKKU',
-            teacherName: '周嘉權老師 Mr. CHAU KA KUEN (CKKU)',
+            teacherName: 'CKKU 周嘉權老師',
             cycleDay: 'DAY 2',
-            leaveType: '[OD] 公假 / 帶隊活動 Official Duty (Robotics Competition)',
-            customTopic: '', // Left blank -> Auto-tracked from School SoW DB!
+            leaveType: '[OD] 公假 (Robotics Competition)',
+            customTopic: '',
             paperMode: 'Revision Worksheet & Short Quiz',
             approvalStatus: 'approved',
             submittedAt: '07:50',
             lessons: [
-              { periodId: 'P1', periodLabel: '第1節 P1 (08:30-09:10)', rawCell: '3C CL_C1 207', room: '207', assignedSubCode: 'TMCHAN', assignedSubName: '陳大文老師 (TMCHAN)', checkinStatus: 'arrived', ackTime: '08:10', arriveTime: '08:28' },
-              { periodId: 'P2', periodLabel: '第2節 P2 (09:10-09:50)', rawCell: '3C CL_C1 207', room: '207', assignedSubCode: 'TMCHAN', assignedSubName: '陳大文老師 (TMCHAN)', checkinStatus: 'arrived', ackTime: '08:10', arriveTime: '09:08' },
-              { periodId: 'P3', periodLabel: '第3節 P3 (10:10-10:50)', rawCell: '3B CL_B1 207', room: '207', assignedSubCode: 'TMCHAN', assignedSubName: '陳大文老師 (TMCHAN)', checkinStatus: 'ack', ackTime: '08:10', arriveTime: '' },
-              { periodId: 'P4', periodLabel: '第4節 P4 (10:50-11:30)', rawCell: '3B CL_B1 207', room: '207', assignedSubCode: 'WKLAM', assignedSubName: '林偉強老師 (WKLAM)', checkinStatus: 'pending', ackTime: '', arriveTime: '' },
-              { periodId: 'P7', periodLabel: '第7節 P7 (14:20-15:00)', rawCell: '2C CT_G1 221', room: '221', assignedSubCode: 'KHWONG', assignedSubName: '黃家豪老師 (KHWONG)', checkinStatus: 'ack', ackTime: '08:22', arriveTime: '' }
+              { periodId: 'P1', periodLabel: '第1節 P1 (08:30-09:10)', rawCell: '3C CL_C1 207', room: '207', assignedSubCode: 'TMCHAN', assignedSubName: 'TMCHAN 陳大文', checkinStatus: 'arrived', ackTime: '08:10', arriveTime: '08:28' },
+              { periodId: 'P2', periodLabel: '第2節 P2 (09:10-09:50)', rawCell: '3C CL_C1 207', room: '207', assignedSubCode: 'TMCHAN', assignedSubName: 'TMCHAN 陳大文', checkinStatus: 'arrived', ackTime: '08:10', arriveTime: '09:08' },
+              { periodId: 'P3', periodLabel: '第3節 P3 (10:10-10:50)', rawCell: '3B CL_B1 207', room: '207', assignedSubCode: 'TMCHAN', assignedSubName: 'TMCHAN 陳大文', checkinStatus: 'arrived', ackTime: '08:10', arriveTime: '10:09' },
+              { periodId: 'P4', periodLabel: '第4節 P4 (10:50-11:30)', rawCell: '3B CL_B1 207', room: '207', assignedSubCode: 'TMCHAN', assignedSubName: 'TMCHAN 陳大文', checkinStatus: 'ack', ackTime: '08:10', arriveTime: '' },
+              { periodId: 'P5', periodLabel: '第5節 P5 (11:50-12:30)', rawCell: '2A CL_G2 207', room: '207', assignedSubCode: 'WKLAM', assignedSubName: 'WKLAM 林偉強', checkinStatus: 'pending', ackTime: '', arriveTime: '' },
+              { periodId: 'P7', periodLabel: '第7節 P7 (14:20-15:00)', rawCell: '2C CT_G1 221', room: '221', assignedSubCode: 'KHWONG', assignedSubName: 'KHWONG 黃家豪', checkinStatus: 'ack', ackTime: '08:22', arriveTime: '' }
             ]
           },
           {
-            id: 'REQ-2026-102',
+            id: 'REQ-102',
             teacherCode: 'SMLI',
-            teacherName: '李淑敏老師 Ms. LI SHUK MAN (SMLI)',
+            teacherName: 'SMLI 李淑敏老師',
             cycleDay: 'DAY 2',
             leaveType: '[SL] 病假 Sick Leave',
-            customTopic: '', // Left blank -> Auto-tracked from School SoW DB!
+            customTopic: '',
             paperMode: '40-Minute Revision Short Test',
             approvalStatus: 'approved',
             submittedAt: '07:42',
             lessons: [
-              { periodId: 'P2', periodLabel: '第2節 P2 (09:10-09:50)', rawCell: '2A ENG 201', room: '201', assignedSubCode: 'KHWONG', assignedSubName: '黃家豪老師 (KHWONG)', checkinStatus: 'arrived', ackTime: '08:15', arriveTime: '09:09' },
-              { periodId: 'P3', periodLabel: '第3節 P3 (10:10-10:50)', rawCell: '3B ENG 302', room: '302', assignedSubCode: 'WKLAM', assignedSubName: '林偉強老師 (WKLAM)', checkinStatus: 'ack', ackTime: '08:25', arriveTime: '' },
-              { periodId: 'P5', periodLabel: '第5節 P5 (11:50-12:30)', rawCell: '3B ENG 302', room: '302', assignedSubCode: 'KHWONG', assignedSubName: '黃家豪老師 (KHWONG)', checkinStatus: 'pending', ackTime: '', arriveTime: '' }
+              { periodId: 'P2', periodLabel: '第2節 P2 (09:10-09:50)', rawCell: '2A ENG 201', room: '201', assignedSubCode: 'KHWONG', assignedSubName: 'KHWONG 黃家豪', checkinStatus: 'arrived', ackTime: '08:15', arriveTime: '09:09' },
+              { periodId: 'P3', periodLabel: '第3節 P3 (10:10-10:50)', rawCell: '3B ENG 302', room: '302', assignedSubCode: 'WKLAM', assignedSubName: 'WKLAM 林偉強', checkinStatus: 'arrived', ackTime: '08:25', arriveTime: '10:08' },
+              { periodId: 'P5', periodLabel: '第5節 P5 (11:50-12:30)', rawCell: '3B ENG 302', room: '302', assignedSubCode: 'KHWONG', assignedSubName: 'KHWONG 黃家豪', checkinStatus: 'ack', ackTime: '08:30', arriveTime: '' }
             ]
           },
           {
-            id: 'REQ-2026-103',
+            id: 'REQ-103',
             teacherCode: 'MYCHEUNG',
-            teacherName: '張美儀老師 Ms. CHEUNG MEI YI (MYCHEUNG)',
+            teacherName: 'MYCHEUNG 張美儀老師',
             cycleDay: 'DAY 2',
-            leaveType: '[TR] 教師進修研討會 EDB Curriculum Seminar',
-            customTopic: '', // Left blank -> Auto-tracked from School SoW DB!
+            leaveType: '[TR] 進修研討會 EDB Seminar',
+            customTopic: '',
             paperMode: 'Revision Worksheet & Short Quiz',
             approvalStatus: 'approved',
             submittedAt: '08:00',
             lessons: [
-              { periodId: 'P1', periodLabel: '第1節 P1 (08:30-09:10)', rawCell: '4A CHIN 401', room: '401', assignedSubCode: 'WKLAM', assignedSubName: '林偉強老師 (WKLAM)', checkinStatus: 'arrived', ackTime: '08:05', arriveTime: '08:29' },
-              { periodId: 'P2', periodLabel: '第2節 P2 (09:10-09:50)', rawCell: '4A CHIN 401', room: '401', assignedSubCode: 'WKLAM', assignedSubName: '林偉強老師 (WKLAM)', checkinStatus: 'ack', ackTime: '08:05', arriveTime: '' },
-              { periodId: 'P4', periodLabel: '第4節 P4 (10:50-11:30)', rawCell: '4C OLE 407', room: '407', assignedSubCode: 'TMCHAN', assignedSubName: '陳大文老師 (TMCHAN)', checkinStatus: 'pending', ackTime: '', arriveTime: '' }
+              { periodId: 'P1', periodLabel: '第1節 P1 (08:30-09:10)', rawCell: '4A CHIN 401', room: '401', assignedSubCode: 'WKLAM', assignedSubName: 'WKLAM 林偉強', checkinStatus: 'arrived', ackTime: '08:05', arriveTime: '08:29' },
+              { periodId: 'P2', periodLabel: '第2節 P2 (09:10-09:50)', rawCell: '4A CHIN 401', room: '401', assignedSubCode: 'WKLAM', assignedSubName: 'WKLAM 林偉強', checkinStatus: 'arrived', ackTime: '08:05', arriveTime: '09:09' },
+              { periodId: 'P4', periodLabel: '第4節 P4 (10:50-11:30)', rawCell: '4C OLE 407', room: '407', assignedSubCode: 'WKLAM', assignedSubName: 'WKLAM 林偉強', checkinStatus: 'ack', ackTime: '08:05', arriveTime: '' }
             ]
           }
         ]
@@ -1653,12 +1430,12 @@
     }
 
     // =========================================================================
-    // 4. STATE MANAGEMENT & NAVIGATION
+    // 4. STATE & AUTOMATIC REAL-TIME HKT CLOCK LOOP
     // =========================================================================
     let db = loadDatabase();
     let currentUserRole = null;
     let currentTeacherCode = 'CKKU';
-    let selectedLeaveDay = 'DAY 2';
+    let selectedLeaveDay = db.currentCycleDay || 'DAY 2';
 
     function loadDatabase() {
       try {
@@ -1667,9 +1444,7 @@
           const parsed = JSON.parse(raw);
           if (parsed && parsed.teachers && parsed.leaveRequests) return parsed;
         }
-      } catch (e) {
-        console.warn('Storage load fallback:', e);
-      }
+      } catch (e) {}
       const fresh = createDefaultDatabase();
       localStorage.setItem(STORAGE_KEY, JSON.stringify(fresh));
       return fresh;
@@ -1678,9 +1453,7 @@
     function saveDatabase() {
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
-      } catch (e) {
-        console.warn('Storage write error:', e);
-      }
+      } catch (e) {}
     }
 
     window.addEventListener('storage', (e) => {
@@ -1694,7 +1467,7 @@
       db = createDefaultDatabase();
       saveDatabase();
       refreshAllActiveViews();
-      showSystemToast('已重置預設示範資料（包含3位請假教師 CKKU、SMLI、MYCHEUNG 及教學進度庫自動配對）！', 'info');
+      showSystemToast('已還原預設資料（自動跟隨香港時間及校曆 DAY 2）！', 'info');
     }
 
     function getNextPeriodId(currentPid) {
@@ -1707,24 +1480,72 @@
       return PERIOD_SLOTS.find(p => p.id === pid) || PERIOD_SLOTS[0];
     }
 
-    function handleActivePeriodChange(newPid) {
-      db.activePeriodId = newPid;
-      saveDatabase();
-      refreshAllActiveViews();
-      const nextPid = getNextPeriodId(newPid);
-      showSystemToast(`🕒 當前時段已切換為：本節 ${newPid} ／ 下一節 ${nextPid || '放學 After School'}`, 'info');
+    // Live Hong Kong Time & School Calendar Auto-Sync Loop
+    function syncWithHongKongTime() {
+      const hk = getHongKongTimeParts();
+      const autoDay = detectCycleDayFromSchoolCalendar(hk.hkDate);
+      const autoPid = detectPeriodFromHKMinutes(hk.totalMinutes);
+
+      let periodChanged = false;
+      if (db.clockMode !== 'manual') {
+        if (db.currentCycleDay !== autoDay || db.activePeriodId !== autoPid) {
+          db.currentCycleDay = autoDay;
+          db.activePeriodId = autoPid;
+          periodChanged = true;
+        }
+      }
+
+      const pMeta = getPeriodMeta(db.activePeriodId);
+      const nextPid = getNextPeriodId(db.activePeriodId);
+
+      // Update Top Header Badges
+      const dateEl = document.getElementById('auto-header-date');
+      const cycleEl = document.getElementById('auto-header-cycle');
+      const pBadgeEl = document.getElementById('auto-header-period-badge');
+      const clockEl = document.getElementById('auto-header-clock');
+      const tvClockEl = document.getElementById('tv-live-clock');
+      const doorClockEl = document.getElementById('door-live-clock');
+
+      if (dateEl) dateEl.textContent = hk.dateStr;
+      if (cycleEl) cycleEl.textContent = db.currentCycleDay;
+      if (pBadgeEl) pBadgeEl.textContent = `本節 ${pMeta.short} (${pMeta.time})`;
+      if (clockEl) clockEl.textContent = hk.timeStr;
+      if (tvClockEl) tvClockEl.textContent = hk.timeStr;
+      if (doorClockEl) doorClockEl.textContent = hk.shortTimeStr;
+
+      const syncTextEl = document.getElementById('tv-auto-sync-status-text');
+      if (syncTextEl) {
+        if (db.clockMode === 'manual') {
+          syncTextEl.innerHTML = `🛠️ 演示時段模式：目前檢視 <strong>本節 ${pMeta.short}</strong> 及 <strong>下一節 ${nextPid || '放學'}</strong>`;
+        } else {
+          syncTextEl.innerHTML = `🕒 香港時間 HKT ${hk.shortTimeStr} 自動鎖定：<strong>本節 ${pMeta.short} (${pMeta.time})</strong> 及 <strong>下一節 ${nextPid || '放學'}</strong>`;
+        }
+      }
+
+      if (periodChanged) {
+        refreshAllActiveViews();
+      }
     }
 
-    function handleCycleDayChange(newDay) {
-      db.currentCycleDay = newDay;
-      selectedLeaveDay = newDay;
-      const leaveDaySel = document.getElementById('leave-form-day');
-      if (leaveDaySel) leaveDaySel.value = newDay;
+    function setClockModeAuto() {
+      db.clockMode = 'auto';
+      syncWithHongKongTime();
       saveDatabase();
       refreshAllActiveViews();
-      showSystemToast(`循環日已切換為：${newDay}`, 'info');
+      showSystemToast('🕒 已恢復全自動香港標準時間 (HKT) 與校曆同步模式！', 'success');
     }
 
+    function setManualDemoPeriod(pid) {
+      db.clockMode = 'manual';
+      db.activePeriodId = pid;
+      syncWithHongKongTime();
+      saveDatabase();
+      refreshAllActiveViews();
+    }
+
+    // =========================================================================
+    // 5. NAVIGATION & ROLE SWITCHING
+    // =========================================================================
     function submitLoginForm(e) {
       e.preventDefault();
       const val = (document.getElementById('login-email-input').value || '').toLowerCase();
@@ -1751,10 +1572,10 @@
       };
       Object.values(navMap).forEach(id => {
         const el = document.getElementById(id);
-        if (el) el.className = 'px-2.5 py-1.5 rounded-lg text-xs font-bold transition bg-black/15 hover:bg-white/20 text-white';
+        if (el) el.className = 'px-2.5 py-1.5 rounded-lg text-xs font-bold transition bg-black/15 hover:bg-white/20 text-white whitespace-nowrap';
       });
       if (navMap[roleKey]) {
-        document.getElementById(navMap[roleKey]).className = 'px-2.5 py-1.5 rounded-lg text-xs font-black transition bg-white text-[#2b5400] shadow-sm';
+        document.getElementById(navMap[roleKey]).className = 'px-2.5 py-1.5 rounded-lg text-xs font-black transition bg-white text-[#2b5400] shadow-sm whitespace-nowrap';
       }
 
       const userPill = document.getElementById('nav-user-pill');
@@ -1763,24 +1584,24 @@
 
       if (roleKey === 'ckku') {
         currentTeacherCode = 'CKKU';
-        userName.textContent = '周嘉權老師 (CKKU)';
+        userName.textContent = 'CKKU 周嘉權老師';
         document.getElementById('screen-teacher').classList.remove('hidden');
         switchTeacherSubTab('timetable-leave');
       } else if (roleKey === 'tmchan') {
         currentTeacherCode = 'TMCHAN';
-        userName.textContent = '陳大文老師 (TMCHAN)';
+        userName.textContent = 'TMCHAN 陳大文老師';
         document.getElementById('screen-teacher').classList.remove('hidden');
         switchTeacherSubTab('my-substitutions');
       } else if (roleKey === 'vp_admin') {
-        userName.textContent = '校務處 / 副校長 (WebSAMS Admin)';
+        userName.textContent = '校務處 WebSAMS Admin';
         document.getElementById('screen-admin').classList.remove('hidden');
         switchAdminSubTab('approval');
       } else if (roleKey === 'staffroom_tv') {
-        userName.textContent = '教員室看板 (本節+下一節)';
+        userName.textContent = '教員室實時看板';
         document.getElementById('screen-staffroom-tv').classList.remove('hidden');
         renderStaffroomTvBoard();
       } else if (roleKey === 'door_monitor') {
-        userName.textContent = '課室門外小型螢幕 (Small Monitor)';
+        userName.textContent = '課室門外極簡螢幕';
         document.getElementById('screen-door-monitor').classList.remove('hidden');
         renderSmallDoorMonitor();
       }
@@ -1794,13 +1615,32 @@
       document.getElementById('screen-login').classList.remove('hidden');
     }
 
+    // Pure CSS Status Badge Helper (Prevents Emoji/Text Overlap on iPad & PC)
+    function buildCleanStatusPill(status, ackTime, arriveTime) {
+      if (status === 'arrived') {
+        return `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-black bg-emerald-100 text-emerald-900 border border-emerald-300 whitespace-nowrap">
+          <span class="w-2 h-2 rounded-full bg-emerald-600 flex-shrink-0"></span>
+          <span>已到班 ${arriveTime ? `(${arriveTime})` : ''}</span>
+        </span>`;
+      }
+      if (status === 'ack') {
+        return `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-black bg-amber-100 text-amber-900 border border-amber-300 whitespace-nowrap">
+          <span class="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0"></span>
+          <span>已簽收 ${ackTime ? `(${ackTime})` : ''}</span>
+        </span>`;
+      }
+      return `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-black bg-rose-100 text-rose-800 border border-rose-300 whitespace-nowrap">
+        <span class="w-2 h-2 rounded-full bg-rose-600 pulse-dot flex-shrink-0"></span>
+        <span>待簽收 Pending</span>
+      </span>`;
+    }
+
     // =========================================================================
-    // 5. TEACHER PORTAL (Full-Day View + Auto SoW Word Paper Generator)
+    // 6. TEACHER PORTAL (Full-Day View Retained + Auto SoW Word Generator)
     // =========================================================================
-    function switchActiveTeacherAccount(teacherCode) {
-      currentTeacherCode = teacherCode;
+    function switchActiveTeacherAccount(code) {
+      currentTeacherCode = code;
       renderTeacherPortal();
-      showSystemToast(`已切換教師檢視帳號為：${db.teachers[teacherCode].name}`, 'info');
     }
 
     function switchTeacherSubTab(subTab) {
@@ -1812,13 +1652,13 @@
       if (subTab === 'timetable-leave') {
         leaveView.classList.remove('hidden');
         subView.classList.add('hidden');
-        btnLeave.className = 'px-3.5 py-1.5 rounded-lg text-xs font-black transition bg-[#68b800] text-white';
-        btnSub.className = 'px-3.5 py-1.5 rounded-lg text-xs font-black transition text-slate-700 hover:bg-lime-50 flex items-center gap-1.5';
+        btnLeave.className = 'px-3 py-1.5 rounded-lg text-xs font-black transition bg-[#68b800] text-white';
+        btnSub.className = 'px-3 py-1.5 rounded-lg text-xs font-black transition text-slate-700 hover:bg-lime-50 flex items-center gap-1.5';
       } else {
         leaveView.classList.add('hidden');
         subView.classList.remove('hidden');
-        btnLeave.className = 'px-3.5 py-1.5 rounded-lg text-xs font-black transition text-slate-700 hover:bg-lime-50';
-        btnSub.className = 'px-3.5 py-1.5 rounded-lg text-xs font-black transition bg-[#68b800] text-white flex items-center gap-1.5';
+        btnLeave.className = 'px-3 py-1.5 rounded-lg text-xs font-black transition text-slate-700 hover:bg-lime-50';
+        btnSub.className = 'px-3 py-1.5 rounded-lg text-xs font-black transition bg-[#68b800] text-white flex items-center gap-1.5';
       }
       renderTeacherPortal();
     }
@@ -1827,12 +1667,12 @@
       const accSelect = document.getElementById('teacher-portal-account-select');
       if (accSelect) {
         accSelect.innerHTML = Object.values(db.teachers).map(t =>
-          `<option value="${t.code}" ${t.code === currentTeacherCode ? 'selected' : ''}>${t.name} (${t.code})</option>`
+          `<option value="${t.code}" ${t.code === currentTeacherCode ? 'selected' : ''}>${t.shortName}</option>`
         ).join('');
       }
 
       const teacher = db.teachers[currentTeacherCode] || db.teachers.CKKU;
-      document.getElementById('timetable-owner-title').textContent = `個人全日時間表 Full-Day Timetable: ${teacher.name} (${teacher.code})`;
+      document.getElementById('timetable-owner-title').textContent = `個人全日時間表 Full-Day Timetable: ${teacher.name}`;
 
       const pillsContainer = document.getElementById('timetable-day-pills');
       pillsContainer.innerHTML = CYCLE_DAYS.map(d => {
@@ -1846,12 +1686,11 @@
         const th = document.getElementById(`th-${d.replace(' ', '-')}`);
         if (th) {
           th.className = (d === selectedLeaveDay)
-            ? 'p-2 cursor-pointer bg-[#68b800] text-white font-black'
-            : 'p-2 cursor-pointer hover:bg-lime-200';
+            ? 'p-1.5 cursor-pointer bg-[#68b800] text-white font-black'
+            : 'p-1.5 cursor-pointer hover:bg-lime-200';
         }
       });
 
-      // Render Teacher's Full Day (P1-P8) Timetable + highlight any assigned cover duties on selected Cycle Day
       const tbody = document.getElementById('teacher-timetable-tbody');
       tbody.innerHTML = PERIOD_SLOTS.map(slot => {
         const isCurrentNow = (slot.id === db.activePeriodId);
@@ -1859,39 +1698,36 @@
           const val = (teacher.timetable[day] && teacher.timetable[day][slot.id]) || '';
           const isSelectedDay = (day === selectedLeaveDay);
 
-          // Check if this teacher is assigned as a cover teacher on this day & period
-          let coverDutyMatch = null;
+          let coverMatch = null;
           db.leaveRequests.forEach(req => {
             if (req.cycleDay === day) {
               req.lessons.forEach(les => {
                 if (les.periodId === slot.id && les.assignedSubCode === teacher.code) {
-                  coverDutyMatch = { req, les };
+                  coverMatch = { req, les };
                 }
               });
             }
           });
 
-          if (coverDutyMatch) {
+          if (coverMatch) {
             return `<td onclick="selectLeaveDay('${day}')" class="p-1.5 cursor-pointer bg-amber-50 border border-amber-300 text-amber-950 font-bold">
-              <div class="text-[10px] bg-amber-500 text-white px-1 rounded inline-block">代課 Cover</div>
-              <div class="text-[11px] font-black">${coverDutyMatch.les.rawCell}</div>
+              <div class="text-[10px] bg-amber-500 text-white px-1 rounded inline-block">代課</div>
+              <div class="text-[11px] font-black">${coverMatch.les.rawCell}</div>
             </td>`;
           }
 
           if (!val) {
-            return `<td class="p-2 text-slate-300 ${isSelectedDay ? 'bg-lime-50/40' : ''}">—</td>`;
+            return `<td class="p-1.5 text-slate-300 ${isSelectedDay ? 'bg-lime-50/40' : ''}">—</td>`;
           }
           return `<td onclick="selectLeaveDay('${day}')" class="p-1.5 cursor-pointer font-bold ${
             isSelectedDay ? 'bg-lime-100 text-[#2b5400]' : 'bg-white text-slate-800 hover:bg-lime-50'
-          }">
-            <div>${val}</div>
-          </td>`;
+          }">${val}</td>`;
         }).join('');
 
-        return `<tr class="${isCurrentNow ? 'ring-2 ring-[#68b800] bg-lime-50/30' : ''}">
-          <td class="p-2 font-black text-slate-700 bg-slate-50 text-left">
-            <div>${slot.label}</div>
-            ${isCurrentNow ? '<span class="text-[10px] bg-[#68b800] text-white px-1.5 py-0.2 rounded">🕒 本節 Current</span>' : ''}
+        return `<tr class="${isCurrentNow ? 'bg-lime-50/60' : ''}">
+          <td class="p-2 font-black text-slate-700 bg-slate-50 text-left whitespace-nowrap">
+            <div>${slot.short} <span class="text-[10px] font-normal text-slate-500">${slot.time}</span></div>
+            ${isCurrentNow ? '<span class="text-[10px] bg-[#68b800] text-white px-1.5 py-0.2 rounded">本節 Now</span>' : ''}
           </td>
           ${cells}
         </tr>`;
@@ -1934,8 +1770,8 @@
                   <div class="text-xs font-black text-slate-900">
                     ${slot.short} (${slot.time}) — <span class="text-[#2b5400]">${cell}</span> [Rm ${room}]
                   </div>
-                  <div class="text-[10px] font-bold text-emerald-800 mt-0.5">
-                    📚 自動對應 SoW 進度: ${sow.currentWeekTopic}
+                  <div class="text-[10px] font-bold text-emerald-800">
+                    📚 自動對應進度: ${sow.currentWeekTopic}
                   </div>
                 </div>
               </div>
@@ -1946,7 +1782,7 @@
 
       container.innerHTML = items.length > 0 ? items.join('') : `
         <div class="p-2.5 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-500 font-bold">
-          此循環日 (${selectedLeaveDay}) 沒有常規課節 No scheduled lessons.
+          此循環日 (${selectedLeaveDay}) 沒有常規課節。
         </div>
       `;
     }
@@ -1959,33 +1795,22 @@
     function refreshWorksheetPreviewFromForm() {
       const customInput = document.getElementById('leave-progress-input');
       const outputArea = document.getElementById('leave-generated-classwork');
-      const badge = document.getElementById('sow-tracking-status-badge');
       if (!outputArea) return;
 
       const checkedBoxes = Array.from(document.querySelectorAll('input[name="affected-lesson-chk"]:checked'));
-      const firstCell = checkedBoxes.length > 0 ? checkedBoxes[0].getAttribute('data-cell') : '3C CL_C1 207';
+      const firstCell = checkedBoxes.length > 0 ? checkedBoxes[0].getAttribute('data-cell') : '3B CL_B1 207';
       const customVal = customInput ? customInput.value.trim() : '';
-
-      if (badge) {
-        if (!customVal) {
-          badge.className = 'text-[10px] font-black bg-emerald-100 text-emerald-900 px-2 py-0.5 rounded border border-emerald-300';
-          badge.textContent = '⚡ 自動按 Week 10 教學進度庫 (Auto SoW) 生成';
-        } else {
-          badge.className = 'text-[10px] font-black bg-amber-100 text-amber-900 px-2 py-0.5 rounded border border-amber-300';
-          badge.textContent = '✏️ 使用教師自訂課題生成 (Custom Topic)';
-        }
-      }
-
       const teacher = db.teachers[currentTeacherCode] || db.teachers.CKKU;
-      outputArea.value = generateWorksheetAndAnswerKeyText(firstCell, customVal, getSelectedPaperMode(), teacher.name);
+
+      outputArea.value = generateWorksheetAndAnswerKeyText(firstCell, customVal, getSelectedPaperMode(), teacher.shortName);
     }
 
     function downloadPreviewWordFromForm() {
       const checkedBoxes = Array.from(document.querySelectorAll('input[name="affected-lesson-chk"]:checked'));
-      const firstCell = checkedBoxes.length > 0 ? checkedBoxes[0].getAttribute('data-cell') : '3C CL_C1 207';
+      const firstCell = checkedBoxes.length > 0 ? checkedBoxes[0].getAttribute('data-cell') : '3B CL_B1 207';
       const customVal = (document.getElementById('leave-progress-input').value || '').trim();
       const teacher = db.teachers[currentTeacherCode] || db.teachers.CKKU;
-      downloadWordDocFile(firstCell, customVal, getSelectedPaperMode(), teacher.name);
+      downloadWordDocFile(firstCell, customVal, getSelectedPaperMode(), teacher.shortName);
     }
 
     function findBestCoverTeacher(cycleDay, periodId, absentTeacherCode) {
@@ -2007,7 +1832,7 @@
 
       const checkedBoxes = Array.from(document.querySelectorAll('input[name="affected-lesson-chk"]:checked'));
       if (checkedBoxes.length === 0) {
-        showSystemToast('請至少勾選一節需安排代課的課節！', 'warning');
+        showSystemToast('請至少勾選一節需代課之課堂！', 'warning');
         return;
       }
 
@@ -2023,7 +1848,7 @@
           rawCell,
           room,
           assignedSubCode: bestSub.code,
-          assignedSubName: `${bestSub.shortName}`,
+          assignedSubName: bestSub.shortName,
           checkinStatus: 'pending',
           ackTime: '',
           arriveTime: ''
@@ -2031,29 +1856,25 @@
       });
 
       const newReq = {
-        id: 'REQ-' + Date.now().toString().slice(-4),
+        id: 'REQ-' + Date.now().toString().slice(-3),
         teacherCode: teacher.code,
-        teacherName: `${teacher.name} (${teacher.code})`,
+        teacherName: `${teacher.shortName}老師`,
         cycleDay,
         leaveType,
         customTopic,
         paperMode,
         approvalStatus: 'approved',
-        submittedAt: new Date().toLocaleTimeString('zh-HK', { hour: '2-digit', minute: '2-digit', hour12: false }),
+        submittedAt: getHongKongTimeParts().shortTimeStr,
         lessons: lessonsArr
       };
 
-      // Replace existing request for same teacher & day or unshift new
       db.leaveRequests = db.leaveRequests.filter(r => !(r.teacherCode === teacher.code && r.cycleDay === cycleDay));
       db.leaveRequests.unshift(newReq);
-      db.currentCycleDay = cycleDay;
-      document.getElementById('global-cycle-day').value = cycleDay;
       saveDatabase();
       refreshAllActiveViews();
-      showSystemToast(`✅ 已成功提交 ${teacher.shortName} 的請假申請，並自動根據教學進度表附上 Word 溫習工作紙/小測連答案！`, 'success');
+      showSystemToast(`✅ 已提交 ${teacher.shortName} 請假申請並自動配對 Word 試卷連答案！`, 'success');
     }
 
-    // Compact Whole-Day Substitution Table for Teachers (Replaces giant stacked cards)
     function renderTeacherAssignedSubstitutions() {
       const tbody = document.getElementById('teacher-assigned-duties-tbody');
       const badge = document.getElementById('teacher-sub-count-badge');
@@ -2068,90 +1889,56 @@
         }
       });
 
-      // Sort chronologically by Period (P1 -> P8) so teacher sees Whole Day neatly
       allLessons.sort((a, b) => a.les.periodId.localeCompare(b.les.periodId));
-
       const myCount = allLessons.filter(item => item.les.assignedSubCode === currentTeacherCode).length;
       if (badge) badge.textContent = myCount;
 
-      const filtered = onlyMine
-        ? allLessons.filter(item => item.les.assignedSubCode === currentTeacherCode)
-        : allLessons;
+      const filtered = onlyMine ? allLessons.filter(item => item.les.assignedSubCode === currentTeacherCode) : allLessons;
 
       if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-500 font-bold">目前沒有符合條件的代課課節 No substitution duties found.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" class="p-5 text-center text-slate-500 font-bold">目前沒有代課課節。</td></tr>`;
         return;
       }
 
       tbody.innerHTML = filtered.map(({ req, les, lessonIdx }) => {
         const sow = matchSchemeOfWorkByCell(les.rawCell);
-        const topicLabel = req.customTopic || `${sow.currentWeekTopic} (Auto SoW)`;
         const isCurrentPeriod = (les.periodId === db.activePeriodId);
-        const isMyDuty = (les.assignedSubCode === currentTeacherCode);
-
-        let statusBadge = '';
-        if (les.checkinStatus === 'arrived') {
-          statusBadge = `<span class="px-2 py-0.5 rounded-full text-[11px] font-black bg-emerald-100 text-emerald-900 border border-emerald-300">🟢 已到班 (${les.arriveTime})</span>`;
-        } else if (les.checkinStatus === 'ack') {
-          statusBadge = `<span class="px-2 py-0.5 rounded-full text-[11px] font-black bg-amber-100 text-amber-900 border border-amber-300">🟡 已簽收 (${les.ackTime})</span>`;
-        } else {
-          statusBadge = `<span class="px-2 py-0.5 rounded-full text-[11px] font-black bg-rose-100 text-rose-800 border border-rose-300">🔴 待簽收</span>`;
-        }
-
         return `
-          <tr class="${isCurrentPeriod ? 'bg-lime-50/80' : 'hover:bg-slate-50'}">
-            <td class="p-2.5 font-black text-[#2b5400]">
-              <div>${les.periodLabel}</div>
-              ${isCurrentPeriod ? '<span class="text-[10px] bg-[#68b800] text-white px-1.5 py-0.2 rounded">🕒 本節 Current</span>' : ''}
+          <tr class="${isCurrentPeriod ? 'bg-lime-50/90' : 'hover:bg-slate-50'}">
+            <td class="p-2.5 font-black text-[#2b5400] whitespace-nowrap">
+              <div>${les.periodId} <span class="text-[11px] font-bold text-slate-500">(${getPeriodMeta(les.periodId).time})</span></div>
+              ${isCurrentPeriod ? '<span class="text-[10px] bg-[#68b800] text-white px-1.5 py-0.2 rounded">本節 Now</span>' : ''}
             </td>
+            <td class="p-2.5 whitespace-nowrap">
+              <span class="font-black text-slate-900">${les.rawCell.split(' ').slice(0, 2).join(' ')}</span>
+              <span class="ml-1 text-[11px] font-bold text-[#2b5400] bg-lime-100 px-1.5 py-0.5 rounded">Rm ${les.room}</span>
+            </td>
+            <td class="p-2.5 font-bold text-slate-700 whitespace-nowrap">${req.teacherName}</td>
+            <td class="p-2.5 font-black text-[#2b5400] whitespace-nowrap">${les.assignedSubName}</td>
             <td class="p-2.5">
-              <div class="font-black text-slate-900 text-sm">${les.rawCell}</div>
-              <span class="text-[11px] font-bold text-[#2b5400] bg-lime-100 px-1.5 py-0.2 rounded">Room ${les.room}</span>
-            </td>
-            <td class="p-2.5 font-bold text-slate-700">
-              <div>${req.teacherName}</div>
-              <div class="text-[10px] text-slate-500">${req.leaveType}</div>
-            </td>
-            <td class="p-2.5 font-black ${isMyDuty ? 'text-[#2b5400]' : 'text-slate-800'}">
-              <div>${les.assignedSubName}</div>
-              ${isMyDuty ? '<span class="text-[10px] bg-amber-100 text-amber-900 px-1.5 py-0.2 rounded border border-amber-300">👉 您的代課 Your Duty</span>' : ''}
-            </td>
-            <td class="p-2.5 max-w-xs">
-              <div class="text-[11px] font-bold text-slate-800 truncate" title="${topicLabel}">${topicLabel}</div>
+              <div class="text-[11px] font-bold text-slate-800 truncate max-w-[200px]">${req.customTopic || sow.currentWeekTopic}</div>
               <div class="flex items-center gap-1.5 mt-1">
                 <button
                   type="button"
-                  onclick="openWorksheetModal('${les.rawCell}', '${(req.customTopic || '').replace(/'/g, '')}', '${req.paperMode || 'Revision Worksheet & Short Quiz'}', '${req.teacherName}')"
-                  class="px-2 py-0.5 rounded bg-white hover:bg-lime-100 text-[#2b5400] border border-[#68b800] text-[11px] font-bold"
+                  onclick="openWorksheetModal('${les.rawCell}', '${(req.customTopic || '').replace(/'/g, '')}', '${req.paperMode}', '${req.teacherName}')"
+                  class="px-2 py-0.5 rounded bg-white hover:bg-lime-100 text-[#2b5400] border border-[#68b800] text-[10px] font-bold whitespace-nowrap"
                 >
-                  👁️ 預覽試卷及答案
+                  預覽試卷
                 </button>
                 <button
                   type="button"
-                  onclick="downloadWordDocFile('${les.rawCell}', '${(req.customTopic || '').replace(/'/g, '')}', '${req.paperMode || 'Revision Worksheet & Short Quiz'}', '${req.teacherName}')"
-                  class="px-2 py-0.5 rounded bg-blue-700 hover:bg-blue-800 text-white text-[11px] font-bold"
+                  onclick="downloadWordDocFile('${les.rawCell}', '${(req.customTopic || '').replace(/'/g, '')}', '${req.paperMode}', '${req.teacherName}')"
+                  class="px-2 py-0.5 rounded bg-blue-700 hover:bg-blue-800 text-white text-[10px] font-bold whitespace-nowrap"
                 >
-                  📄 下載 Word (.doc)
+                  📄 Word (.doc)
                 </button>
               </div>
             </td>
-            <td class="p-2.5 text-center space-y-1">
-              <div>${statusBadge}</div>
+            <td class="p-2.5 text-center whitespace-nowrap space-y-1">
+              <div>${buildCleanStatusPill(les.checkinStatus, les.ackTime, les.arriveTime)}</div>
               <div class="flex items-center justify-center gap-1">
-                <button
-                  type="button"
-                  onclick="updateLessonCheckinStatus('${req.id}', ${lessonIdx}, 'ack')"
-                  class="px-2 py-1 rounded bg-amber-500 hover:bg-amber-600 text-white text-[10px] font-black"
-                >
-                  ✋ 簽收
-                </button>
-                <button
-                  type="button"
-                  onclick="updateLessonCheckinStatus('${req.id}', ${lessonIdx}, 'arrived')"
-                  class="px-2 py-1 rounded bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-black"
-                >
-                  📍 到班打卡
-                </button>
+                <button onclick="updateLessonCheckinStatus('${req.id}', ${lessonIdx}, 'ack')" class="px-2 py-0.5 rounded bg-amber-500 text-white text-[10px] font-black">簽收</button>
+                <button onclick="updateLessonCheckinStatus('${req.id}', ${lessonIdx}, 'arrived')" class="px-2 py-0.5 rounded bg-emerald-600 text-white text-[10px] font-black">到班</button>
               </div>
             </td>
           </tr>
@@ -2163,7 +1950,7 @@
       const req = db.leaveRequests.find(r => r.id === reqId);
       if (!req || !req.lessons[lessonIdx]) return;
 
-      const nowStr = new Date().toLocaleTimeString('zh-HK', { hour: '2-digit', minute: '2-digit', hour12: false });
+      const nowStr = getHongKongTimeParts().shortTimeStr;
       const les = req.lessons[lessonIdx];
       les.checkinStatus = newStatus;
       if (newStatus === 'ack') les.ackTime = nowStr;
@@ -2174,11 +1961,11 @@
 
       saveDatabase();
       refreshAllActiveViews();
-      showSystemToast(`✅ 已更新 ${les.rawCell} (Room ${les.room}) 狀態為：${newStatus === 'arrived' ? '🟢 已到班打卡 Arrived' : '🟡 已簽收 Acknowledged'}`, 'success');
+      showSystemToast(`✅ Room ${les.room} (${les.rawCell.split(' ')[0]}) 狀態已更新！`, 'success');
     }
 
     // =========================================================================
-    // 6. STAFFROOM LIVE BOARD (SEPARATED: Left = Absent Teachers, Right = Current & Next Lesson ONLY)
+    // 7. STAFFROOM LIVE BOARD (Zero Overlap on iPad & Desktop, Auto HKT)
     // =========================================================================
     function toggleTvFullDayMode() {
       db.tvShowFullDay = !db.tvShowFullDay;
@@ -2192,59 +1979,47 @@
 
       const toggleBtn = document.getElementById('tv-mode-toggle-btn');
       if (toggleBtn) {
-        toggleBtn.textContent = db.tvShowFullDay
-          ? '⏱️ 切回實時模式：只顯示本節及下一節 (Current & Next Only)'
-          : '🔍 展開全日所有代課課節 (Show Full Day P1–P8)';
+        toggleBtn.textContent = db.tvShowFullDay ? '⏱️ 只顯示本節及下一節' : '🔍 展開全日 (Full Day)';
       }
 
-      // Render quick period switcher pills on TV board
       const pillsEl = document.getElementById('tv-period-quick-pills');
       if (pillsEl) {
         pillsEl.innerHTML = PERIOD_SLOTS.map(p => {
-          const active = (p.id === db.activePeriodId);
-          return `<button type="button" onclick="handleActivePeriodChange('${p.id}')" class="px-2 py-0.5 rounded text-[11px] font-black transition ${
-            active ? 'bg-[#68b800] text-white shadow-sm' : 'bg-slate-100 text-slate-700 hover:bg-lime-100'
+          const active = (db.clockMode === 'manual' && p.id === db.activePeriodId);
+          return `<button type="button" onclick="setManualDemoPeriod('${p.id}')" class="px-2 py-0.5 rounded text-[11px] font-black transition ${
+            active ? 'bg-amber-600 text-white' : 'bg-white text-slate-700 border border-amber-300 hover:bg-amber-100'
           }">${p.short}</button>`;
         }).join('');
       }
 
-      // Filter requests for current cycle day
       const todaysReqs = db.leaveRequests.filter(r => r.cycleDay === db.currentCycleDay);
 
-      // 1. Render Left Panel: Today's Absent Teachers List
+      // Left Panel: Absent Teachers List
       const absentCountEl = document.getElementById('tv-absent-teacher-count');
       if (absentCountEl) absentCountEl.textContent = `${todaysReqs.length} 位請假`;
 
       const absentListEl = document.getElementById('tv-absent-teachers-list');
       if (absentListEl) {
-        if (todaysReqs.length === 0) {
-          absentListEl.innerHTML = `<div class="p-4 text-center text-xs text-slate-500 font-bold">今日沒有教職員請假紀錄</div>`;
-        } else {
-          absentListEl.innerHTML = todaysReqs.map(req => {
-            const pList = req.lessons.map(l => `${l.periodId}(${l.rawCell.split(' ')[0]})`).join(', ');
-            return `
-              <div class="p-3 rounded-xl bg-[#f4fae8] border border-lime-300 space-y-1">
-                <div class="flex items-center justify-between gap-1">
-                  <span class="text-xs font-black text-slate-900">${req.teacherName}</span>
-                  <span class="text-[10px] font-black bg-white text-[#2b5400] px-2 py-0.5 rounded border border-lime-400">
-                    共 ${req.lessons.length} 節
-                  </span>
-                </div>
-                <div class="text-[11px] font-bold text-amber-900">${req.leaveType}</div>
-                <div class="text-[11px] text-slate-600 font-mono">
-                  受影響課節: <strong class="text-[#2b5400]">${pList}</strong>
-                </div>
-                <div class="text-[10px] text-emerald-800 font-bold flex items-center justify-between pt-1 border-t border-lime-200/80">
-                  <span>📄 已自動配對 SoW Word 試卷連答案</span>
-                  <span class="text-slate-400">${req.submittedAt}</span>
-                </div>
+        absentListEl.innerHTML = todaysReqs.map(req => {
+          const pList = req.lessons.map(l => `${l.periodId}(${l.rawCell.split(' ')[0]})`).join(', ');
+          return `
+            <div class="p-2.5 rounded-xl bg-[#f4fae8] border border-lime-300 space-y-1">
+              <div class="flex items-center justify-between gap-1">
+                <span class="text-xs font-black text-slate-900">${req.teacherName}</span>
+                <span class="text-[10px] font-black bg-white text-[#2b5400] px-1.5 py-0.2 rounded border border-lime-400 whitespace-nowrap">
+                  ${req.lessons.length} 節
+                </span>
               </div>
-            `;
-          }).join('');
-        }
+              <div class="text-[11px] font-bold text-amber-900 truncate">${req.leaveType}</div>
+              <div class="text-[11px] text-slate-600 font-mono">
+                課節: <strong class="text-[#2b5400]">${pList}</strong>
+              </div>
+            </div>
+          `;
+        }).join('');
       }
 
-      // Flatten all substitution lessons today for stats & right panel
+      // Flatten today's substitution lessons
       let pendingCount = 0, ackCount = 0, arrivedCount = 0;
       const allLessonsToday = [];
       todaysReqs.forEach(req => {
@@ -2260,120 +2035,114 @@
       document.getElementById('tv-stat-ack').textContent = ackCount;
       document.getElementById('tv-stat-arrived').textContent = arrivedCount;
 
-      // 2. Render Right Panel: ONLY Current Lesson & Next Lesson (unless Full Day toggle is clicked)
+      // Right Panel: Auto-Synced Current Lesson & Next Lesson
       const rightContainer = document.getElementById('tv-time-filtered-container');
-      const currentPid = db.activePeriodId || 'P2';
+      const currentPid = db.activePeriodId || 'P4';
       const nextPid = getNextPeriodId(currentPid);
 
       if (db.tvShowFullDay) {
         allLessonsToday.sort((a, b) => a.les.periodId.localeCompare(b.les.periodId));
         rightContainer.innerHTML = buildTvPeriodBlockHtml(
-          `📅 全日代課總表 Full-Day Substitution Schedule (${db.currentCycleDay} · All Periods P1–P8)`,
+          `📅 全日代課總表 Full-Day Schedule (${db.currentCycleDay})`,
           'bg-slate-800 text-white',
-          allLessonsToday
+          allLessonsToday,
+          true
         );
       } else {
         const currentMeta = getPeriodMeta(currentPid);
         const currentLessons = allLessonsToday.filter(item => item.les.periodId === currentPid);
 
         let html = buildTvPeriodBlockHtml(
-          `🟢 本節課堂代課安排 THIS LESSON — ${currentMeta.label}`,
+          `本節課堂代課 THIS LESSON — ${currentMeta.label}`,
           'bg-[#68b800] text-white',
-          currentLessons
+          currentLessons,
+          false
         );
 
         if (nextPid) {
           const nextMeta = getPeriodMeta(nextPid);
           const nextLessons = allLessonsToday.filter(item => item.les.periodId === nextPid);
           html += buildTvPeriodBlockHtml(
-            `⏭️ 下一節課堂代課預告 NEXT LESSON — ${nextMeta.label}`,
+            `下一節課堂代課 NEXT LESSON — ${nextMeta.label}`,
             'bg-[#2b5400] text-white',
-            nextLessons
+            nextLessons,
+            false
           );
-        } else {
-          html += `
-            <div class="bg-white rounded-xl border border-slate-200 p-4 text-center text-xs font-bold text-slate-500">
-              ⏭️ 下一節課堂：本節為今日最後一節 (P8)，下一節為放學時段 After School
-            </div>
-          `;
         }
         rightContainer.innerHTML = html;
       }
     }
 
-    function buildTvPeriodBlockHtml(headerTitle, headerBgClass, lessonItems) {
+    function buildTvPeriodBlockHtml(headerTitle, headerBgClass, lessonItems, showPeriodCol) {
       if (lessonItems.length === 0) {
         return `
           <div class="bg-white rounded-xl border border-lime-300 shadow-sm overflow-hidden">
-            <div class="${headerBgClass} px-4 py-2 text-xs sm:text-sm font-black flex items-center justify-between">
+            <div class="${headerBgClass} px-3.5 py-2 text-xs sm:text-sm font-black flex items-center justify-between">
               <span>${headerTitle}</span>
-              <span class="text-[11px] bg-white/20 px-2 py-0.5 rounded">0 宗代課</span>
+              <span class="text-[11px] bg-white/20 px-2 py-0.5 rounded">0 班代課</span>
             </div>
-            <div class="p-5 text-center text-xs font-bold text-slate-500">
-              ✅ 本時段所有課室均按常規課表上課，無須代課調動 No substitution required in this period.
+            <div class="p-4 text-center text-xs font-bold text-slate-500">
+              ✅ 本節無須代課調動 No substitution required in this period.
             </div>
           </div>
         `;
       }
 
-      const rows = lessonItems.map(({ req, les, lessonIdx }) => {
+      const rows = lessonItems.map(({ req, les }) => {
         const sow = matchSchemeOfWorkByCell(les.rawCell);
-        let statusBadge = '';
-        if (les.checkinStatus === 'arrived') {
-          statusBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-black bg-emerald-100 text-emerald-900 border border-emerald-300">🟢 已到班 (${les.arriveTime})</span>`;
-        } else if (les.checkinStatus === 'ack') {
-          statusBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-black bg-amber-100 text-amber-900 border border-amber-300">🟡 已簽收 (${les.ackTime})</span>`;
-        } else {
-          statusBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-black bg-rose-100 text-rose-800 border border-rose-300 pulse-badge">🔴 待簽收 Pending</span>`;
-        }
-
+        const classSubjectOnly = les.rawCell.split(' ').slice(0, 2).join(' ');
         return `
           <tr class="hover:bg-[#f4fae8] transition">
-            <td class="p-2.5">
-              <div class="text-sm font-black text-slate-900">${les.rawCell}</div>
-              <span class="text-[11px] font-black bg-[#eef8dc] text-[#2b5400] border border-lime-400 px-1.5 py-0.2 rounded">
-                課室 Room ${les.room}
+            ${showPeriodCol ? `<td class="p-2.5 font-black text-[#2b5400] whitespace-nowrap">${les.periodId}</td>` : ''}
+            <td class="p-2.5 whitespace-nowrap">
+              <span class="text-sm font-black text-slate-900">${classSubjectOnly}</span>
+              <span class="ml-1.5 text-[11px] font-black bg-[#eef8dc] text-[#2b5400] border border-lime-400 px-1.5 py-0.5 rounded">
+                Rm ${les.room}
               </span>
             </td>
-            <td class="p-2.5">
-              <div class="text-xs font-bold text-slate-800">${req.teacherName}</div>
-              <div class="text-[10px] text-slate-500">${req.leaveType}</div>
+            <td class="p-2.5 font-bold text-slate-800 whitespace-nowrap">
+              ${req.teacherName}
+            </td>
+            <td class="p-2.5 font-black text-[#2b5400] text-sm whitespace-nowrap">
+              ${les.assignedSubName}
             </td>
             <td class="p-2.5">
-              <div class="text-sm font-black text-[#2b5400]">${les.assignedSubName}</div>
-            </td>
-            <td class="p-2.5">
-              <div class="text-[11px] font-bold text-emerald-900 truncate max-w-[230px]" title="${sow.currentWeekTopic}">
-                ${req.customTopic || sow.currentWeekTopic}
+              <div class="flex items-center justify-between gap-2">
+                <span class="text-[11px] font-bold text-slate-700 truncate max-w-[180px]" title="${sow.currentWeekTopic}">
+                  ${req.customTopic || sow.currentWeekTopic}
+                </span>
+                <button
+                  type="button"
+                  onclick="downloadWordDocFile('${les.rawCell}', '${(req.customTopic || '').replace(/'/g, '')}', '${req.paperMode}', '${req.teacherName}')"
+                  class="px-2 py-0.5 rounded bg-blue-50 hover:bg-blue-100 text-blue-800 border border-blue-200 text-[10px] font-black whitespace-nowrap flex-shrink-0"
+                >
+                  📄 Word
+                </button>
               </div>
-              <button
-                type="button"
-                onclick="downloadWordDocFile('${les.rawCell}', '${(req.customTopic || '').replace(/'/g, '')}', '${req.paperMode || 'Revision Worksheet & Short Quiz'}', '${req.teacherName}')"
-                class="mt-0.5 text-[10px] font-black text-blue-700 hover:underline"
-              >
-                📄 下載 Word 試卷連答案 (.doc)
-              </button>
             </td>
-            <td class="p-2.5 text-center">${statusBadge}</td>
+            <td class="p-2.5 text-center whitespace-nowrap">
+              ${buildCleanStatusPill(les.checkinStatus, les.ackTime, les.arriveTime)}
+            </td>
           </tr>
         `;
       }).join('');
 
       return `
         <div class="bg-white rounded-xl border-2 border-[#68b800] shadow-sm overflow-hidden">
-          <div class="${headerBgClass} px-4 py-2 text-xs sm:text-sm font-black flex items-center justify-between">
+          <div class="${headerBgClass} px-3.5 py-2 text-xs sm:text-sm font-black flex items-center justify-between">
             <span>${headerTitle}</span>
-            <span class="text-[11px] bg-white/20 px-2 py-0.5 rounded">共 ${lessonItems.length} 班代課</span>
+            <span class="text-[11px] bg-white/20 px-2 py-0.5 rounded whitespace-nowrap">共 ${lessonItems.length} 班代課</span>
           </div>
           <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse websams-table text-xs">
               <thead>
-                <tr class="bg-[#eef8dc] text-[#2b5400] font-black">
-                  <th class="p-2.5">班別及課室 Class & Room</th>
-                  <th class="p-2.5">請假老師 Absent Teacher</th>
-                  <th class="p-2.5">指派代課 Cover Teacher</th>
-                  <th class="p-2.5">40分鐘 Word 工作紙/小測 (Auto SoW)</th>
-                  <th class="p-2.5 text-center">實時狀態 Status</th>
+                <tr class="bg-[#eef8dc] text-[#2b5400] font-black whitespace-nowrap">
+                  ${showPeriodCol ? '<th class="p-2.5">節數</th>' : ''}
+                  <th class="p-2.5">班別及課室</th>
+                  <th class="p-2.5">請假原任</th>
+                  <th class="p-2.5">指派代課</th>
+                  <th class="p-2.5">40分鐘溫習卷 (Auto SoW)</th>
+                  <th class="p-2.5 text-center">狀態</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-slate-200 bg-white">${rows}</tbody>
@@ -2384,47 +2153,32 @@
     }
 
     // =========================================================================
-    // 7. SMALL CLASSROOM DOOR MONITOR (WebApp Kiosk for 7"-10" Screen Outside Door)
+    // 8. ULTRA-MINIMALIST CLASSROOM DOOR MONITOR (iPad / Small Monitor Outside Door)
+    //    Only shows essential minimum info: e.g. "CKKU 周嘉權 請假 -> TMCHAN 陳大文 代課"
     // =========================================================================
     function findRoomLessonInfo(roomNum, cycleDay, periodId) {
-      if (!periodId) return { mode: 'after_school', periodLabel: '放學時段 After School' };
+      if (!periodId) return { mode: 'after_school', periodMeta: { short: '-', time: '放學 After School' } };
       const periodMeta = getPeriodMeta(periodId);
 
-      // 1. Check if there is a substitution lesson in this room for this cycleDay & periodId
       for (const req of db.leaveRequests) {
         if (req.cycleDay === cycleDay) {
           for (let i = 0; i < req.lessons.length; i++) {
             const les = req.lessons[i];
             if (String(les.room) === String(roomNum) && les.periodId === periodId) {
-              return {
-                mode: 'substitution',
-                periodMeta,
-                req,
-                les,
-                lessonIdx: i
-              };
+              return { mode: 'substitution', periodMeta, req, les, lessonIdx: i };
             }
           }
         }
       }
 
-      // 2. Otherwise check if any regular teacher has a scheduled class in this room
       for (const t of Object.values(db.teachers)) {
         const cell = t.timetable[cycleDay] && t.timetable[cycleDay][periodId];
         if (cell && parseRoomFromCell(cell) === String(roomNum)) {
-          return {
-            mode: 'regular',
-            periodMeta,
-            rawCell: cell,
-            teacherName: t.name
-          };
+          return { mode: 'regular', periodMeta, rawCell: cell, teacherShortName: t.shortName };
         }
       }
 
-      return {
-        mode: 'free',
-        periodMeta
-      };
+      return { mode: 'free', periodMeta };
     }
 
     function renderSmallDoorMonitor() {
@@ -2433,161 +2187,127 @@
       const frame = document.getElementById('small-monitor-kiosk-frame');
       if (!frame) return;
 
-      const currentPid = db.activePeriodId || 'P2';
+      const hk = getHongKongTimeParts();
+      const currentPid = db.activePeriodId || 'P4';
       const nextPid = getNextPeriodId(currentPid);
 
       const currentInfo = findRoomLessonInfo(roomNum, db.currentCycleDay, currentPid);
       const nextInfo = findRoomLessonInfo(roomNum, db.currentCycleDay, nextPid);
 
       frame.innerHTML = `
-        <!-- Top Compact Kiosk Header -->
-        <div class="bg-[#68b800] text-white px-5 py-3 flex flex-wrap items-center justify-between gap-2">
-          <div class="flex items-center gap-2.5">
-            <span class="bg-white text-[#2b5400] font-black text-base px-3 py-1 rounded-lg shadow-sm">
-              ROOM ${roomNum}
+        <!-- Minimalist Top Header Bar -->
+        <div class="bg-[#68b800] text-white px-5 py-3 flex items-center justify-between gap-2">
+          <div class="flex items-center gap-3">
+            <span class="bg-white text-[#2b5400] font-black text-xl sm:text-2xl px-3.5 py-1 rounded-xl shadow-sm">
+              RM ${roomNum}
             </span>
             <div>
-              <div class="text-sm sm:text-base font-black leading-tight">
-                仁濟醫院靚次伯紀念中學 · 課室門外電子班牌 Classroom Door Sign
-              </div>
-              <div class="text-[11px] text-lime-100 font-bold">
-                2026-11-06 (Term 1 · Week 10) ｜ 循環日 Cycle Day: ${db.currentCycleDay}
-              </div>
+              <div class="text-sm sm:text-base font-black">仁濟醫院靚次伯紀念中學</div>
+              <div class="text-xs text-lime-100 font-bold">課室門外電子門牌 Classroom Sign</div>
             </div>
           </div>
 
-          <div class="flex items-center gap-1.5">
-            <span class="text-xs font-bold text-lime-100">時段 Period:</span>
-            <select
-              onchange="handleActivePeriodChange(this.value)"
-              class="bg-white text-[#2b5400] font-black text-xs px-2 py-1 rounded border-0 outline-none cursor-pointer"
-            >
-              ${PERIOD_SLOTS.map(p => `<option value="${p.id}" ${p.id === currentPid ? 'selected' : ''}>${p.short} (${p.time})</option>`).join('')}
-            </select>
+          <div class="flex items-center gap-2">
+            <span class="bg-black/20 px-3 py-1 rounded-lg text-sm font-black text-yellow-200">
+              ${db.currentCycleDay}
+            </span>
+            <span id="door-live-clock" class="bg-white text-[#2b5400] px-3 py-1 rounded-lg text-base sm:text-lg font-mono font-black">
+              ${hk.shortTimeStr}
+            </span>
           </div>
         </div>
 
-        <!-- 2-Column Single-Screen Kiosk Body (Left: THIS LESSON, Right: NEXT LESSON) -->
-        <div class="p-4 bg-[#f4fae8] grid grid-cols-1 md:grid-cols-12 gap-4 items-stretch">
-          <div class="md:col-span-7 flex flex-col">
-            ${buildDoorMonitorCardHtml(roomNum, '🟢 本節課堂 THIS LESSON (NOW)', currentInfo, true)}
-          </div>
-          <div class="md:col-span-5 flex flex-col">
-            ${buildDoorMonitorCardHtml(roomNum, '⏭️ 下一節課堂 NEXT LESSON', nextInfo, false)}
-          </div>
+        <!-- Ultra-Clean 2-Column Body: THIS LESSON & NEXT LESSON -->
+        <div class="p-4 sm:p-5 bg-[#f4fae8] grid grid-cols-1 sm:grid-cols-2 gap-4 items-stretch">
+          ${buildMinimalistDoorCardHtml('本節課堂 THIS LESSON', currentInfo, true)}
+          ${buildMinimalistDoorCardHtml('下一節 NEXT LESSON', nextInfo, false)}
         </div>
       `;
     }
 
-    function buildDoorMonitorCardHtml(roomNum, badgeTitle, info, isCurrent) {
-      if (info.mode === 'after_school') {
-        return `
-          <div class="flex-1 bg-white rounded-xl border-2 border-slate-200 p-4 flex flex-col justify-between">
-            <div class="text-xs font-black text-slate-600 border-b border-slate-100 pb-2">${badgeTitle}</div>
-            <div class="py-8 text-center text-sm font-bold text-slate-400">放學時段 After School</div>
-          </div>
-        `;
-      }
+    function buildMinimalistDoorCardHtml(cardHeader, info, isCurrent) {
+      const borderClass = isCurrent ? 'border-4 border-[#f58220] shadow-md' : 'border-2 border-[#68b800]';
+      const headerBadgeClass = isCurrent ? 'bg-[#f58220] text-white' : 'bg-[#eef8dc] text-[#2b5400]';
 
-      if (info.mode === 'free') {
+      if (info.mode === 'after_school' || info.mode === 'free') {
         return `
-          <div class="flex-1 bg-white rounded-xl border-2 border-lime-300 p-4 flex flex-col justify-between">
-            <div class="flex items-center justify-between border-b border-slate-100 pb-2">
-              <span class="text-xs font-black text-[#2b5400]">${badgeTitle}</span>
-              <span class="text-xs font-bold text-slate-500">${info.periodMeta.label}</span>
+          <div class="bg-white rounded-2xl ${borderClass} p-5 flex flex-col justify-between min-h-[250px]">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+              <span class="px-2.5 py-1 rounded-lg text-xs font-black ${headerBadgeClass}">${cardHeader}</span>
+              <span class="text-sm font-mono font-black text-slate-600">${info.periodMeta.short} (${info.periodMeta.time})</span>
             </div>
-            <div class="py-8 text-center space-y-1">
-              <div class="inline-block px-3 py-1 rounded-full bg-slate-100 text-slate-600 text-xs font-black">空置課室 Room Available</div>
-              <div class="text-xs text-slate-400">本節課室沒有排課 No scheduled class</div>
+            <div class="my-auto text-center py-8">
+              <div class="text-2xl font-black text-slate-400">空堂 Free Room</div>
+              <div class="text-xs font-bold text-slate-400 mt-1">本節無排課</div>
             </div>
-            <div class="text-[11px] text-slate-400 text-right">Room ${roomNum}</div>
           </div>
         `;
       }
 
       if (info.mode === 'regular') {
+        const classSubject = info.rawCell.split(' ').slice(0, 2).join(' ');
         return `
-          <div class="flex-1 bg-white rounded-xl border-2 border-lime-400 p-4 flex flex-col justify-between space-y-3">
-            <div class="flex items-center justify-between border-b border-slate-100 pb-2">
-              <span class="text-xs font-black text-[#2b5400]">${badgeTitle}</span>
-              <span class="text-xs font-black bg-lime-100 text-[#2b5400] px-2 py-0.5 rounded">${info.periodMeta.label}</span>
+          <div class="bg-white rounded-2xl ${borderClass} p-5 flex flex-col justify-between min-h-[250px]">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+              <span class="px-2.5 py-1 rounded-lg text-xs font-black ${headerBadgeClass}">${cardHeader}</span>
+              <span class="text-sm font-mono font-black text-slate-700">${info.periodMeta.short} (${info.periodMeta.time})</span>
             </div>
-            <div class="space-y-2">
-              <div class="inline-block px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-900 text-[11px] font-black">
-                🟢 常規課堂 Normal Scheduled Lesson
-              </div>
-              <div class="text-xl font-black text-slate-900">${info.rawCell}</div>
-              <div class="p-2.5 rounded-lg bg-slate-50 border border-slate-200 text-xs">
-                <span class="text-slate-500 font-bold">任課老師 Subject Teacher：</span>
-                <strong class="text-slate-900">${info.teacherName}</strong>
+
+            <div class="my-auto py-4 space-y-3 text-center">
+              <div class="text-3xl font-black text-slate-900">${classSubject}</div>
+              <div class="inline-block px-4 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-base font-black text-emerald-900">
+                ${info.teacherShortName} (常規上課)
               </div>
             </div>
-            <div class="text-[11px] text-slate-400">按常規教學進度上課 Regular Lesson</div>
+
+            <div class="text-center text-xs font-bold text-slate-400 pt-2 border-t border-slate-100">
+              常規課堂 Normal Lesson
+            </div>
           </div>
         `;
       }
 
-      // Substitution Mode
+      // SUBSTITUTION MODE: Ultra-Minimalist (e.g., "CKKU 周嘉權 請假" -> "TMCHAN 陳大文 代課")
       const { req, les, lessonIdx } = info;
-      const sow = matchSchemeOfWorkByCell(les.rawCell);
-      const topicStr = req.customTopic || sow.currentWeekTopic;
-
-      let statusPill = '';
-      if (les.checkinStatus === 'arrived') {
-        statusPill = `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-emerald-100 text-emerald-900 border border-emerald-300">🟢 代課老師已到班 (${les.arriveTime})</span>`;
-      } else if (les.checkinStatus === 'ack') {
-        statusPill = `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-amber-100 text-amber-900 border border-amber-300">🟡 已簽收・正前往課室</span>`;
-      } else {
-        statusPill = `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-rose-100 text-rose-800 border border-rose-300 pulse-badge">🔴 待簽收 Pending</span>`;
-      }
+      const classSubject = les.rawCell.split(' ').slice(0, 2).join(' ');
+      const absentShort = req.teacherName.replace('老師', '');
 
       return `
-        <div class="flex-1 bg-white rounded-xl border-2 ${isCurrent ? 'border-[#f58220] shadow-md' : 'border-[#68b800]'} p-4 flex flex-col justify-between space-y-3">
-          <div class="flex flex-wrap items-center justify-between gap-1 border-b border-slate-100 pb-2">
-            <span class="text-xs font-black ${isCurrent ? 'text-[#f58220]' : 'text-[#2b5400]'}">${badgeTitle}</span>
-            <span class="text-xs font-black bg-[#68b800] text-white px-2 py-0.5 rounded">${info.periodMeta.label}</span>
+        <div class="bg-white rounded-2xl ${borderClass} p-5 flex flex-col justify-between min-h-[250px] space-y-4">
+          <!-- Period Header -->
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <span class="px-2.5 py-1 rounded-lg text-xs font-black ${headerBadgeClass}">${cardHeader}</span>
+            <span class="text-sm font-mono font-black text-slate-800">${info.periodMeta.short} (${info.periodMeta.time})</span>
           </div>
 
-          <div class="space-y-2.5">
-            <div class="flex flex-wrap items-center justify-between gap-1">
-              <div class="text-xl font-black text-slate-900">${les.rawCell}</div>
-              ${statusPill}
+          <!-- Class & Minimalist Absent -> Cover Box -->
+          <div class="space-y-3 my-auto">
+            <div class="flex items-center justify-between">
+              <span class="text-2xl sm:text-3xl font-black text-slate-900">${classSubject}</span>
+              ${buildCleanStatusPill(les.checkinStatus, les.ackTime, les.arriveTime)}
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              <div class="p-2 rounded-lg bg-slate-50 border border-slate-200">
-                <div class="text-[10px] font-bold text-slate-500">請假原任老師 Absent</div>
-                <div class="text-xs font-black text-slate-700 line-through">${req.teacherName}</div>
+            <!-- 2-Row High-Contrast Absent / Cover Display -->
+            <div class="rounded-xl border-2 border-slate-200 overflow-hidden">
+              <div class="bg-rose-50 px-4 py-2.5 flex items-center justify-between border-b border-rose-200">
+                <span class="text-xs font-black text-rose-800 uppercase">請假 Absent</span>
+                <span class="text-base sm:text-lg font-black text-rose-900">${absentShort}</span>
               </div>
-              <div class="p-2 rounded-lg bg-[#f4fae8] border-2 border-[#68b800]">
-                <div class="text-[10px] font-bold text-[#2b5400]">指派代課老師 Cover Teacher</div>
-                <div class="text-xs font-black text-[#2b5400]">${les.assignedSubName}</div>
+              <div class="bg-[#eef8dc] px-4 py-3 flex items-center justify-between">
+                <span class="text-xs font-black text-[#2b5400] uppercase">代課 Cover</span>
+                <span class="text-lg sm:text-xl font-black text-[#2b5400]">${les.assignedSubName} 代課</span>
               </div>
-            </div>
-
-            <div class="p-2.5 rounded-lg bg-amber-50/90 border border-amber-200 text-xs space-y-1">
-              <div class="font-black text-amber-950 flex items-center justify-between">
-                <span>📄 本節堂課：${req.paperMode || '40分鐘溫習工作紙/小測'}</span>
-                <span class="text-[10px] bg-white px-1.5 py-0.2 rounded border border-amber-300">附答案 Answer Key</span>
-              </div>
-              <div class="text-[11px] font-bold text-slate-800">${topicStr}</div>
             </div>
           </div>
 
-          <div class="pt-2 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2">
-            <button
-              type="button"
-              onclick="openWorksheetModal('${les.rawCell}', '${(req.customTopic || '').replace(/'/g, '')}', '${req.paperMode || 'Revision Worksheet & Short Quiz'}', '${req.teacherName}')"
-              class="px-2.5 py-1.5 rounded-lg bg-white hover:bg-lime-50 text-[#2b5400] border border-[#68b800] text-[11px] font-black"
-            >
-              👁️ 檢視工作紙及答案
-            </button>
+          <!-- Single One-Tap Check-In Button -->
+          <div class="pt-2 border-t border-slate-100">
             <button
               type="button"
               onclick="updateLessonCheckinStatus('${req.id}', ${lessonIdx}, 'arrived')"
-              class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black shadow-sm transition"
+              class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white text-sm font-black shadow-sm transition flex items-center justify-center gap-1.5"
             >
-              📍 代課老師到班打卡 (Tap to Check-In)
+              <span>📍 代課老師到班打卡 (Tap Check-In)</span>
             </button>
           </div>
         </div>
@@ -2599,24 +2319,18 @@
       const nav = document.getElementById('app-main-nav');
       header.classList.toggle('hidden');
       nav.classList.toggle('hidden');
-      showSystemToast(
-        header.classList.contains('hidden')
-          ? '已進入課室門外小型螢幕全螢幕模式（再次點擊按鈕可還原頂部導覽列）'
-          : '已還原頂部導覽列',
-        'info'
-      );
     }
 
     // =========================================================================
-    // 8. WEBSAMS ADMIN PORTAL (Approval, Quota Ledger, SoW DB & Timetable DB)
+    // 9. WEBSAMS ADMIN PORTAL
     // =========================================================================
     function switchAdminSubTab(tabName) {
       ['approval', 'sow', 'database'].forEach(t => {
         document.getElementById(`admin-subview-${t}`).classList.add('hidden');
-        document.getElementById(`admin-subtab-btn-${t}`).className = 'px-3.5 py-1.5 rounded-lg text-xs font-black transition text-slate-700 hover:bg-lime-50';
+        document.getElementById(`admin-subtab-btn-${t}`).className = 'px-3 py-1.5 rounded-lg text-xs font-black transition text-slate-700 hover:bg-lime-50';
       });
       document.getElementById(`admin-subview-${tabName}`).classList.remove('hidden');
-      document.getElementById(`admin-subtab-btn-${tabName}`).className = 'px-3.5 py-1.5 rounded-lg text-xs font-black transition bg-[#68b800] text-white';
+      document.getElementById(`admin-subtab-btn-${tabName}`).className = 'px-3 py-1.5 rounded-lg text-xs font-black transition bg-[#68b800] text-white';
 
       if (tabName === 'approval') renderAdminApprovalList();
       if (tabName === 'sow') renderSowDatabaseTable();
@@ -2624,7 +2338,6 @@
     }
 
     function renderAdminApprovalList() {
-      // 1. Render Quota Ledger Bar
       const ledgerBar = document.getElementById('admin-quota-ledger-bar');
       if (ledgerBar) {
         ledgerBar.innerHTML = Object.values(db.teachers).map(t => {
@@ -2633,18 +2346,13 @@
           return `
             <div class="p-2.5 rounded-lg bg-[#f4fae8] border border-lime-300">
               <div class="text-xs font-black text-slate-900">${t.shortName}</div>
-              <div class="text-[10px] text-slate-600 mt-0.5">
-                本學期累計代課: <strong class="text-[#2b5400]">${t.subQuotaUsed} 節</strong>
-              </div>
-              <div class="text-[10px] text-emerald-800 font-bold">
-                ${db.currentCycleDay} 空堂: ${freeCount} 節
-              </div>
+              <div class="text-[10px] text-slate-600 mt-0.5">累計代課: <strong class="text-[#2b5400]">${t.subQuotaUsed} 節</strong></div>
+              <div class="text-[10px] text-emerald-800 font-bold">今日空堂: ${freeCount} 節</div>
             </div>
           `;
         }).join('');
       }
 
-      // 2. Render Leave Requests
       const container = document.getElementById('admin-leave-requests-container');
       if (!container) return;
 
@@ -2657,33 +2365,33 @@
               const busyCell = t.timetable[req.cycleDay] && t.timetable[req.cycleDay][les.periodId];
               const isFree = !busyCell || busyCell.trim() === '';
               const selected = (t.code === les.assignedSubCode) ? 'selected' : '';
-              return `<option value="${t.code}" ${selected}>${t.shortName} — ${isFree ? `✅ 空堂 Free (累計${t.subQuotaUsed}節)` : `⚠️ 撞堂 (${busyCell})`}</option>`;
+              return `<option value="${t.code}" ${selected}>${t.shortName} — ${isFree ? `✅ 空堂 (累計${t.subQuotaUsed}節)` : `⚠️ 撞堂 (${busyCell})`}</option>`;
             }).join('');
 
           return `
             <tr class="border-b border-slate-200">
-              <td class="p-2.5 font-black text-[#2b5400]">${les.periodLabel}</td>
-              <td class="p-2.5 font-bold text-slate-900">${les.rawCell} <span class="text-[11px] bg-lime-100 text-[#2b5400] px-1.5 py-0.2 rounded">Rm ${les.room}</span></td>
+              <td class="p-2.5 font-black text-[#2b5400] whitespace-nowrap">${les.periodId} (${getPeriodMeta(les.periodId).time})</td>
+              <td class="p-2.5 font-bold text-slate-900 whitespace-nowrap">${les.rawCell}</td>
               <td class="p-2.5">
                 <select
                   onchange="changeAssignedCoverTeacher('${req.id}', ${idx}, this.value)"
-                  class="w-full px-2.5 py-1 rounded border border-lime-500 bg-white text-xs font-bold text-slate-900"
+                  class="w-full px-2 py-1 rounded border border-lime-500 bg-white text-xs font-bold text-slate-900"
                 >
                   ${optionsHtml}
                 </select>
               </td>
               <td class="p-2.5 text-[11px]">
-                <div class="font-bold text-emerald-900 truncate max-w-[220px]">${req.customTopic || sow.currentWeekTopic}</div>
+                <div class="font-bold text-emerald-900 truncate max-w-[200px]">${req.customTopic || sow.currentWeekTopic}</div>
                 <button
                   type="button"
-                  onclick="downloadWordDocFile('${les.rawCell}', '${(req.customTopic || '').replace(/'/g, '')}', '${req.paperMode || 'Revision Worksheet & Short Quiz'}', '${req.teacherName}')"
+                  onclick="downloadWordDocFile('${les.rawCell}', '${(req.customTopic || '').replace(/'/g, '')}', '${req.paperMode}', '${req.teacherName}')"
                   class="text-blue-700 font-black hover:underline"
                 >
-                  📄 下載 Word 試卷連答案 (.doc)
+                  📄 下載 Word (.doc)
                 </button>
               </td>
-              <td class="p-2.5 text-center text-xs font-bold">
-                ${les.checkinStatus === 'arrived' ? '🟢 已到班' : (les.checkinStatus === 'ack' ? '🟡 已簽收' : '🔴 待簽收')}
+              <td class="p-2.5 text-center whitespace-nowrap">
+                ${buildCleanStatusPill(les.checkinStatus, les.ackTime, les.arriveTime)}
               </td>
             </tr>
           `;
@@ -2691,25 +2399,24 @@
 
         return `
           <div class="bg-white rounded-xl p-4 shadow-sm border-2 border-[#68b800] space-y-3">
-            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2">
               <div>
                 <span class="text-xs font-mono bg-lime-100 text-[#2b5400] font-black px-2 py-0.5 rounded">${req.id}</span>
-                <span class="text-sm sm:text-base font-black text-slate-900 ml-1">${req.teacherName}</span>
+                <span class="text-sm font-black text-slate-900 ml-1">${req.teacherName}</span>
                 <span class="text-xs font-bold text-amber-800 ml-2">${req.leaveType}</span>
               </div>
               <span class="px-2.5 py-0.5 rounded-full text-xs font-black bg-emerald-100 text-emerald-900 border border-emerald-300">
-                ✅ 已批核並同步至看板及門外小型螢幕
+                ✅ 已批核並同步
               </span>
             </div>
-
             <div class="overflow-x-auto rounded-lg border border-lime-300">
               <table class="w-full text-left border-collapse websams-table text-xs">
                 <thead>
-                  <tr class="bg-[#eef8dc] text-[#2b5400] font-black">
-                    <th class="p-2.5">課節 Period</th>
-                    <th class="p-2.5">班別及課室 Class & Room</th>
-                    <th class="p-2.5">WebSAMS 無衝突代課教師配對</th>
-                    <th class="p-2.5">教學進度庫 (SoW) 溫習工作紙/小測連答案</th>
+                  <tr class="bg-[#eef8dc] text-[#2b5400] font-black whitespace-nowrap">
+                    <th class="p-2.5">課節</th>
+                    <th class="p-2.5">班別及課室</th>
+                    <th class="p-2.5">無衝突代課教師配對</th>
+                    <th class="p-2.5">SoW Word 試卷連答案</th>
                     <th class="p-2.5 text-center">狀態</th>
                   </tr>
                 </thead>
@@ -2729,7 +2436,7 @@
       req.lessons[lessonIdx].assignedSubName = t.shortName;
       saveDatabase();
       refreshAllActiveViews();
-      showSystemToast(`已更新代課教師為：${t.name}`, 'info');
+      showSystemToast(`已更新代課老師為：${t.shortName}`, 'info');
     }
 
     function renderSowDatabaseTable() {
@@ -2741,13 +2448,13 @@
           <td class="p-2.5 font-bold text-slate-800">${item.classes}</td>
           <td class="p-2.5 text-slate-600">${item.priorTopics}</td>
           <td class="p-2.5 font-bold text-emerald-900 bg-emerald-50/50">${item.currentWeekTopic}</td>
-          <td class="p-2.5 text-center">
+          <td class="p-2.5 text-center whitespace-nowrap">
             <button
               type="button"
               onclick="downloadWordDocFile('${item.classes.split(',')[0].trim()} ${item.key.split('_')[1]} 207', '', 'Revision Worksheet & Short Quiz', 'Subject Panel')"
-              class="px-2.5 py-1 rounded bg-blue-700 hover:bg-blue-800 text-white text-[11px] font-black shadow-sm"
+              class="px-2.5 py-1 rounded bg-blue-700 hover:bg-blue-800 text-white text-[11px] font-black"
             >
-              📄 下載此科 Word 試卷連答案 (.doc)
+              📄 下載 Word (.doc)
             </button>
           </td>
         </tr>
@@ -2761,7 +2468,7 @@
 
       const cur = selectEl.value || 'CKKU';
       selectEl.innerHTML = Object.values(db.teachers).map(t =>
-        `<option value="${t.code}" ${t.code === cur ? 'selected' : ''}>${t.name} (${t.code})</option>`
+        `<option value="${t.code}" ${t.code === cur ? 'selected' : ''}>${t.name}</option>`
       ).join('');
 
       const selectedTeacher = db.teachers[selectEl.value] || db.teachers.CKKU;
@@ -2782,7 +2489,7 @@
             </td>
           `;
         }).join('');
-        return `<tr><td class="p-2 font-black text-slate-700 bg-slate-50 text-left">${slot.label}</td>${cells}</tr>`;
+        return `<tr><td class="p-2 font-black text-slate-700 bg-slate-50 text-left whitespace-nowrap">${slot.short} (${slot.time})</td>${cells}</tr>`;
       }).join('');
     }
 
@@ -2791,15 +2498,15 @@
       db.teachers[teacherCode].timetable[day][periodId] = newValue.trim();
       saveDatabase();
       renderAdminTimetableInspector();
-      showSystemToast(`已更新 ${teacherCode} (${day} ${periodId}) 課節資料！`, 'success');
+      showSystemToast(`已儲存 ${teacherCode} (${day} ${periodId}) 課表！`, 'success');
     }
 
     // =========================================================================
-    // 9. MODAL & UTILITY HELPERS
+    // 10. MODAL & INIT
     // =========================================================================
     function openWorksheetModal(rawCell, customTopic, paperMode, absentTeacherName) {
       const sow = matchSchemeOfWorkByCell(rawCell);
-      document.getElementById('modal-worksheet-title').textContent = `${rawCell} — ${paperMode} (附答案 Answer Key)`;
+      document.getElementById('modal-worksheet-title').textContent = `${rawCell} — ${paperMode}`;
       document.getElementById('modal-worksheet-subtitle').textContent = `自動對應教學進度表 (SoW): ${customTopic || sow.currentWeekTopic}`;
       document.getElementById('modal-worksheet-body').textContent = generateWorksheetAndAnswerKeyText(rawCell, customTopic, paperMode, absentTeacherName);
 
@@ -2815,8 +2522,6 @@
     }
 
     function refreshAllActiveViews() {
-      document.getElementById('global-cycle-day').value = db.currentCycleDay || 'DAY 2';
-      document.getElementById('global-active-period').value = db.activePeriodId || 'P2';
       if (currentUserRole === 'ckku' || currentUserRole === 'tmchan') renderTeacherPortal();
       else if (currentUserRole === 'vp_admin') {
         renderAdminApprovalList();
@@ -2830,7 +2535,7 @@
       const banner = document.getElementById('system-toast');
       const icon = document.getElementById('system-toast-icon');
       const text = document.getElementById('system-toast-text');
-      banner.className = 'rounded-xl p-3 border shadow-sm flex items-center justify-between transition-all ';
+      banner.className = 'rounded-xl p-2.5 border shadow-sm flex items-center justify-between transition-all ';
       if (type === 'warning') {
         banner.classList.add('bg-amber-50', 'border-amber-300', 'text-amber-950');
         icon.textContent = '⚠️';
@@ -2848,14 +2553,11 @@
       document.getElementById('system-toast').classList.add('hidden');
     }
 
-    setInterval(() => {
-      const clockEl = document.getElementById('tv-live-clock');
-      if (clockEl) clockEl.textContent = new Date().toLocaleTimeString('zh-HK', { hour12: false });
-    }, 1000);
+    // Start 1-Second Automatic Hong Kong Time & Calendar Sync
+    setInterval(syncWithHongKongTime, 1000);
 
     window.onload = function() {
-      document.getElementById('global-cycle-day').value = db.currentCycleDay || 'DAY 2';
-      document.getElementById('global-active-period').value = db.activePeriodId || 'P2';
+      syncWithHongKongTime();
       renderTeacherPortal();
     };
   </script>
