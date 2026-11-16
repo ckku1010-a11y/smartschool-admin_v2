@@ -85,20 +85,6 @@
       50% { border-color: #f97316; background-color: #fff7ed; box-shadow: 0 0 0 8px rgba(249, 115, 22, 0.35); }
     }
     .overdue-alert-card { animation: overdue-flash 1.4s infinite ease-in-out; }
-
-    /* Simulated QAPASS 1602 LCD Display Box */
-    .lcd-1602-box {
-      background-color: #4b8b1c;
-      border: 6px solid #1e293b;
-      box-shadow: inset 0 0 12px rgba(0,0,0,0.45);
-      font-family: 'JetBrains Mono', monospace;
-      color: #0b1f02;
-      letter-spacing: 0.12em;
-    }
-    .lcd-1602-alert {
-      background-color: #d97706;
-      color: #ffffff;
-    }
   </style>
 </head>
 <body class="flex flex-col min-h-screen text-slate-800 pb-28">
@@ -130,7 +116,7 @@
           </div>
         </div>
         <span class="bg-[#2b5400] text-white text-xs font-black px-3 py-1 rounded-full">
-          請選擇啟動模式 Select Launch Mode
+          請選擇啟動模式 Select Mode
         </span>
       </div>
 
@@ -147,11 +133,11 @@
               <span class="text-sm font-bold text-amber-700">Guided Step-by-Step Workflow Demo</span>
             </h2>
             <p class="text-xs text-slate-600 leading-relaxed">
-              專為向評判演示而設：透過底部導覽列，一步步順序展示<strong>「科任請假自動出卷 ➔ 校務處零衝突排課 ➔ 教員室看板及防漏堂提示 ➔ 老師在網站報到並同步至課室門外 QAPASS 1602 顯示屏」</strong>完整流程。
+              專為向評判演示而設：透過底部導覽列及右側同屏課室門外小螢幕，順序展示<strong>「科任請假自動出卷 ➔ 校務處零衝突排課 ➔ 教員室看板及防漏堂提示 ➔ 代課老師在網站報到並即時更新課室門外顯示屏」</strong>完整流程。
             </p>
             <ul class="text-xs text-slate-700 space-y-1 font-bold pt-1">
               <li>✅ 內置 6 步清晰中英解說及一鍵示範按鈕</li>
-              <li>✅ 同時保留所有真實按鈕，隨時可回應評判提問</li>
+              <li>✅ 自動開啟「同屏門外小螢幕」直觀對比變化</li>
             </ul>
           </div>
           <button
@@ -174,11 +160,11 @@
               <span class="text-sm font-bold text-[#2b5400]">Full Functional School System</span>
             </h2>
             <p class="text-xs text-slate-600 leading-relaxed">
-              直接進入完整的學校日常運作系統，無導覽列遮擋。可自由切換<strong>科任教師、代課教師、校務處管理台、教員室分欄看板及課室門外顯示屏</strong>，支援即時雲端同步。
+              直接進入完整的學校日常運作系統，無導覽列遮擋。可自由切換<strong>科任教師、代課教師、校務處管理台、教員室分欄看板及課室門外小型顯示屏</strong>，支援分屏即時連動。
             </p>
             <ul class="text-xs text-slate-700 space-y-1 font-bold pt-1">
-              <li>✅ 全自動同步香港標準時間 (HKT) 及學校循環日</li>
-              <li>✅ 即時連動 ESP-32S + QAPASS 1602 門外顯示屏</li>
+              <li>✅ 自動同步香港標準時間 (HKT) 及學校循環日</li>
+              <li>✅ 支援單機同屏或雙視窗分屏實時同步</li>
             </ul>
           </div>
           <button
@@ -226,7 +212,7 @@
         </div>
       </div>
 
-      <!-- Right: Mode Switcher, Cloud Setup & Live Clock -->
+      <!-- Right: Mode Switcher, Pin Door Screen & Live Clock -->
       <div class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0 flex-wrap">
         <button
           type="button"
@@ -247,11 +233,11 @@
 
         <button
           type="button"
-          onclick="openCloudHardwareModal()"
-          class="px-2.5 py-1 rounded-lg text-xs font-black bg-slate-800 hover:bg-slate-900 text-white shadow-sm transition flex items-center gap-1 whitespace-nowrap"
+          onclick="togglePinnedDoorPreview()"
+          id="top-btn-pin-door"
+          class="px-2.5 py-1 rounded-lg text-xs font-black bg-sky-700 hover:bg-sky-800 text-white shadow-sm transition flex items-center gap-1 whitespace-nowrap"
         >
-          <span id="hw-status-dot" class="w-2 h-2 rounded-full bg-slate-400"></span>
-          <span>☁️ 雲端及 1602 設定 Cloud Setup</span>
+          <span>🪟 同屏顯示門外屏 Pin Door Screen</span>
         </button>
 
         <div class="bg-white/95 border border-lime-600/50 px-2.5 py-1 rounded-lg shadow-sm flex items-center gap-2 text-xs whitespace-nowrap">
@@ -321,7 +307,7 @@
             id="nav-tab-door"
             class="px-2.5 py-1.5 rounded-lg text-xs font-bold transition bg-black/15 hover:bg-white/20 text-white whitespace-nowrap"
           >
-            🖥️ 門外顯示屏 Door Display (1602)
+            🖥️ 課室門外顯示屏 Door Display
           </button>
         </div>
 
@@ -345,728 +331,766 @@
   </nav>
 
   <!-- ==========================================================================
-       3. MAIN WORKSPACE CONTAINER
+       3. MAIN WORKSPACE CONTAINER (With Optional Pinned Door Monitor Split View)
        ========================================================================== -->
-  <main class="max-w-7xl mx-auto w-full px-3 sm:px-4 py-4 flex-1 space-y-4">
+  <div class="max-w-7xl mx-auto w-full px-3 sm:px-4 py-4 flex-1">
+    <div id="workspace-grid" class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
 
-    <!-- System Toast -->
-    <div id="system-toast" class="hidden rounded-xl p-2.5 border shadow-sm flex items-center justify-between transition-all">
-      <div class="flex items-center gap-2 min-w-0">
-        <span id="system-toast-icon" class="text-sm flex-shrink-0">✅</span>
-        <p id="system-toast-text" class="text-xs font-bold truncate"></p>
-      </div>
-      <button onclick="hideSystemToast()" class="text-xs font-bold px-2 py-0.5 rounded hover:bg-black/5 flex-shrink-0">✕</button>
-    </div>
+      <!-- MAIN LEFT / FULL AREA -->
+      <main id="main-content-col" class="lg:col-span-12 space-y-4">
 
-    <!-- ========================================================================
-         SCREEN A: HOME / LOGIN & ROLE SWITCHER
-         ======================================================================== -->
-    <section id="screen-login" class="space-y-4">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
-
-        <!-- Left 5 Cols: Core Invention Highlights -->
-        <div class="lg:col-span-5 bg-white rounded-xl p-5 shadow-sm border border-lime-300 space-y-3.5">
-          <div class="flex items-center gap-2">
-            <span class="lcp-orange-arrow">↘</span>
-            <h2 class="text-base font-black text-slate-900 lcp-section-underline">
-              提升效率與減少人為失誤 System Highlights
-            </h2>
+        <!-- System Toast -->
+        <div id="system-toast" class="hidden rounded-xl p-2.5 border shadow-sm flex items-center justify-between transition-all">
+          <div class="flex items-center gap-2 min-w-0">
+            <span id="system-toast-icon" class="text-sm flex-shrink-0">✅</span>
+            <p id="system-toast-text" class="text-xs font-bold truncate"></p>
           </div>
-
-          <div class="space-y-2.5 text-xs leading-relaxed text-slate-700">
-            <div class="p-3 rounded-lg bg-[#f4fae8] border border-lime-300">
-              <div class="font-black text-[#2b5400]">1. 零衝突代課配對與時段鎖定 Conflict-Free Matching</div>
-              <p class="mt-0.5 text-slate-600">
-                系統自動讀取香港時間及學校校曆，自動比對全校教師空堂及累計代課節數，杜絕人手排表撞堂或看錯行。
-              </p>
-            </div>
-
-            <div class="p-3 rounded-lg bg-[#f4fae8] border border-lime-300">
-              <div class="font-black text-[#2b5400]">2. 網站一鍵報到同步門外 1602 螢幕 Web Check-In &amp; Door LCD</div>
-              <p class="mt-0.5 text-slate-600">
-                課室門外安裝 <strong>ESP-32S + QAPASS 1602 顯示屏</strong>，自動顯示本節代課老師；代課老師在網站點擊「到班報到」，門外螢幕與教員室看板即時同步更新。
-              </p>
-            </div>
-
-            <div class="p-3 rounded-lg bg-[#f4fae8] border border-lime-300">
-              <div class="font-black text-[#2b5400]">3. 自動對照教學進度生成工作紙連答案 Smart Worksheet</div>
-              <p class="mt-0.5 text-slate-600">
-                教師請假免除抱病出卷，系統自動按當日周次對照《各科教學進度表》或自訂課題，即時生成 40 分鐘溫習工作紙連評分參考。
-              </p>
-            </div>
-          </div>
+          <button onclick="hideSystemToast()" class="text-xs font-bold px-2 py-0.5 rounded hover:bg-black/5 flex-shrink-0">✕</button>
         </div>
 
-        <!-- Right 7 Cols: Staff Sign-In & Role Cards -->
-        <div class="lg:col-span-7 bg-white rounded-xl p-5 shadow-md border-2 border-[#68b800] space-y-4">
-          <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
-            <div class="flex items-center gap-2">
-              <span class="lcp-orange-arrow">↘</span>
-              <div>
-                <h2 class="text-base font-black text-slate-900">教職員內聯網登入 Staff Intranet Sign In</h2>
-                <p class="text-[11px] text-slate-500">點擊下方角色卡可直接進入對應介面 Select a role card below or start the guided tour</p>
-              </div>
-            </div>
-            <span class="text-[11px] font-mono bg-lime-100 text-lime-900 font-bold px-2 py-0.5 rounded border border-lime-300">
-              @lcp.edu.hk
-            </span>
-          </div>
+        <!-- ====================================================================
+             SCREEN A: HOME / LOGIN & ROLE SWITCHER
+             ==================================================================== -->
+        <section id="screen-login" class="space-y-4">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
 
-          <form onsubmit="submitLoginForm(event)" class="grid grid-cols-1 sm:grid-cols-12 gap-2.5 items-end">
-            <div class="sm:col-span-5">
-              <label class="block text-xs font-bold text-slate-700 mb-1">學校帳號 Staff Account</label>
-              <input
-                type="text"
-                id="login-email-input"
-                value="ckku@lcp.edu.hk"
-                class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs font-bold outline-none focus:border-lime-600"
-                required
-              />
-            </div>
-            <div class="sm:col-span-4">
-              <label class="block text-xs font-bold text-slate-700 mb-1">密碼 Password</label>
-              <input
-                type="password"
-                value="••••••••"
-                class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs font-bold outline-none focus:border-lime-600"
-                required
-              />
-            </div>
-            <div class="sm:col-span-3">
-              <button
-                type="submit"
-                class="w-full py-2 px-4 rounded-lg font-black text-white text-xs shadow-sm transition hover:opacity-95"
-                style="background-color: var(--lcp-green-bar);"
-              >
-                登入 Sign In ➔
-              </button>
-            </div>
-          </form>
-
-          <div class="pt-3 border-t border-slate-200 space-y-2">
-            <div class="flex items-center justify-between flex-wrap gap-2">
-              <span class="text-xs font-black text-slate-700">⚡ 快速切換系統角色 Quick Role Switcher:</span>
-              <button
-                type="button"
-                onclick="selectSystemLaunchMode('competition')"
-                class="text-[11px] font-black text-amber-900 bg-amber-100 hover:bg-amber-200 border border-amber-300 px-2.5 py-0.5 rounded transition"
-              >
-                ▶ 開啟 6 步比賽流程演示 Start Guided Flow
-              </button>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-              <button
-                type="button"
-                onclick="loginAsRole('ckku')"
-                class="text-left p-3 rounded-xl border border-lime-400 bg-lime-50/70 hover:bg-lime-100 transition flex items-start justify-between gap-2"
-              >
-                <div>
-                  <div class="text-xs font-black text-lime-950">① 科任請假：周嘉權老師 (CKKU)</div>
-                  <div class="text-[11px] text-slate-600 mt-0.5">Leave Application &amp; Auto 40-Min Worksheet</div>
-                </div>
-                <span class="text-[10px] bg-[#68b800] text-white px-2 py-0.5 rounded font-bold shrink-0">Leave</span>
-              </button>
-
-              <button
-                type="button"
-                onclick="loginAsRole('tmchan')"
-                class="text-left p-3 rounded-xl border border-amber-400 bg-amber-50/60 hover:bg-amber-100/70 transition flex items-start justify-between gap-2"
-              >
-                <div>
-                  <div class="text-xs font-black text-amber-950">② 代課報到：陳大文老師 (TMCHAN)</div>
-                  <div class="text-[11px] text-slate-600 mt-0.5">Cover Schedule, Download Paper &amp; Web Check-In</div>
-                </div>
-                <span class="text-[10px] bg-amber-600 text-white px-2 py-0.5 rounded font-bold shrink-0">Cover</span>
-              </button>
-
-              <button
-                type="button"
-                onclick="loginAsRole('staffroom_tv')"
-                class="text-left p-3 rounded-xl border-2 border-emerald-500 bg-emerald-50/60 hover:bg-emerald-100/70 transition flex items-start justify-between gap-2"
-              >
-                <div>
-                  <div class="text-xs font-black text-emerald-950">③ 教員室分欄看板 (Staffroom Board)</div>
-                  <div class="text-[11px] text-slate-600 mt-0.5">Absent List + Current &amp; Next Period Live View</div>
-                </div>
-                <span class="text-[10px] bg-emerald-700 text-white px-2 py-0.5 rounded font-bold shrink-0">Board</span>
-              </button>
-
-              <button
-                type="button"
-                onclick="loginAsRole('door_monitor')"
-                class="text-left p-3 rounded-xl border-2 border-sky-500 bg-sky-50/60 hover:bg-sky-100/70 transition flex items-start justify-between gap-2"
-              >
-                <div>
-                  <div class="text-xs font-black text-sky-950">④ 課室門外顯示屏 (Door Display &amp; 1602)</div>
-                  <div class="text-[11px] text-slate-600 mt-0.5">Classroom Door View + QAPASS 1602 Live Sync</div>
-                </div>
-                <span class="text-[10px] bg-sky-700 text-white px-2 py-0.5 rounded font-bold shrink-0">Door LCD</span>
-              </button>
-
-              <button
-                type="button"
-                onclick="loginAsRole('vp_admin')"
-                class="sm:col-span-2 text-left p-2.5 rounded-xl border border-slate-300 bg-slate-50 hover:bg-lime-50 transition flex items-center justify-between gap-2"
-              >
-                <div>
-                  <div class="text-xs font-black text-slate-900">⑤ 校務處管理台 (General Office Approval &amp; Teaching Progress)</div>
-                  <div class="text-[11px] text-slate-600">審批請假申請、零衝突自動派課、管理《全校各科教學進度表》</div>
-                </div>
-                <span class="text-[10px] bg-[#4d8a00] text-white px-2.5 py-1 rounded font-bold shrink-0">Office</span>
-              </button>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- ========================================================================
-         SCREEN B: TEACHER PORTAL (Leave Request + Substitute Teacher Report Arrival)
-         ======================================================================== -->
-    <section id="screen-teacher" class="hidden space-y-4">
-
-      <div class="bg-white rounded-xl p-2.5 shadow-sm border border-lime-300 flex flex-wrap items-center justify-between gap-2">
-        <div class="flex flex-wrap items-center gap-1.5">
-          <button
-            onclick="switchTeacherSubTab('timetable-leave')"
-            id="teacher-subtab-btn-leave"
-            class="px-3 py-1.5 rounded-lg text-xs font-black transition bg-[#68b800] text-white"
-          >
-            📅 個人全日課表及請假申請 (Timetable &amp; Leave Request)
-          </button>
-          <button
-            onclick="switchTeacherSubTab('my-substitutions')"
-            id="teacher-subtab-btn-sub"
-            class="px-3 py-1.5 rounded-lg text-xs font-black transition text-slate-700 hover:bg-lime-50 flex items-center gap-1.5"
-          >
-            <span>📋 代課時間表、下載工作紙及網上報到 (Cover Duties &amp; Report Arrival)</span>
-            <span id="teacher-sub-count-badge" class="px-2 py-0.2 rounded-full text-[11px] bg-amber-500 text-white font-black">0</span>
-          </button>
-        </div>
-
-        <div class="flex items-center gap-1.5">
-          <span class="text-xs font-bold text-slate-600">切換教師 Staff:</span>
-          <select
-            id="teacher-portal-account-select"
-            onchange="switchActiveTeacherAccount(this.value)"
-            class="px-2.5 py-1 rounded-lg border border-[#68b800] bg-[#eef8dc] text-xs font-black text-[#2b5400]"
-          ></select>
-        </div>
-      </div>
-
-      <!-- SUBVIEW B1: Teacher Full Timetable + Leave Request -->
-      <div id="teacher-subview-leave" class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
-
-        <!-- Left 7 Cols: Full 6-Day Timetable -->
-        <div class="lg:col-span-7 bg-white rounded-xl p-4 shadow-sm border border-lime-300 space-y-3">
-          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2">
-            <div class="flex items-center gap-2">
-              <span class="lcp-orange-arrow">↘</span>
-              <div>
-                <h2 id="timetable-owner-title" class="text-sm sm:text-base font-black text-slate-900">
-                  個人全日時間表 Full-Day Timetable (P1–P8)
-                </h2>
-                <p class="text-[11px] text-slate-500">
-                  點擊任何循環日 (DAY 1 – DAY 6) 即可檢視及勾選當日需請假之課節 Select Cycle Day
-                </p>
-              </div>
-            </div>
-            <div id="timetable-day-pills" class="flex items-center gap-1"></div>
-          </div>
-
-          <div class="overflow-x-auto">
-            <table class="w-full text-center border-collapse school-table text-xs">
-              <thead>
-                <tr class="bg-[#eef8dc] text-[#2b5400] font-black">
-                  <th class="p-2 w-24 text-left">課節 Period</th>
-                  <th onclick="selectLeaveDay('DAY 1')" id="th-DAY-1" class="p-1.5 cursor-pointer hover:bg-lime-200">DAY 1</th>
-                  <th onclick="selectLeaveDay('DAY 2')" id="th-DAY-2" class="p-1.5 cursor-pointer hover:bg-lime-200">DAY 2</th>
-                  <th onclick="selectLeaveDay('DAY 3')" id="th-DAY-3" class="p-1.5 cursor-pointer hover:bg-lime-200">DAY 3</th>
-                  <th onclick="selectLeaveDay('DAY 4')" id="th-DAY-4" class="p-1.5 cursor-pointer hover:bg-lime-200">DAY 4</th>
-                  <th onclick="selectLeaveDay('DAY 5')" id="th-DAY-5" class="p-1.5 cursor-pointer hover:bg-lime-200">DAY 5</th>
-                  <th onclick="selectLeaveDay('DAY 6')" id="th-DAY-6" class="p-1.5 cursor-pointer hover:bg-lime-200">DAY 6</th>
-                </tr>
-              </thead>
-              <tbody id="teacher-timetable-tbody" class="bg-white"></tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- Right 5 Cols: Leave Submission + Smart Worksheet Generator -->
-        <div class="lg:col-span-5 bg-white rounded-xl p-4 shadow-sm border-2 border-[#68b800] space-y-3">
-          <div class="flex items-center gap-2 border-b border-slate-100 pb-2">
-            <span class="lcp-orange-arrow">↘</span>
-            <div>
-              <h3 class="text-sm sm:text-base font-black text-slate-900">
-                請假申請及自動生成課堂工作紙 Leave &amp; Worksheet
-              </h3>
-              <p class="text-[11px] text-slate-500">
-                自動按當日周次對照《各科教學進度表》出題，或輸入自訂課題即時生成
-              </p>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-2 gap-2.5">
-            <div>
-              <label class="block text-[11px] font-bold text-slate-700 mb-1">請假循環日 Cycle Day</label>
-              <select
-                id="leave-form-day"
-                onchange="selectLeaveDay(this.value)"
-                class="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 text-xs font-black bg-lime-50 text-lime-950"
-              >
-                <option value="DAY 1">DAY 1</option>
-                <option value="DAY 2" selected>DAY 2 (今日 Today)</option>
-                <option value="DAY 3">DAY 3</option>
-                <option value="DAY 4">DAY 4</option>
-                <option value="DAY 5">DAY 5</option>
-                <option value="DAY 6">DAY 6</option>
-              </select>
-            </div>
-
-            <div>
-              <label class="block text-[11px] font-bold text-slate-700 mb-1">請假類別 Leave Type</label>
-              <select id="leave-form-reason" class="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 text-xs font-bold bg-white">
-                <option value="[OD] 公假 Official Duty">[OD] 公假 Official Duty</option>
-                <option value="[SL] 病假 Sick Leave">[SL] 病假 Sick Leave</option>
-                <option value="[TR] 進修研討會 Seminar">[TR] 進修研討會 Seminar</option>
-                <option value="[PL] 事假 Personal Leave">[PL] 事假 Personal Leave</option>
-              </select>
-            </div>
-          </div>
-
-          <div>
-            <label class="block text-[11px] font-bold text-slate-700 mb-1">
-              當日受影響課節及對應《各科教學進度表》課題 Affected Lessons:
-            </label>
-            <div id="leave-affected-lessons-list" class="space-y-1.5 max-h-40 overflow-y-auto pr-1"></div>
-          </div>
-
-          <!-- Smart Worksheet Generator Box -->
-          <div class="p-3 rounded-xl bg-[#f4fae8] border border-[#68b800] space-y-2">
-            <div class="flex items-center justify-between gap-1 flex-wrap">
-              <span class="text-xs font-black text-[#2b5400]">📄 40分鐘溫習工作紙連答案 (40-Min Worksheet &amp; Key)</span>
-              <span id="schedule-tracking-status-badge" class="text-[10px] font-black bg-emerald-100 text-emerald-900 px-2 py-0.5 rounded border border-emerald-300 whitespace-nowrap">
-                ⚡ 已對照 Week 10 教學進度
-              </span>
-            </div>
-
-            <div>
-              <label class="block text-[11px] font-bold text-slate-700 mb-1">
-                選擇出題範圍 Curriculum Scope（切換即更新整份試卷題目及答案）：
-              </label>
-              <select
-                id="leave-scope-select"
-                onchange="refreshWorksheetPreviewFromForm()"
-                class="w-full px-2.5 py-1.5 rounded-lg border border-lime-500 text-xs font-bold bg-white text-slate-900"
-              >
-                <option value="current" selected>📌 本周教學進度 (Week 9–10 Current Progress)</option>
-                <option value="prior">🔄 前期溫習範圍 (Week 1–8 Prior Revision Topics)</option>
-              </select>
-            </div>
-
-            <div>
-              <label class="block text-[11px] font-bold text-slate-700 mb-1">
-                自訂課題 Custom Topic（可輸入新課題並點擊右側按鈕即時生成）：
-              </label>
-              <div class="flex items-center gap-1.5">
-                <input
-                  type="text"
-                  id="leave-progress-input"
-                  value=""
-                  placeholder="留空 = 使用校本進度題庫；或輸入新課題..."
-                  oninput="refreshWorksheetPreviewFromForm()"
-                  class="flex-1 px-2.5 py-1.5 rounded-lg border border-lime-500 text-xs font-bold bg-white"
-                />
-                <button
-                  type="button"
-                  onclick="generateSmartCloudWorksheet()"
-                  id="btn-smart-cloud-gen"
-                  class="px-2.5 py-1.5 rounded-lg bg-purple-700 hover:bg-purple-800 text-white text-[11px] font-black shadow-sm transition whitespace-nowrap"
-                >
-                  ✨ 智能生成題目
-                </button>
-              </div>
-            </div>
-
-            <div class="flex items-center justify-between gap-2 pt-0.5 flex-wrap">
-              <div class="flex items-center gap-2 text-[11px] font-bold">
-                <label class="flex items-center gap-1 cursor-pointer">
-                  <input type="radio" name="paper-mode-radio" value="Revision Worksheet & Short Quiz" checked onchange="refreshWorksheetPreviewFromForm()" />
-                  <span>工作紙連小測 Worksheet</span>
-                </label>
-                <label class="flex items-center gap-1 cursor-pointer">
-                  <input type="radio" name="paper-mode-radio" value="40-Minute Revision Short Test" onchange="refreshWorksheetPreviewFromForm()" />
-                  <span>單元小測 Quiz</span>
-                </label>
-              </div>
-
-              <button
-                type="button"
-                onclick="downloadPreviewWordFromForm()"
-                class="text-[11px] font-black bg-blue-700 hover:bg-blue-800 text-white px-2.5 py-1 rounded shadow-sm transition whitespace-nowrap"
-              >
-                📥 下載 Word 工作紙
-              </button>
-            </div>
-
-            <textarea
-              id="leave-generated-classwork"
-              rows="5"
-              class="w-full p-2 rounded-lg border border-slate-300 text-[11px] text-slate-800 leading-snug bg-white font-mono"
-            ></textarea>
-          </div>
-
-          <button
-            type="button"
-            onclick="submitTeacherLeaveRequest()"
-            class="w-full py-2.5 rounded-xl font-black text-white text-xs sm:text-sm shadow-md transition hover:opacity-95"
-            style="background-color: var(--lcp-green-bar);"
-          >
-            📨 提交請假申請並附上工作紙 Submit Leave Request
-          </button>
-        </div>
-
-      </div>
-
-      <!-- SUBVIEW B2: Substitute Teacher Full-Day Schedule & Web Report Arrival -->
-      <div id="teacher-subview-substitutions" class="hidden space-y-4">
-        <div class="bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-lime-300 space-y-3">
-          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
-            <div class="flex items-center gap-2">
-              <span class="lcp-orange-arrow">↘</span>
-              <div>
-                <h2 class="text-sm sm:text-base font-black text-slate-900">
-                  全日代課表、工作紙下載及網上報到 (Full-Day Cover Schedule &amp; Web Report Arrival)
-                </h2>
-                <p class="text-[11px] text-slate-500">
-                  代課老師在此點擊「📍 到班報到 Report Arrival」，課室門外 QAPASS 1602 顯示屏及教員室看板將即時同步更新
-                </p>
-              </div>
-            </div>
-            <label class="flex items-center gap-1.5 text-xs font-bold text-[#2b5400] bg-[#eef8dc] px-3 py-1 rounded-lg border border-lime-300 cursor-pointer">
-              <input type="checkbox" id="filter-my-duties-only" onchange="renderTeacherAssignedSubstitutions()" class="rounded text-[#68b800]" />
-              <span>只顯示本人代課 My Duties Only</span>
-            </label>
-          </div>
-
-          <div class="overflow-x-auto rounded-xl border border-lime-300">
-            <table class="w-full text-left border-collapse school-table text-xs">
-              <thead>
-                <tr class="bg-[#eef8dc] text-[#2b5400] font-black whitespace-nowrap">
-                  <th class="p-2.5">課節 Period</th>
-                  <th class="p-2.5">班別及課室 Class &amp; Room</th>
-                  <th class="p-2.5">請假原任 Absent Teacher</th>
-                  <th class="p-2.5">指派代課 Cover Teacher</th>
-                  <th class="p-2.5">教學進度工作紙 Worksheet &amp; Key</th>
-                  <th class="p-2.5 text-center">網上簽收及到班報到 Web Report Arrival</th>
-                </tr>
-              </thead>
-              <tbody id="teacher-assigned-duties-tbody" class="bg-white divide-y divide-slate-200"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-    </section>
-
-    <!-- ========================================================================
-         SCREEN C: GENERAL OFFICE ADMIN PORTAL
-         ======================================================================== -->
-    <section id="screen-admin" class="hidden space-y-4">
-
-      <div class="bg-white rounded-xl p-2.5 shadow-sm border border-lime-300 flex flex-wrap items-center justify-between gap-2">
-        <div class="flex flex-wrap items-center gap-1.5">
-          <button
-            onclick="switchAdminSubTab('approval')"
-            id="admin-subtab-btn-approval"
-            class="px-3 py-1.5 rounded-lg text-xs font-black transition bg-[#68b800] text-white"
-          >
-            ✅ 請假批核及零衝突代課編排 (Leave Approval &amp; Matching)
-          </button>
-          <button
-            onclick="switchAdminSubTab('schedule_table')"
-            id="admin-subtab-btn-schedule_table"
-            class="px-3 py-1.5 rounded-lg text-xs font-black transition text-slate-700 hover:bg-lime-50"
-          >
-            📚 各科教學進度表 (Teaching Progress Schedule)
-          </button>
-          <button
-            onclick="switchAdminSubTab('timetables')"
-            id="admin-subtab-btn-timetables"
-            class="px-3 py-1.5 rounded-lg text-xs font-black transition text-slate-700 hover:bg-lime-50"
-          >
-            🗂️ 全校教師時間表管理 (Staff Timetables)
-          </button>
-        </div>
-
-        <button
-          onclick="resetAllSystemData()"
-          class="text-xs font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 px-3 py-1 rounded-lg transition"
-        >
-          ↺ 重置預設演示資料 Reset Demo Data
-        </button>
-      </div>
-
-      <div id="admin-subview-approval" class="space-y-4">
-        <div class="bg-white rounded-xl p-4 shadow-sm border border-lime-300">
-          <div class="flex items-center justify-between flex-wrap gap-2 mb-2">
-            <div class="text-xs font-black text-[#2b5400]">
-              📊 教職員實時代課節數統計及今日空堂 (Live Substitution Quota &amp; Free Periods)
-            </div>
-            <span class="text-[11px] font-bold text-slate-500">
-              自動優先指派「當節空堂且無重疊代課」及「累計代課最少」之教師
-            </span>
-          </div>
-          <div id="admin-quota-ledger-bar" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2"></div>
-        </div>
-        <div id="admin-leave-requests-container" class="space-y-4"></div>
-      </div>
-
-      <div id="admin-subview-schedule_table" class="hidden space-y-4">
-        <div class="bg-white rounded-xl p-4 sm:p-5 shadow-sm border-2 border-[#68b800] space-y-3">
-          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
-            <div>
-              <h3 class="text-base font-black text-slate-900">全校各科教學進度表及校本題庫 Teaching Progress &amp; Question Bank</h3>
-              <p class="text-xs text-slate-500">系統自動按今日香港日期對應各班教學周次，一鍵生成 40 分鐘溫習工作紙連評分參考</p>
-            </div>
-          </div>
-          <div class="overflow-x-auto rounded-xl border border-lime-300">
-            <table class="w-full text-left border-collapse school-table text-xs">
-              <thead>
-                <tr class="bg-[#eef8dc] text-[#2b5400] font-black">
-                  <th class="p-2.5">科目 Subject</th>
-                  <th class="p-2.5">適用班別 Classes</th>
-                  <th class="p-2.5">第 1–8 周溫習範圍 (Weeks 1–8)</th>
-                  <th class="p-2.5">第 9–10 周當前進度 (Weeks 9–10 Current)</th>
-                  <th class="p-2.5 text-center">下載工作紙範本 Sample</th>
-                </tr>
-              </thead>
-              <tbody id="schedule-table-tbody" class="bg-white divide-y divide-slate-200"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <div id="admin-subview-timetables" class="hidden space-y-4">
-        <div class="bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-lime-300 space-y-3">
-          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
-            <h3 class="text-base font-black text-slate-900">全校教師 6 循環日時間表檢視及修改 Staff 6-Day Timetable Editor</h3>
-            <select
-              id="admin-inspect-teacher-select"
-              onchange="renderAdminTimetableInspector()"
-              class="px-3 py-1 rounded-lg border border-[#68b800] bg-lime-50 text-xs font-black text-lime-950"
-            ></select>
-          </div>
-          <div class="overflow-x-auto">
-            <table class="w-full text-center border-collapse school-table text-xs">
-              <thead>
-                <tr class="bg-[#eef8dc] text-[#2b5400] font-black">
-                  <th class="p-2 w-24 text-left">課節 Period</th>
-                  <th class="p-2">DAY 1</th>
-                  <th class="p-2">DAY 2</th>
-                  <th class="p-2">DAY 3</th>
-                  <th class="p-2">DAY 4</th>
-                  <th class="p-2">DAY 5</th>
-                  <th class="p-2">DAY 6</th>
-                </tr>
-              </thead>
-              <tbody id="admin-inspector-tbody"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-    </section>
-
-    <!-- ========================================================================
-         SCREEN D: STAFFROOM LIVE BOARD
-         ======================================================================== -->
-    <section id="screen-staffroom-tv" class="hidden space-y-3">
-
-      <div class="bg-white border-2 border-[#68b800] shadow-md rounded-xl overflow-hidden">
-        <div class="bg-[#68b800] text-white px-4 py-2.5 flex flex-wrap items-center justify-between gap-2">
-          <div class="flex items-center gap-2 text-xs sm:text-sm font-black">
-            <span>📺</span>
-            <span>教員室實時請假及代課電子看板 Staffroom Live Substitution Board</span>
-          </div>
-
-          <div class="flex items-center gap-2 flex-wrap">
-            <button
-              type="button"
-              onclick="toggleTvFullDayMode()"
-              id="tv-mode-toggle-btn"
-              class="bg-black/25 hover:bg-black/40 text-white px-2.5 py-1 rounded text-[11px] font-bold transition whitespace-nowrap"
-            >
-              🔍 展開全日 (Full Day)
-            </button>
-            <span class="bg-white/20 px-2.5 py-0.5 rounded text-xs font-bold whitespace-nowrap">
-              校曆 Cycle: <strong id="tv-cycle-day-label" class="text-yellow-200">DAY 2</strong>
-            </span>
-            <span class="bg-white text-[#2b5400] px-2.5 py-0.5 rounded text-xs font-mono font-black whitespace-nowrap" id="tv-live-clock">
-              10:55:00
-            </span>
-          </div>
-        </div>
-
-        <div class="p-3 sm:p-4 bg-[#f8fcf2] grid grid-cols-1 md:grid-cols-12 gap-3.5 items-start">
-
-          <!-- LEFT PANEL (4 Cols): Today's Absent Staff -->
-          <div class="md:col-span-4 bg-white rounded-xl border-2 border-lime-300 shadow-sm overflow-hidden">
-            <div class="bg-[#eef8dc] px-3.5 py-2 border-b border-lime-300 flex items-center justify-between">
-              <div class="flex items-center gap-1.5">
+            <!-- Left 5 Cols: Core Invention Highlights -->
+            <div class="lg:col-span-5 bg-white rounded-xl p-5 shadow-sm border border-lime-300 space-y-3.5">
+              <div class="flex items-center gap-2">
                 <span class="lcp-orange-arrow">↘</span>
-                <h3 class="text-xs sm:text-sm font-black text-[#2b5400]">
-                  今日請假教職員 Absent Staff
-                </h3>
+                <h2 class="text-base font-black text-slate-900 lcp-section-underline">
+                  提升效率與減少人為失誤 System Highlights
+                </h2>
               </div>
-              <span id="tv-absent-teacher-count" class="px-2 py-0.5 rounded-full text-[11px] font-black bg-[#68b800] text-white whitespace-nowrap">
-                3 人
-              </span>
+
+              <div class="space-y-2.5 text-xs leading-relaxed text-slate-700">
+                <div class="p-3 rounded-lg bg-[#f4fae8] border border-lime-300">
+                  <div class="font-black text-[#2b5400]">1. 零衝突代課配對與時段鎖定 Conflict-Free Matching</div>
+                  <p class="mt-0.5 text-slate-600">
+                    系統自動讀取香港時間及學校校曆，自動比對全校教師空堂及累計代課節數，杜絕人手排表撞堂或看錯行。
+                  </p>
+                </div>
+
+                <div class="p-3 rounded-lg bg-[#f4fae8] border border-lime-300">
+                  <div class="font-black text-[#2b5400]">2. 課室門外小型顯示屏與網上報到 Door Display &amp; Web Check-In</div>
+                  <p class="mt-0.5 text-slate-600">
+                    課室門外安裝小型顯示屏，清晰顯示<strong>「CKKU 周嘉權 請假 ➔ TMCHAN 陳大文 代課」</strong>；代課老師在網站點擊「到班報到」，門外顯示屏與教員室看板即時同步更新。
+                  </p>
+                </div>
+
+                <div class="p-3 rounded-lg bg-[#f4fae8] border border-lime-300">
+                  <div class="font-black text-[#2b5400]">3. 自動對照教學進度生成工作紙連答案 Smart Worksheet</div>
+                  <p class="mt-0.5 text-slate-600">
+                    教師請假免除抱病出卷，系統自動按當日周次對照《各科教學進度表》或自訂課題，即時生成 40 分鐘溫習工作紙連評分參考。
+                  </p>
+                </div>
+              </div>
             </div>
 
-            <div class="p-2.5 space-y-2" id="tv-absent-teachers-list"></div>
-
-            <div class="bg-slate-50 px-2.5 py-2 border-t border-slate-200 grid grid-cols-3 gap-1.5 text-center">
-              <div class="p-1.5 rounded bg-rose-50 border border-rose-200">
-                <div class="flex items-center justify-center gap-1 text-[10px] font-bold text-rose-800 whitespace-nowrap">
-                  <span class="w-2 h-2 rounded-full bg-rose-600 inline-block"></span>待簽收 Pending
+            <!-- Right 7 Cols: Staff Sign-In & Role Cards -->
+            <div class="lg:col-span-7 bg-white rounded-xl p-5 shadow-md border-2 border-[#68b800] space-y-4">
+              <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
+                <div class="flex items-center gap-2">
+                  <span class="lcp-orange-arrow">↘</span>
+                  <div>
+                    <h2 class="text-base font-black text-slate-900">教職員內聯網登入 Staff Intranet Sign In</h2>
+                    <p class="text-[11px] text-slate-500">點擊下方角色卡可直接進入對應介面 Select a role card below or start the guided tour</p>
+                  </div>
                 </div>
-                <div id="tv-stat-pending" class="text-sm font-black text-rose-700">0</div>
-              </div>
-              <div class="p-1.5 rounded bg-amber-50 border border-amber-200">
-                <div class="flex items-center justify-center gap-1 text-[10px] font-bold text-amber-900 whitespace-nowrap">
-                  <span class="w-2 h-2 rounded-full bg-amber-500 inline-block"></span>已簽收 Ack
-                </div>
-                <div id="tv-stat-ack" class="text-sm font-black text-amber-700">0</div>
-              </div>
-              <div class="p-1.5 rounded bg-emerald-50 border border-emerald-200">
-                <div class="flex items-center justify-center gap-1 text-[10px] font-bold text-emerald-900 whitespace-nowrap">
-                  <span class="w-2 h-2 rounded-full bg-emerald-600 inline-block"></span>已報到 Arrived
-                </div>
-                <div id="tv-stat-arrived" class="text-sm font-black text-emerald-700">0</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- RIGHT PANEL (8 Cols): Current Lesson & Next Lesson -->
-          <div class="md:col-span-8 space-y-3">
-
-            <div class="bg-white rounded-xl px-3.5 py-2 border border-lime-300 shadow-sm flex flex-wrap items-center justify-between gap-2">
-              <div class="flex items-center gap-2 text-xs font-bold text-slate-700">
-                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 pulse-dot flex-shrink-0"></span>
-                <span id="tv-auto-sync-status-text">
-                  已按香港標準時間 (HKT) 及校曆自動鎖定：本節課堂 及 下一節課堂
+                <span class="text-[11px] font-mono bg-lime-100 text-lime-900 font-bold px-2 py-0.5 rounded border border-lime-300">
+                  @lcp.edu.hk
                 </span>
               </div>
 
-              <div class="flex items-center gap-1.5 text-[11px]">
+              <form onsubmit="submitLoginForm(event)" class="grid grid-cols-1 sm:grid-cols-12 gap-2.5 items-end">
+                <div class="sm:col-span-5">
+                  <label class="block text-xs font-bold text-slate-700 mb-1">學校帳號 Staff Account</label>
+                  <input
+                    type="text"
+                    id="login-email-input"
+                    value="ckku@lcp.edu.hk"
+                    class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs font-bold outline-none focus:border-lime-600"
+                    required
+                  />
+                </div>
+                <div class="sm:col-span-4">
+                  <label class="block text-xs font-bold text-slate-700 mb-1">密碼 Password</label>
+                  <input
+                    type="password"
+                    value="••••••••"
+                    class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs font-bold outline-none focus:border-lime-600"
+                    required
+                  />
+                </div>
+                <div class="sm:col-span-3">
+                  <button
+                    type="submit"
+                    class="w-full py-2 px-4 rounded-lg font-black text-white text-xs shadow-sm transition hover:opacity-95"
+                    style="background-color: var(--lcp-green-bar);"
+                  >
+                    登入 Sign In ➔
+                  </button>
+                </div>
+              </form>
+
+              <div class="pt-3 border-t border-slate-200 space-y-2">
+                <div class="flex items-center justify-between flex-wrap gap-2">
+                  <span class="text-xs font-black text-slate-700">⚡ 快速切換系統角色 Quick Role Switcher:</span>
+                  <button
+                    type="button"
+                    onclick="selectSystemLaunchMode('competition')"
+                    class="text-[11px] font-black text-amber-900 bg-amber-100 hover:bg-amber-200 border border-amber-300 px-2.5 py-0.5 rounded transition"
+                  >
+                    ▶ 開啟 6 步比賽流程演示 Start Guided Flow
+                  </button>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  <button
+                    type="button"
+                    onclick="loginAsRole('ckku')"
+                    class="text-left p-3 rounded-xl border border-lime-400 bg-lime-50/70 hover:bg-lime-100 transition flex items-start justify-between gap-2"
+                  >
+                    <div>
+                      <div class="text-xs font-black text-lime-950">① 科任請假：周嘉權老師 (CKKU)</div>
+                      <div class="text-[11px] text-slate-600 mt-0.5">Leave Application &amp; Auto 40-Min Worksheet</div>
+                    </div>
+                    <span class="text-[10px] bg-[#68b800] text-white px-2 py-0.5 rounded font-bold shrink-0">Leave</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onclick="loginAsRole('tmchan')"
+                    class="text-left p-3 rounded-xl border border-amber-400 bg-amber-50/60 hover:bg-amber-100/70 transition flex items-start justify-between gap-2"
+                  >
+                    <div>
+                      <div class="text-xs font-black text-amber-950">② 代課報到：陳大文老師 (TMCHAN)</div>
+                      <div class="text-[11px] text-slate-600 mt-0.5">Cover Schedule, Download Paper &amp; Web Check-In</div>
+                    </div>
+                    <span class="text-[10px] bg-amber-600 text-white px-2 py-0.5 rounded font-bold shrink-0">Cover</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onclick="loginAsRole('staffroom_tv')"
+                    class="text-left p-3 rounded-xl border-2 border-emerald-500 bg-emerald-50/60 hover:bg-emerald-100/70 transition flex items-start justify-between gap-2"
+                  >
+                    <div>
+                      <div class="text-xs font-black text-emerald-950">③ 教員室分欄看板 (Staffroom Board)</div>
+                      <div class="text-[11px] text-slate-600 mt-0.5">Absent List + Current &amp; Next Period Live View</div>
+                    </div>
+                    <span class="text-[10px] bg-emerald-700 text-white px-2 py-0.5 rounded font-bold shrink-0">Board</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onclick="loginAsRole('door_monitor')"
+                    class="text-left p-3 rounded-xl border-2 border-sky-500 bg-sky-50/60 hover:bg-sky-100/70 transition flex items-start justify-between gap-2"
+                  >
+                    <div>
+                      <div class="text-xs font-black text-sky-950">④ 課室門外顯示屏 (Classroom Door Display)</div>
+                      <div class="text-[11px] text-slate-600 mt-0.5">Room 207 Outside Monitor &amp; Late Alert View</div>
+                    </div>
+                    <span class="text-[10px] bg-sky-700 text-white px-2 py-0.5 rounded font-bold shrink-0">Door Screen</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onclick="loginAsRole('vp_admin')"
+                    class="sm:col-span-2 text-left p-2.5 rounded-xl border border-slate-300 bg-slate-50 hover:bg-lime-50 transition flex items-center justify-between gap-2"
+                  >
+                    <div>
+                      <div class="text-xs font-black text-slate-900">⑤ 校務處管理台 (General Office Approval &amp; Teaching Progress)</div>
+                      <div class="text-[11px] text-slate-600">審批請假申請、零衝突自動派課、管理《全校各科教學進度表》</div>
+                    </div>
+                    <span class="text-[10px] bg-[#4d8a00] text-white px-2.5 py-1 rounded font-bold shrink-0">Office</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ====================================================================
+             SCREEN B: TEACHER PORTAL (Leave Request + Substitute Web Check-In)
+             ==================================================================== -->
+        <section id="screen-teacher" class="hidden space-y-4">
+
+          <div class="bg-white rounded-xl p-2.5 shadow-sm border border-lime-300 flex flex-wrap items-center justify-between gap-2">
+            <div class="flex flex-wrap items-center gap-1.5">
+              <button
+                onclick="switchTeacherSubTab('timetable-leave')"
+                id="teacher-subtab-btn-leave"
+                class="px-3 py-1.5 rounded-lg text-xs font-black transition bg-[#68b800] text-white"
+              >
+                📅 個人全日課表及請假申請 (Timetable &amp; Leave Request)
+              </button>
+              <button
+                onclick="switchTeacherSubTab('my-substitutions')"
+                id="teacher-subtab-btn-sub"
+                class="px-3 py-1.5 rounded-lg text-xs font-black transition text-slate-700 hover:bg-lime-50 flex items-center gap-1.5"
+              >
+                <span>📋 代課時間表、下載工作紙及網上報到 (Cover Duties &amp; Report Arrival)</span>
+                <span id="teacher-sub-count-badge" class="px-2 py-0.2 rounded-full text-[11px] bg-amber-500 text-white font-black">0</span>
+              </button>
+            </div>
+
+            <div class="flex items-center gap-1.5">
+              <span class="text-xs font-bold text-slate-600">切換教師 Staff:</span>
+              <select
+                id="teacher-portal-account-select"
+                onchange="switchActiveTeacherAccount(this.value)"
+                class="px-2.5 py-1 rounded-lg border border-[#68b800] bg-[#eef8dc] text-xs font-black text-[#2b5400]"
+              ></select>
+            </div>
+          </div>
+
+          <!-- SUBVIEW B1: Teacher Full Timetable + Leave Request -->
+          <div id="teacher-subview-leave" class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+
+            <!-- Left 7 Cols: Full 6-Day Timetable -->
+            <div class="lg:col-span-7 bg-white rounded-xl p-4 shadow-sm border border-lime-300 space-y-3">
+              <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2">
+                <div class="flex items-center gap-2">
+                  <span class="lcp-orange-arrow">↘</span>
+                  <div>
+                    <h2 id="timetable-owner-title" class="text-sm sm:text-base font-black text-slate-900">
+                      個人全日時間表 Full-Day Timetable (P1–P8)
+                    </h2>
+                    <p class="text-[11px] text-slate-500">
+                      點擊任何循環日 (DAY 1 – DAY 6) 即可檢視及勾選當日需請假之課節 Select Cycle Day
+                    </p>
+                  </div>
+                </div>
+                <div id="timetable-day-pills" class="flex items-center gap-1"></div>
+              </div>
+
+              <div class="overflow-x-auto">
+                <table class="w-full text-center border-collapse school-table text-xs">
+                  <thead>
+                    <tr class="bg-[#eef8dc] text-[#2b5400] font-black">
+                      <th class="p-2 w-24 text-left">課節 Period</th>
+                      <th onclick="selectLeaveDay('DAY 1')" id="th-DAY-1" class="p-1.5 cursor-pointer hover:bg-lime-200">DAY 1</th>
+                      <th onclick="selectLeaveDay('DAY 2')" id="th-DAY-2" class="p-1.5 cursor-pointer hover:bg-lime-200">DAY 2</th>
+                      <th onclick="selectLeaveDay('DAY 3')" id="th-DAY-3" class="p-1.5 cursor-pointer hover:bg-lime-200">DAY 3</th>
+                      <th onclick="selectLeaveDay('DAY 4')" id="th-DAY-4" class="p-1.5 cursor-pointer hover:bg-lime-200">DAY 4</th>
+                      <th onclick="selectLeaveDay('DAY 5')" id="th-DAY-5" class="p-1.5 cursor-pointer hover:bg-lime-200">DAY 5</th>
+                      <th onclick="selectLeaveDay('DAY 6')" id="th-DAY-6" class="p-1.5 cursor-pointer hover:bg-lime-200">DAY 6</th>
+                    </tr>
+                  </thead>
+                  <tbody id="teacher-timetable-tbody" class="bg-white"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Right 5 Cols: Leave Submission + Smart Worksheet Generator -->
+            <div class="lg:col-span-5 bg-white rounded-xl p-4 shadow-sm border-2 border-[#68b800] space-y-3">
+              <div class="flex items-center gap-2 border-b border-slate-100 pb-2">
+                <span class="lcp-orange-arrow">↘</span>
+                <div>
+                  <h3 class="text-sm sm:text-base font-black text-slate-900">
+                    請假申請及自動生成課堂工作紙 Leave &amp; Worksheet
+                  </h3>
+                  <p class="text-[11px] text-slate-500">
+                    自動按當日周次對照《各科教學進度表》出題，或輸入自訂課題即時生成
+                  </p>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-2.5">
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-700 mb-1">請假循環日 Cycle Day</label>
+                  <select
+                    id="leave-form-day"
+                    onchange="selectLeaveDay(this.value)"
+                    class="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 text-xs font-black bg-lime-50 text-lime-950"
+                  >
+                    <option value="DAY 1">DAY 1</option>
+                    <option value="DAY 2" selected>DAY 2 (今日 Today)</option>
+                    <option value="DAY 3">DAY 3</option>
+                    <option value="DAY 4">DAY 4</option>
+                    <option value="DAY 5">DAY 5</option>
+                    <option value="DAY 6">DAY 6</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-700 mb-1">請假類別 Leave Type</label>
+                  <select id="leave-form-reason" class="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 text-xs font-bold bg-white">
+                    <option value="[OD] 公假 Official Duty">[OD] 公假 Official Duty</option>
+                    <option value="[SL] 病假 Sick Leave">[SL] 病假 Sick Leave</option>
+                    <option value="[TR] 進修研討會 Seminar">[TR] 進修研討會 Seminar</option>
+                    <option value="[PL] 事假 Personal Leave">[PL] 事假 Personal Leave</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-[11px] font-bold text-slate-700 mb-1">
+                  當日受影響課節及對應《各科教學進度表》課題 Affected Lessons:
+                </label>
+                <div id="leave-affected-lessons-list" class="space-y-1.5 max-h-40 overflow-y-auto pr-1"></div>
+              </div>
+
+              <!-- Smart Worksheet Generator Box -->
+              <div class="p-3 rounded-xl bg-[#f4fae8] border border-[#68b800] space-y-2">
+                <div class="flex items-center justify-between gap-1 flex-wrap">
+                  <span class="text-xs font-black text-[#2b5400]">📄 40分鐘溫習工作紙連答案 (40-Min Worksheet &amp; Key)</span>
+                  <span id="schedule-tracking-status-badge" class="text-[10px] font-black bg-emerald-100 text-emerald-900 px-2 py-0.5 rounded border border-emerald-300 whitespace-nowrap">
+                    ⚡ 已對照 Week 10 教學進度
+                  </span>
+                </div>
+
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-700 mb-1">
+                    選擇出題範圍 Curriculum Scope（切換即更新整份試卷題目及答案）：
+                  </label>
+                  <select
+                    id="leave-scope-select"
+                    onchange="refreshWorksheetPreviewFromForm()"
+                    class="w-full px-2.5 py-1.5 rounded-lg border border-lime-500 text-xs font-bold bg-white text-slate-900"
+                  >
+                    <option value="current" selected>📌 本周教學進度 (Week 9–10 Current Progress)</option>
+                    <option value="prior">🔄 前期溫習範圍 (Week 1–8 Prior Revision Topics)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-700 mb-1">
+                    自訂課題 Custom Topic（可輸入新課題並點擊右側按鈕即時生成）：
+                  </label>
+                  <div class="flex items-center gap-1.5">
+                    <input
+                      type="text"
+                      id="leave-progress-input"
+                      value=""
+                      placeholder="留空 = 使用校本進度題庫；或輸入新課題..."
+                      oninput="refreshWorksheetPreviewFromForm()"
+                      class="flex-1 px-2.5 py-1.5 rounded-lg border border-lime-500 text-xs font-bold bg-white"
+                    />
+                    <button
+                      type="button"
+                      onclick="generateSmartCloudWorksheet()"
+                      id="btn-smart-cloud-gen"
+                      class="px-2.5 py-1.5 rounded-lg bg-purple-700 hover:bg-purple-800 text-white text-[11px] font-black shadow-sm transition whitespace-nowrap"
+                    >
+                      ✨ 智能生成題目
+                    </button>
+                  </div>
+                </div>
+
+                <div class="flex items-center justify-between gap-2 pt-0.5 flex-wrap">
+                  <div class="flex items-center gap-2 text-[11px] font-bold">
+                    <label class="flex items-center gap-1 cursor-pointer">
+                      <input type="radio" name="paper-mode-radio" value="Revision Worksheet & Short Quiz" checked onchange="refreshWorksheetPreviewFromForm()" />
+                      <span>工作紙連小測 Worksheet</span>
+                    </label>
+                    <label class="flex items-center gap-1 cursor-pointer">
+                      <input type="radio" name="paper-mode-radio" value="40-Minute Revision Short Test" onchange="refreshWorksheetPreviewFromForm()" />
+                      <span>單元小測 Quiz</span>
+                    </label>
+                  </div>
+
+                  <button
+                    type="button"
+                    onclick="downloadPreviewWordFromForm()"
+                    class="text-[11px] font-black bg-blue-700 hover:bg-blue-800 text-white px-2.5 py-1 rounded shadow-sm transition whitespace-nowrap"
+                  >
+                    📥 下載 Word 工作紙
+                  </button>
+                </div>
+
+                <textarea
+                  id="leave-generated-classwork"
+                  rows="5"
+                  class="w-full p-2 rounded-lg border border-slate-300 text-[11px] text-slate-800 leading-snug bg-white font-mono"
+                ></textarea>
+              </div>
+
+              <button
+                type="button"
+                onclick="submitTeacherLeaveRequest()"
+                class="w-full py-2.5 rounded-xl font-black text-white text-xs sm:text-sm shadow-md transition hover:opacity-95"
+                style="background-color: var(--lcp-green-bar);"
+              >
+                📨 提交請假申請並附上工作紙 Submit Leave Request
+              </button>
+            </div>
+
+          </div>
+
+          <!-- SUBVIEW B2: Substitute Teacher Full-Day Schedule & Web Report Arrival -->
+          <div id="teacher-subview-substitutions" class="hidden space-y-4">
+            <div class="bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-lime-300 space-y-3">
+              <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
+                <div class="flex items-center gap-2">
+                  <span class="lcp-orange-arrow">↘</span>
+                  <div>
+                    <h2 class="text-sm sm:text-base font-black text-slate-900">
+                      全日代課表、工作紙下載及網上報到 (Full-Day Cover Schedule &amp; Web Report Arrival)
+                    </h2>
+                    <p class="text-[11px] text-slate-500">
+                      代課老師在此點擊「📍 到班報到 Report Arrival」，課室門外顯示屏及教員室看板將即時同步更新
+                    </p>
+                  </div>
+                </div>
+                <label class="flex items-center gap-1.5 text-xs font-bold text-[#2b5400] bg-[#eef8dc] px-3 py-1 rounded-lg border border-lime-300 cursor-pointer">
+                  <input type="checkbox" id="filter-my-duties-only" onchange="renderTeacherAssignedSubstitutions()" class="rounded text-[#68b800]" />
+                  <span>只顯示本人代課 My Duties Only</span>
+                </label>
+              </div>
+
+              <div class="overflow-x-auto rounded-xl border border-lime-300">
+                <table class="w-full text-left border-collapse school-table text-xs">
+                  <thead>
+                    <tr class="bg-[#eef8dc] text-[#2b5400] font-black whitespace-nowrap">
+                      <th class="p-2.5">課節 Period</th>
+                      <th class="p-2.5">班別及課室 Class &amp; Room</th>
+                      <th class="p-2.5">請假原任 Absent Teacher</th>
+                      <th class="p-2.5">指派代課 Cover Teacher</th>
+                      <th class="p-2.5">教學進度工作紙 Worksheet &amp; Key</th>
+                      <th class="p-2.5 text-center">網上簽收及到班報到 Web Report Arrival</th>
+                    </tr>
+                  </thead>
+                  <tbody id="teacher-assigned-duties-tbody" class="bg-white divide-y divide-slate-200"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ====================================================================
+             SCREEN C: GENERAL OFFICE ADMIN PORTAL
+             ==================================================================== -->
+        <section id="screen-admin" class="hidden space-y-4">
+
+          <div class="bg-white rounded-xl p-2.5 shadow-sm border border-lime-300 flex flex-wrap items-center justify-between gap-2">
+            <div class="flex flex-wrap items-center gap-1.5">
+              <button
+                onclick="switchAdminSubTab('approval')"
+                id="admin-subtab-btn-approval"
+                class="px-3 py-1.5 rounded-lg text-xs font-black transition bg-[#68b800] text-white"
+              >
+                ✅ 請假批核及零衝突代課編排 (Leave Approval &amp; Matching)
+              </button>
+              <button
+                onclick="switchAdminSubTab('schedule_table')"
+                id="admin-subtab-btn-schedule_table"
+                class="px-3 py-1.5 rounded-lg text-xs font-black transition text-slate-700 hover:bg-lime-50"
+              >
+                📚 各科教學進度表 (Teaching Progress Schedule)
+              </button>
+              <button
+                onclick="switchAdminSubTab('timetables')"
+                id="admin-subtab-btn-timetables"
+                class="px-3 py-1.5 rounded-lg text-xs font-black transition text-slate-700 hover:bg-lime-50"
+              >
+                🗂️ 全校教師時間表管理 (Staff Timetables)
+              </button>
+            </div>
+
+            <button
+              onclick="resetAllSystemData()"
+              class="text-xs font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 px-3 py-1 rounded-lg transition"
+            >
+              ↺ 重置預設演示資料 Reset Demo Data
+            </button>
+          </div>
+
+          <div id="admin-subview-approval" class="space-y-4">
+            <div class="bg-white rounded-xl p-4 shadow-sm border border-lime-300">
+              <div class="flex items-center justify-between flex-wrap gap-2 mb-2">
+                <div class="text-xs font-black text-[#2b5400]">
+                  📊 教職員實時代課節數統計及今日空堂 (Live Substitution Quota &amp; Free Periods)
+                </div>
+                <span class="text-[11px] font-bold text-slate-500">
+                  自動優先指派「當節空堂且無重疊代課」及「累計代課最少」之教師
+                </span>
+              </div>
+              <div id="admin-quota-ledger-bar" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2"></div>
+            </div>
+            <div id="admin-leave-requests-container" class="space-y-4"></div>
+          </div>
+
+          <div id="admin-subview-schedule_table" class="hidden space-y-4">
+            <div class="bg-white rounded-xl p-4 sm:p-5 shadow-sm border-2 border-[#68b800] space-y-3">
+              <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
+                <div>
+                  <h3 class="text-base font-black text-slate-900">全校各科教學進度表及校本題庫 Teaching Progress &amp; Question Bank</h3>
+                  <p class="text-xs text-slate-500">系統自動按今日香港日期對應各班教學周次，一鍵生成 40 分鐘溫習工作紙連評分參考</p>
+                </div>
+              </div>
+              <div class="overflow-x-auto rounded-xl border border-lime-300">
+                <table class="w-full text-left border-collapse school-table text-xs">
+                  <thead>
+                    <tr class="bg-[#eef8dc] text-[#2b5400] font-black">
+                      <th class="p-2.5">科目 Subject</th>
+                      <th class="p-2.5">適用班別 Classes</th>
+                      <th class="p-2.5">第 1–8 周溫習範圍 (Weeks 1–8)</th>
+                      <th class="p-2.5">第 9–10 周當前進度 (Weeks 9–10 Current)</th>
+                      <th class="p-2.5 text-center">下載工作紙範本 Sample</th>
+                    </tr>
+                  </thead>
+                  <tbody id="schedule-table-tbody" class="bg-white divide-y divide-slate-200"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div id="admin-subview-timetables" class="hidden space-y-4">
+            <div class="bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-lime-300 space-y-3">
+              <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
+                <h3 class="text-base font-black text-slate-900">全校教師 6 循環日時間表檢視及修改 Staff 6-Day Timetable Editor</h3>
+                <select
+                  id="admin-inspect-teacher-select"
+                  onchange="renderAdminTimetableInspector()"
+                  class="px-3 py-1 rounded-lg border border-[#68b800] bg-lime-50 text-xs font-black text-lime-950"
+                ></select>
+              </div>
+              <div class="overflow-x-auto">
+                <table class="w-full text-center border-collapse school-table text-xs">
+                  <thead>
+                    <tr class="bg-[#eef8dc] text-[#2b5400] font-black">
+                      <th class="p-2 w-24 text-left">課節 Period</th>
+                      <th class="p-2">DAY 1</th>
+                      <th class="p-2">DAY 2</th>
+                      <th class="p-2">DAY 3</th>
+                      <th class="p-2">DAY 4</th>
+                      <th class="p-2">DAY 5</th>
+                      <th class="p-2">DAY 6</th>
+                    </tr>
+                  </thead>
+                  <tbody id="admin-inspector-tbody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ====================================================================
+             SCREEN D: STAFFROOM LIVE BOARD
+             ==================================================================== -->
+        <section id="screen-staffroom-tv" class="hidden space-y-3">
+
+          <div class="bg-white border-2 border-[#68b800] shadow-md rounded-xl overflow-hidden">
+            <div class="bg-[#68b800] text-white px-4 py-2.5 flex flex-wrap items-center justify-between gap-2">
+              <div class="flex items-center gap-2 text-xs sm:text-sm font-black">
+                <span>📺</span>
+                <span>教員室實時請假及代課電子看板 Staffroom Live Substitution Board</span>
+              </div>
+
+              <div class="flex items-center gap-2 flex-wrap">
                 <button
                   type="button"
-                  onclick="document.getElementById('demo-time-override-bar').classList.toggle('hidden')"
-                  class="text-slate-600 hover:text-[#2b5400] font-bold px-2 py-0.5 rounded bg-slate-100 hover:bg-lime-100 transition whitespace-nowrap"
+                  onclick="toggleTvFullDayMode()"
+                  id="tv-mode-toggle-btn"
+                  class="bg-black/25 hover:bg-black/40 text-white px-2.5 py-1 rounded text-[11px] font-bold transition whitespace-nowrap"
                 >
-                  ⚙️ 切換演示課節 Period Selector
+                  🔍 展開全日 (Full Day)
                 </button>
+                <span class="bg-white/20 px-2.5 py-0.5 rounded text-xs font-bold whitespace-nowrap">
+                  校曆 Cycle: <strong id="tv-cycle-day-label" class="text-yellow-200">DAY 2</strong>
+                </span>
+                <span class="bg-white text-[#2b5400] px-2.5 py-0.5 rounded text-xs font-mono font-black whitespace-nowrap" id="tv-live-clock">
+                  10:55:00
+                </span>
               </div>
             </div>
 
-            <div id="demo-time-override-bar" class="hidden bg-amber-50 border border-amber-300 rounded-xl px-3.5 py-2 flex flex-wrap items-center justify-between gap-2 text-xs">
-              <span class="font-bold text-amber-900">🛠️ 演示課節切換（點擊課節可即時預覽該節看板與門外 1602 顯示屏）：</span>
-              <div class="flex items-center gap-1 flex-wrap">
-                <button type="button" onclick="setClockModeAuto()" class="px-2 py-0.5 rounded font-black bg-[#68b800] text-white text-[11px]">
-                  🕒 實時香港時間 (Live HKT)
-                </button>
-                <div id="tv-period-quick-pills" class="flex items-center gap-1 flex-wrap"></div>
+            <div class="p-3 sm:p-4 bg-[#f8fcf2] grid grid-cols-1 md:grid-cols-12 gap-3.5 items-start">
+
+              <!-- LEFT PANEL (4 Cols): Today's Absent Staff -->
+              <div class="md:col-span-4 bg-white rounded-xl border-2 border-lime-300 shadow-sm overflow-hidden">
+                <div class="bg-[#eef8dc] px-3.5 py-2 border-b border-lime-300 flex items-center justify-between">
+                  <div class="flex items-center gap-1.5">
+                    <span class="lcp-orange-arrow">↘</span>
+                    <h3 class="text-xs sm:text-sm font-black text-[#2b5400]">
+                      今日請假教職員 Absent Staff
+                    </h3>
+                  </div>
+                  <span id="tv-absent-teacher-count" class="px-2 py-0.5 rounded-full text-[11px] font-black bg-[#68b800] text-white whitespace-nowrap">
+                    3 人
+                  </span>
+                </div>
+
+                <div class="p-2.5 space-y-2" id="tv-absent-teachers-list"></div>
+
+                <div class="bg-slate-50 px-2.5 py-2 border-t border-slate-200 grid grid-cols-3 gap-1.5 text-center">
+                  <div class="p-1.5 rounded bg-rose-50 border border-rose-200">
+                    <div class="flex items-center justify-center gap-1 text-[10px] font-bold text-rose-800 whitespace-nowrap">
+                      <span class="w-2 h-2 rounded-full bg-rose-600 inline-block"></span>待簽收 Pending
+                    </div>
+                    <div id="tv-stat-pending" class="text-sm font-black text-rose-700">0</div>
+                  </div>
+                  <div class="p-1.5 rounded bg-amber-50 border border-amber-200">
+                    <div class="flex items-center justify-center gap-1 text-[10px] font-bold text-amber-900 whitespace-nowrap">
+                      <span class="w-2 h-2 rounded-full bg-amber-500 inline-block"></span>已簽收 Ack
+                    </div>
+                    <div id="tv-stat-ack" class="text-sm font-black text-amber-700">0</div>
+                  </div>
+                  <div class="p-1.5 rounded bg-emerald-50 border border-emerald-200">
+                    <div class="flex items-center justify-center gap-1 text-[10px] font-bold text-emerald-900 whitespace-nowrap">
+                      <span class="w-2 h-2 rounded-full bg-emerald-600 inline-block"></span>已報到 Arrived
+                    </div>
+                    <div id="tv-stat-arrived" class="text-sm font-black text-emerald-700">0</div>
+                  </div>
+                </div>
               </div>
+
+              <!-- RIGHT PANEL (8 Cols): Current Lesson & Next Lesson -->
+              <div class="md:col-span-8 space-y-3">
+
+                <div class="bg-white rounded-xl px-3.5 py-2 border border-lime-300 shadow-sm flex flex-wrap items-center justify-between gap-2">
+                  <div class="flex items-center gap-2 text-xs font-bold text-slate-700">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 pulse-dot flex-shrink-0"></span>
+                    <span id="tv-auto-sync-status-text">
+                      已按香港標準時間 (HKT) 及校曆自動鎖定：本節課堂 及 下一節課堂
+                    </span>
+                  </div>
+
+                  <div class="flex items-center gap-1.5 text-[11px]">
+                    <button
+                      type="button"
+                      onclick="document.getElementById('demo-time-override-bar').classList.toggle('hidden')"
+                      class="text-slate-600 hover:text-[#2b5400] font-bold px-2 py-0.5 rounded bg-slate-100 hover:bg-lime-100 transition whitespace-nowrap"
+                    >
+                      ⚙️ 切換演示課節 Period Selector
+                    </button>
+                  </div>
+                </div>
+
+                <div id="demo-time-override-bar" class="hidden bg-amber-50 border border-amber-300 rounded-xl px-3.5 py-2 flex flex-wrap items-center justify-between gap-2 text-xs">
+                  <span class="font-bold text-amber-900">🛠️ 演示課節切換（點擊課節可即時預覽該節看板與門外顯示屏）：</span>
+                  <div class="flex items-center gap-1 flex-wrap">
+                    <button type="button" onclick="setClockModeAuto()" class="px-2 py-0.5 rounded font-black bg-[#68b800] text-white text-[11px]">
+                      🕒 實時香港時間 (Live HKT)
+                    </button>
+                    <div id="tv-period-quick-pills" class="flex items-center gap-1 flex-wrap"></div>
+                  </div>
+                </div>
+
+                <div id="tv-time-filtered-container" class="space-y-3"></div>
+
+              </div>
+
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ====================================================================
+             SCREEN E: FULL-SCREEN CLASSROOM DOOR DISPLAY
+             ==================================================================== -->
+        <section id="screen-door-monitor" class="hidden space-y-3">
+
+          <!-- Control Bar -->
+          <div id="door-control-bar" class="bg-white rounded-xl px-4 py-2.5 shadow-sm border border-lime-300 flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+              <span class="lcp-orange-arrow">↘</span>
+              <span class="text-xs sm:text-sm font-black text-slate-900">
+                課室門外小型顯示屏 Classroom Door Display (單一螢幕演示 Single Monitor View)
+              </span>
             </div>
 
-            <div id="tv-time-filtered-container" class="space-y-3"></div>
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="text-xs font-bold text-slate-700">課室 Room:</span>
+              <select
+                id="door-monitor-room-select"
+                onchange="syncSelectedRoom(this.value)"
+                class="px-3 py-1 rounded-lg border-2 border-[#68b800] bg-[#f4fae8] text-xs font-black text-[#2b5400]"
+              >
+                <option value="207" selected>Room 207 (電腦室 Computer Rm)</option>
+                <option value="201">Room 201 (2A 課室)</option>
+                <option value="302">Room 302 (3B 課室)</option>
+                <option value="401">Room 401 (4A 課室)</option>
+                <option value="407">Room 407 (4C 課室)</option>
+                <option value="221">Room 221 (創科室 Maker Lab)</option>
+              </select>
 
+              <button
+                type="button"
+                onclick="toggleOverdueSimulation()"
+                class="px-3 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-black transition whitespace-nowrap"
+              >
+                🔔 切換「未到班提示」Late Alert
+              </button>
+
+              <button
+                type="button"
+                onclick="toggleDoorFullscreen()"
+                class="px-3 py-1 rounded-lg bg-[#2b5400] hover:bg-lime-900 text-white text-xs font-black transition whitespace-nowrap"
+              >
+                ⛶ 全螢幕顯示 Fullscreen
+              </button>
+            </div>
           </div>
 
-        </div>
-      </div>
-
-    </section>
-
-    <!-- ========================================================================
-         SCREEN E: SINGLE CLASSROOM DOOR DISPLAY + QAPASS 1602 LCD SIMULATOR
-         ======================================================================== -->
-    <section id="screen-door-monitor" class="hidden space-y-3">
-
-      <!-- Control Bar -->
-      <div id="door-control-bar" class="bg-white rounded-xl px-4 py-2.5 shadow-sm border border-lime-300 flex flex-wrap items-center justify-between gap-2">
-        <div class="flex items-center gap-2">
-          <span class="lcp-orange-arrow">↘</span>
-          <span class="text-xs sm:text-sm font-black text-slate-900">
-            課室門外顯示屏及 QAPASS 1602 實時同步預覽 Classroom Door Display &amp; 1602 LCD
-          </span>
-        </div>
-
-        <div class="flex items-center gap-2 flex-wrap">
-          <span class="text-xs font-bold text-slate-700">課室 Room:</span>
-          <select
-            id="door-monitor-room-select"
-            onchange="renderSmallDoorMonitor(); saveRecords(true);"
-            class="px-3 py-1 rounded-lg border-2 border-[#68b800] bg-[#f4fae8] text-xs font-black text-[#2b5400]"
-          >
-            <option value="207" selected>Room 207 (電腦室 Computer Rm)</option>
-            <option value="201">Room 201 (2A 課室)</option>
-            <option value="302">Room 302 (3B 課室)</option>
-            <option value="401">Room 401 (4A 課室)</option>
-            <option value="407">Room 407 (4C 課室)</option>
-            <option value="221">Room 221 (創科室 Maker Lab)</option>
-          </select>
-
-          <button
-            type="button"
-            onclick="toggleOverdueSimulation()"
-            class="px-3 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-black transition whitespace-nowrap"
-          >
-            🔔 切換「未到班提示」Late Alert
-          </button>
-
-          <button
-            type="button"
-            onclick="toggleDoorFullscreen()"
-            class="px-3 py-1 rounded-lg bg-[#2b5400] hover:bg-lime-900 text-white text-xs font-black transition whitespace-nowrap"
-          >
-            ⛶ 全螢幕顯示 Fullscreen
-          </button>
-        </div>
-      </div>
-
-      <!-- Simulated Physical ESP-32S + QAPASS 1602 Hardware Preview Banner -->
-      <div class="max-w-4xl mx-auto bg-slate-900 text-white rounded-2xl p-4 shadow-md border-2 border-slate-700 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div class="space-y-1">
-          <div class="flex items-center gap-2">
-            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 pulse-dot"></span>
-            <span class="text-xs font-black text-lime-300 uppercase tracking-wider">
-              ESP-32S + QAPASS 1602 門外硬件顯示屏同步畫面 (16x2 Characters)
-            </span>
+          <!-- Single Door Monitor Web Frame -->
+          <div id="small-monitor-frame" class="max-w-4xl mx-auto bg-white rounded-2xl border-4 border-[#68b800] shadow-lg overflow-hidden">
+            <!-- Dynamically rendered by renderSmallDoorMonitor() -->
           </div>
-          <p class="text-[11px] text-slate-300">
-            硬體螢幕純作門外顯示代課資訊（無須按掣點名）。當老師在網站點擊「到班報到」，下方 16×2 字幕會透過 Firebase 即時傳送至實體 1602 螢幕：
-          </p>
+
+        </section>
+
+      </main>
+
+      <!-- ======================================================================
+           PINNED SIDE-BY-SIDE CLASSROOM DOOR MONITOR (For Single-iPad Demo!)
+           ====================================================================== -->
+      <aside id="pinned-door-col" class="hidden lg:col-span-4 sticky top-14 space-y-2">
+        <div class="bg-slate-900 text-white rounded-2xl p-3 shadow-xl border-2 border-sky-400 space-y-2.5">
+          <div class="flex items-center justify-between border-b border-slate-700 pb-2">
+            <div class="flex items-center gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 pulse-dot"></span>
+              <span class="text-xs font-black text-sky-300">🖥️ 課室門外小螢幕實時預覽 Door Screen</span>
+            </div>
+            <div class="flex items-center gap-1">
+              <select
+                id="pinned-room-select"
+                onchange="syncSelectedRoom(this.value)"
+                class="px-2 py-0.5 rounded bg-slate-800 border border-sky-400 text-[11px] font-black text-white"
+              >
+                <option value="207" selected>RM 207</option>
+                <option value="201">RM 201</option>
+                <option value="302">RM 302</option>
+                <option value="401">RM 401</option>
+                <option value="407">RM 407</option>
+                <option value="221">RM 221</option>
+              </select>
+              <button
+                type="button"
+                onclick="togglePinnedDoorPreview()"
+                class="text-xs font-black px-2 py-0.5 rounded bg-white/10 hover:bg-white/20 text-slate-300"
+                title="隱藏同屏門外小螢幕"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+
+          <!-- Live Mini Door Display Content -->
+          <div id="pinned-door-monitor-body" class="bg-white text-slate-900 rounded-xl overflow-hidden border-2 border-[#68b800]">
+            <!-- Populated by renderSmallDoorMonitor() -->
+          </div>
+
+          <div class="text-[11px] text-slate-300 leading-snug flex items-center justify-between">
+            <span>💡 老師於左方網站報到，此門外屏即時更新</span>
+            <button
+              type="button"
+              onclick="loginAsRole('door_monitor')"
+              class="text-amber-300 hover:underline font-bold whitespace-nowrap"
+            >
+              放大全屏 ➔
+            </button>
+          </div>
         </div>
+      </aside>
 
-        <!-- 16x2 Character Display Box -->
-        <div id="qapass-1602-preview-box" class="lcd-1602-box px-4 py-2.5 rounded-xl text-base sm:text-lg font-black leading-tight shrink-0 select-all">
-          <div id="lcd-line-1">R207 P4 3B CL_B1</div>
-          <div id="lcd-line-2">CKKU-&gt;TMCHAN ACK</div>
-        </div>
-      </div>
-
-      <!-- Single Door Monitor Web Frame -->
-      <div id="small-monitor-frame" class="max-w-4xl mx-auto bg-white rounded-2xl border-4 border-[#68b800] shadow-lg overflow-hidden">
-        <!-- Dynamically rendered by renderSmallDoorMonitor() -->
-      </div>
-
-    </section>
-
-  </main>
+    </div>
+  </div>
 
   <!-- ==========================================================================
        4. STEP-BY-STEP COMPETITION PRESENTATION DOCK
@@ -1082,7 +1106,7 @@
             第一步：痛點分析與系統概覽
           </div>
           <p class="text-[11px] sm:text-xs text-slate-200 leading-snug mt-0.5" id="pres-step-desc">
-            介紹傳統人手排代課易撞堂、抄寫白板易看漏眼的痛點，以及本系統如何透過雲端與門外 1602 顯示屏減少人為失誤。
+            介紹傳統人手排代課易撞堂、抄寫白板易看漏眼的痛點，以及本系統如何透過實時同步與課室門外小螢幕減少人為失誤。
           </p>
         </div>
       </div>
@@ -1168,71 +1192,7 @@
   </div>
 
   <!-- ==========================================================================
-       6. FIREBASE CLOUD & ESP-32S 1602 LCD SETUP MODAL
-       ========================================================================== -->
-  <div id="cloud-hardware-modal" class="hidden fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-2xl w-full p-5 shadow-2xl border-2 border-[#68b800] space-y-4 max-h-[90vh] overflow-y-auto">
-      <div class="flex items-center justify-between border-b border-slate-200 pb-2.5">
-        <div class="flex items-center gap-2">
-          <span class="lcp-orange-arrow">↘</span>
-          <h3 class="text-base font-black text-slate-900">
-            ☁️ Firebase 雲端同步及 ESP-32S + QAPASS 1602 設定
-          </h3>
-        </div>
-        <button onclick="closeCloudHardwareModal()" class="text-xs font-black px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-200">✕</button>
-      </div>
-
-      <!-- 1. Free Cloud Sync (Firebase Realtime REST) -->
-      <div class="p-3.5 rounded-xl bg-[#f4fae8] border border-lime-400 space-y-2">
-        <div class="text-xs font-black text-[#2b5400]">☁️ 1. 免費 Firebase 雲端即時同步網址 (連繫 iPad 網站與 ESP-32S 1602 螢幕)</div>
-        <p class="text-[11px] text-slate-600">
-          貼上你的免費 Firebase Realtime 網址（例如 <code class="bg-white px-1 rounded">https://你的專案.asia-southeast1.firebasedatabase.app</code>）。網站每次變動都會自動寫入 <code class="bg-white px-1 rounded">/lcd_door.json</code>，讓 ESP-32S 直接讀取 16×2 字幕顯示於 QAPASS 1602 螢幕！
-        </p>
-        <div class="flex items-center gap-2">
-          <input
-            type="text"
-            id="firebase-url-input"
-            placeholder="https://your-project-default-rtdb.asia-southeast1.firebasedatabase.app"
-            class="flex-1 px-2.5 py-1.5 rounded-lg border border-slate-300 text-xs font-mono bg-white"
-          />
-          <button
-            type="button"
-            onclick="saveCloudSettings()"
-            class="px-3 py-1.5 rounded-lg bg-[#68b800] hover:bg-[#4d8a00] text-white text-xs font-black whitespace-nowrap"
-          >
-            儲存並同步 Save &amp; Sync
-          </button>
-        </div>
-      </div>
-
-      <!-- 2. Free HK/TW Smart Question Generator API -->
-      <div class="p-3.5 rounded-xl bg-purple-50 border border-purple-300 space-y-2">
-        <div class="text-xs font-black text-purple-950">✨ 2. 免費雲端智能出題接口 (香港、台灣免翻牆直接可用)</div>
-        <p class="text-[11px] text-slate-600">
-          系統已預設啟用<strong>免金鑰免費雲端出題接口</strong>。如你有免費的 OpenRouter 金鑰，亦可填寫於下方：
-        </p>
-        <input
-          type="password"
-          id="smart-gen-key-input"
-          placeholder="選填 Optional：OpenRouter 免費金鑰 (sk-or-...)，留空即使用預設免費免金鑰通道"
-          class="w-full px-2.5 py-1.5 rounded-lg border border-purple-300 text-xs font-mono bg-white"
-        />
-      </div>
-
-      <div class="flex justify-end pt-2 border-t border-slate-200">
-        <button
-          type="button"
-          onclick="closeCloudHardwareModal()"
-          class="px-4 py-1.5 rounded-xl bg-slate-800 text-white text-xs font-black"
-        >
-          完成 Done
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ==========================================================================
-       7. CORE SYSTEM SCRIPT
+       6. CORE SYSTEM SCRIPT (Pure GitHub & iPad Multi-Window Sync)
        ========================================================================== -->
   <script>
     // =========================================================================
@@ -1250,7 +1210,18 @@
     ];
 
     const CYCLE_DAYS = ['DAY 1', 'DAY 2', 'DAY 3', 'DAY 4', 'DAY 5', 'DAY 6'];
-    const STORAGE_KEY = 'ychlcp_slrs_final_1602_v1';
+    const STORAGE_KEY = 'ychlcp_slrs_github_ipad_v1';
+
+    // Instant Cross-Tab Sync Channel (for iPad Safari Split View!)
+    const syncChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('ychlcp_slrs_channel') : null;
+    if (syncChannel) {
+      syncChannel.onmessage = (event) => {
+        if (event.data && event.data.type === 'STATE_UPDATED') {
+          appData = loadRecords();
+          refreshAllActiveViews();
+        }
+      };
+    }
 
     function getHongKongTimeParts() {
       const now = new Date();
@@ -1434,15 +1405,15 @@
         key: 'F2_CT',
         subjectName: 'F.2 Creative Technology (創意科技科 CT)',
         classes: '2C',
-        priorTopics: 'Weeks 1–8: Microcontroller Pins & Digital/Analog Signals',
+        priorTopics: 'Weeks 1–8: Digital/Analog Signals & Basic Circuit Design',
         currentWeekTopic: 'Week 9–10: Smart Sensors, IPO Model & Flowchart Logic',
         questionsCurrent: {
           mc: [
             {
               q: '1. In the Input-Process-Output (IPO) model, which component acts as an OUTPUT device?',
-              options: ['A. Push Button', 'B. Ultrasonic Sensor', 'C. 1602 LCD Display', 'D. Temperature Sensor'],
+              options: ['A. Push Button', 'B. Ultrasonic Sensor', 'C. Classroom Door Display', 'D. Temperature Sensor'],
               ans: 'C',
-              exp: 'The 1602 LCD displays character output from the microcontroller.'
+              exp: 'A display screen outputs visual information processed by the system.'
             },
             {
               q: '2. Which flowchart symbol represents a conditional Decision (True/False)?',
@@ -1453,19 +1424,19 @@
           ],
           fill: [
             { q: '1. IPO stands for Input, ____________, and Output.', ans: 'Process' },
-            { q: '2. A 1602 LCD screen can display 2 rows of ____________ characters each.', ans: '16' }
+            { q: '2. A push button generates a ____________ signal (HIGH or LOW).', ans: 'digital' }
           ],
           structured: [
             {
-              q: 'Question 1 (6 marks): State the Input, Process, and Output of a smart classroom door sign that receives cloud data via Wi-Fi and shows the cover teacher on a 1602 LCD.',
-              ans: 'Input: Cloud data via Wi-Fi; Process: ESP-32S parses room & teacher code; Output: 1602 LCD displays 2 lines of text.'
+              q: 'Question 1 (6 marks): State the Input, Process, and Output of a smart classroom door sign that receives teacher check-in status and shows the cover teacher on the screen.',
+              ans: 'Input: Teacher web check-in click; Process: System matches room & period schedule; Output: Door screen displays cover teacher status.'
             }
           ]
         },
         questionsPrior: {
           mc: [
             {
-              q: '1. What voltage level represents logic LOW on a standard microcontroller?',
+              q: '1. What voltage level represents logic LOW in a standard digital circuit?',
               options: ['A. 0V (GND)', 'B. 3.3V', 'C. 5V', 'D. 12V'],
               ans: 'A',
               exp: '0V (Ground) represents digital LOW (0).'
@@ -1678,33 +1649,12 @@
 Plain text only.`;
 
       try {
+        const url = 'https://text.pollinations.ai/' + encodeURIComponent(promptText);
+        const res = await fetch(url);
         let generatedText = '';
-        const customKey = localStorage.getItem('ychlcp_smart_gen_key') || '';
-
-        if (customKey.startsWith('sk-or-')) {
-          const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${customKey}`
-            },
-            body: JSON.stringify({
-              model: 'meta-llama/llama-3.3-70b-instruct:free',
-              messages: [{ role: 'user', content: promptText }]
-            })
-          });
-          const data = await res.json();
-          if (data.choices && data.choices[0]) {
-            generatedText = data.choices[0].message.content;
-          }
-        } else {
-          const url = 'https://text.pollinations.ai/' + encodeURIComponent(promptText);
-          const res = await fetch(url);
-          if (res.ok) {
-            generatedText = await res.text();
-          }
+        if (res.ok) {
+          generatedText = await res.text();
         }
-
         if (generatedText && generatedText.trim().length > 60) {
           customGeneratedWorksheets[customTopic] = generatedText.trim();
           outputArea.value = generatedText.trim();
@@ -1802,6 +1752,7 @@ Plain text only.`;
         clockMode: 'auto',
         tvShowFullDay: false,
         overdueAlertActive: false,
+        selectedDoorRoom: '207',
         teachers: {
           CKKU: {
             code: 'CKKU',
@@ -1974,13 +1925,13 @@ Plain text only.`;
     }
 
     // =========================================================================
-    // 4. STATE, DUAL-MODE LAUNCHER & FIREBASE 1602 LCD CLOUD SYNC
+    // 4. STATE, DUAL-MODE LAUNCHER & PINNED DOOR SCREEN
     // =========================================================================
     let appData = loadRecords();
     let currentUserRole = null;
     let currentTeacherCode = 'CKKU';
     let selectedLeaveDay = appData.currentCycleDay || 'DAY 2';
-    let firebaseBaseUrl = localStorage.getItem('ychlcp_firebase_url') || '';
+    let pinnedDoorVisible = false;
 
     function openModeLauncherModal() {
       document.getElementById('mode-launcher-modal').classList.remove('hidden');
@@ -1990,19 +1941,55 @@ Plain text only.`;
       document.getElementById('mode-launcher-modal').classList.add('hidden');
       if (mode === 'competition') {
         currentPresIdx = 0;
+        if (!pinnedDoorVisible) {
+          togglePinnedDoorPreview(true);
+        }
         if (!presentationActive) {
           togglePresentationMode();
         } else {
           applyPresentationStep(0);
         }
-        showSystemToast('🏆 已進入「比賽流程逐步演示模式 (Guided Competition Flow)」！', 'info');
+        showSystemToast('🏆 已進入「比賽流程逐步演示模式」，右側已自動開啟「課室門外小螢幕」同步預覽！', 'info');
       } else {
         if (presentationActive) {
           togglePresentationMode();
         }
+        if (pinnedDoorVisible) {
+          togglePinnedDoorPreview(false);
+        }
         logoutToLoginScreen();
         showSystemToast('🏫 已進入「完整學校實時系統模式 (Full Functional System)」！', 'success');
       }
+    }
+
+    function togglePinnedDoorPreview(forceState = null) {
+      pinnedDoorVisible = (forceState !== null) ? forceState : !pinnedDoorVisible;
+      const mainCol = document.getElementById('main-content-col');
+      const pinnedCol = document.getElementById('pinned-door-col');
+      const topBtn = document.getElementById('top-btn-pin-door');
+
+      if (pinnedDoorVisible) {
+        mainCol.className = 'lg:col-span-8 space-y-4';
+        pinnedCol.classList.remove('hidden');
+        topBtn.className = 'px-2.5 py-1 rounded-lg text-xs font-black bg-emerald-600 text-white shadow-sm transition flex items-center gap-1 whitespace-nowrap';
+        topBtn.innerHTML = '<span>🪟 門外小螢幕已固定 Pin ON</span>';
+        renderSmallDoorMonitor();
+      } else {
+        mainCol.className = 'lg:col-span-12 space-y-4';
+        pinnedCol.classList.add('hidden');
+        topBtn.className = 'px-2.5 py-1 rounded-lg text-xs font-black bg-sky-700 hover:bg-sky-800 text-white shadow-sm transition flex items-center gap-1 whitespace-nowrap';
+        topBtn.innerHTML = '<span>🪟 同屏顯示門外屏 Pin Door Screen</span>';
+      }
+    }
+
+    function syncSelectedRoom(newRoom) {
+      appData.selectedDoorRoom = String(newRoom || '207');
+      const sel1 = document.getElementById('door-monitor-room-select');
+      const sel2 = document.getElementById('pinned-room-select');
+      if (sel1) sel1.value = appData.selectedDoorRoom;
+      if (sel2) sel2.value = appData.selectedDoorRoom;
+      saveRecords();
+      renderSmallDoorMonitor();
     }
 
     function loadRecords() {
@@ -2018,168 +2005,20 @@ Plain text only.`;
       return fresh;
     }
 
-    // Format exact 16-char ASCII lines for QAPASS 1602 LCD
-    function padOrTrim16(str) {
-      const clean = (str || '').replace(/[^\x20-\x7E]/g, '');
-      return clean.padEnd(16, ' ').substring(0, 16);
-    }
-
-    function computeDoor1602Payload(roomNum) {
-      const targetRoom = String(roomNum || '207');
-      const currentPid = appData.activePeriodId || 'P4';
-      const cycleShort = (appData.currentCycleDay || 'DAY 2').replace('DAY ', 'D');
-      const info = findRoomLessonInfo(targetRoom, appData.currentCycleDay, currentPid);
-
-      let line1 = `RM${targetRoom} ${cycleShort} ${currentPid}`;
-      let line2 = 'FREE CLASSROOM';
-      let isAlert = false;
-
-      if (info.mode === 'regular') {
-        const classSubj = info.rawCell.split(' ').slice(0, 2).join(' ');
-        const tCode = info.teacherShortName.split(' ')[0];
-        line1 = `R${targetRoom} ${currentPid} ${classSubj}`;
-        line2 = `TCHR:${tCode} OK`;
-      } else if (info.mode === 'substitution') {
-        const classSubj = info.les.rawCell.split(' ').slice(0, 2).join(' ');
-        const absCode = info.req.teacherCode;
-        const subCode = info.les.assignedSubCode;
-        const status = info.les.checkinStatus;
-        isAlert = Boolean(appData.overdueAlertActive && status !== 'arrived');
-
-        if (status === 'arrived') {
-          line1 = `R${targetRoom} ${currentPid} ${classSubj}`;
-          line2 = `SUB:${subCode} [IN!]`;
-        } else if (isAlert) {
-          line1 = `!LATE! R${targetRoom} ${classSubj.split(' ')[0]}`;
-          line2 = `CALL:${subCode} NOW`;
-        } else if (status === 'ack') {
-          line1 = `R${targetRoom} ${currentPid} ${classSubj}`;
-          line2 = `${absCode}->${subCode} ACK`;
-        } else {
-          line1 = `R${targetRoom} ${currentPid} ${classSubj}`;
-          line2 = `${absCode}->${subCode} WAIT`;
-        }
-      }
-
-      return {
-        room: targetRoom,
-        line1: padOrTrim16(line1),
-        line2: padOrTrim16(line2),
-        alert: isAlert,
-        updatedAt: Date.now()
-      };
-    }
-
-    function updateOnScreen1602Preview() {
-      const roomSelect = document.getElementById('door-monitor-room-select');
-      const roomNum = (roomSelect && roomSelect.value) || '207';
-      const lcdData = computeDoor1602Payload(roomNum);
-
-      const l1El = document.getElementById('lcd-line-1');
-      const l2El = document.getElementById('lcd-line-2');
-      const boxEl = document.getElementById('qapass-1602-preview-box');
-
-      if (l1El) l1El.textContent = lcdData.line1;
-      if (l2El) l2El.textContent = lcdData.line2;
-      if (boxEl) {
-        boxEl.className = lcdData.alert
-          ? 'lcd-1602-box lcd-1602-alert px-4 py-2.5 rounded-xl text-base sm:text-lg font-black leading-tight shrink-0 select-all pulse-dot'
-          : 'lcd-1602-box px-4 py-2.5 rounded-xl text-base sm:text-lg font-black leading-tight shrink-0 select-all';
-      }
-      return lcdData;
-    }
-
-    function saveRecords(pushToCloud = true) {
+    function saveRecords() {
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
-      } catch (e) {}
-      updateOnScreen1602Preview();
-      if (pushToCloud && firebaseBaseUrl) {
-        pushRecordsToFirebase();
-      }
-    }
-
-    async function pushRecordsToFirebase() {
-      if (!firebaseBaseUrl) return;
-      try {
-        const base = firebaseBaseUrl.replace(/\/$/, '');
-        const roomSelect = document.getElementById('door-monitor-room-select');
-        const roomNum = (roomSelect && roomSelect.value) || '207';
-        const lcdPayload = computeDoor1602Payload(roomNum);
-
-        // 1. Push ultra-lightweight /lcd_door.json for ESP-32S + QAPASS 1602
-        await fetch(base + '/lcd_door.json', {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(lcdPayload)
-        });
-
-        // 2. Push full state /slrs_state.json for multi-device web sync
-        await fetch(base + '/slrs_state.json', {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            updatedAt: Date.now(),
-            payload: appData
-          })
-        });
-
-        document.getElementById('hw-status-dot').className = 'w-2 h-2 rounded-full bg-emerald-400';
-      } catch (e) {
-        document.getElementById('hw-status-dot').className = 'w-2 h-2 rounded-full bg-rose-400';
-      }
-    }
-
-    async function pullRecordsFromFirebase() {
-      if (!firebaseBaseUrl) return;
-      try {
-        const cleanUrl = firebaseBaseUrl.replace(/\/$/, '') + '/slrs_state.json';
-        const res = await fetch(cleanUrl);
-        if (!res.ok) return;
-        const data = await res.json();
-        if (data && data.payload && data.payload.teachers) {
-          const localStr = JSON.stringify(appData.leaveRequests);
-          const remoteStr = JSON.stringify(data.payload.leaveRequests);
-          if (localStr !== remoteStr || appData.overdueAlertActive !== data.payload.overdueAlertActive || appData.activePeriodId !== data.payload.activePeriodId) {
-            appData = data.payload;
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
-            refreshAllActiveViews();
-            updateOnScreen1602Preview();
-          }
-          document.getElementById('hw-status-dot').className = 'w-2 h-2 rounded-full bg-emerald-400';
+        if (syncChannel) {
+          syncChannel.postMessage({ type: 'STATE_UPDATED', ts: Date.now() });
         }
       } catch (e) {}
-    }
-
-    function openCloudHardwareModal() {
-      document.getElementById('firebase-url-input').value = firebaseBaseUrl;
-      document.getElementById('smart-gen-key-input').value = localStorage.getItem('ychlcp_smart_gen_key') || '';
-      document.getElementById('cloud-hardware-modal').classList.remove('hidden');
-    }
-
-    function closeCloudHardwareModal() {
-      document.getElementById('cloud-hardware-modal').classList.add('hidden');
-    }
-
-    function saveCloudSettings() {
-      firebaseBaseUrl = (document.getElementById('firebase-url-input').value || '').trim();
-      const genKey = (document.getElementById('smart-gen-key-input').value || '').trim();
-      localStorage.setItem('ychlcp_firebase_url', firebaseBaseUrl);
-      localStorage.setItem('ychlcp_smart_gen_key', genKey);
-      if (firebaseBaseUrl) {
-        pushRecordsToFirebase();
-        showSystemToast('☁️ 已儲存並同步至 Firebase（ESP-32S 1602 螢幕將即時更新）！', 'success');
-      } else {
-        showSystemToast('✅ 已儲存設定（目前使用本機儲存模式）！', 'info');
-      }
-      closeCloudHardwareModal();
+      renderSmallDoorMonitor();
     }
 
     window.addEventListener('storage', (e) => {
       if (e.key === STORAGE_KEY) {
         appData = loadRecords();
         refreshAllActiveViews();
-        updateOnScreen1602Preview();
       }
     });
 
@@ -2242,7 +2081,7 @@ Plain text only.`;
 
       if (periodChanged) {
         refreshAllActiveViews();
-        saveRecords(true);
+        saveRecords();
       }
     }
 
@@ -2277,7 +2116,7 @@ Plain text only.`;
           }
         }
         if (btn) btn.textContent = '🚨 逾時警報開啟中 (點擊關閉)';
-        showSystemToast('🚨 已觸發「防漏堂溫馨提示」：網站及門外 QAPASS 1602 螢幕已同步顯示逾時警報！', 'warning');
+        showSystemToast('🚨 已觸發「防漏堂溫馨提示」：教員室看板及課室門外小螢幕已同步亮起逾時未報到提示！', 'warning');
       } else {
         if (btn) btn.textContent = '🔔 模擬未到班提示 Late Alert';
         showSystemToast('✅ 已關閉逾時未到班模擬提示。', 'info');
@@ -2293,8 +2132,8 @@ Plain text only.`;
       {
         step: 1,
         role: 'login',
-        title: '第一步｜痛點分析與雙端同步概念 (Problem & System Concept)',
-        desc: '向評判介紹：傳統人手排代課容易撞堂、漏交堂課或看漏白板。本系統結合「中英對照網站」及安裝於課室門外的「ESP-32S + QAPASS 1602 顯示屏」，透過免費 Firebase 雲端即時同步。',
+        title: '第一步｜痛點分析與課室門外小螢幕概念 (Problem & Invention Concept)',
+        desc: '向評判介紹：傳統人手排代課容易撞堂、漏交堂課或看漏白板。本系統將「請假自動出卷、校務處零衝突排課、教員室看板及課室門外小型顯示屏（見右側同屏預覽）」全面自動化連結。',
         actionLabel: '⚡ 下一步：示範科任老師請假',
         actionFn: () => changePresentationStep(1)
       },
@@ -2324,7 +2163,7 @@ Plain text only.`;
           if (pendingReq) {
             approveLeaveRequest(pendingReq.id);
           } else {
-            showSystemToast('✅ 所有請假申請均已批核並同步至雲端及門外 1602 顯示屏！', 'success');
+            showSystemToast('✅ 所有請假申請均已批核並同步至全校看板與門外顯示屏！', 'success');
           }
         }
       },
@@ -2332,18 +2171,18 @@ Plain text only.`;
         step: 4,
         role: 'staffroom_tv',
         title: '第四步｜教員室實時看板與「防漏堂溫馨提示」 (Staffroom Board & Late Alert)',
-        desc: '演示教員室大螢幕：左列今日請假名單，右列按香港時間自動鎖定「本節及下一節」。點擊右方按鈕可模擬「上課鐘響後未報到」，看板及門外 1602 螢幕會同步閃動提示！',
+        desc: '演示教員室大螢幕：左列今日請假名單，右列按香港時間自動鎖定「本節及下一節」。點擊右方按鈕可模擬「上課鐘響後未報到」，看板及右側門外小螢幕會同步閃動提示！',
         actionLabel: '🔔 模擬上課鐘響後未到班警報',
         actionFn: () => {
           if (!appData.overdueAlertActive) toggleOverdueSimulation();
-          else showSystemToast('🚨 目前已處於「逾時未到班提示」狀態！', 'warning');
+          else showSystemToast('🚨 目前已處於「逾時未到班提示」狀態，請留意右側門外小螢幕的紅框閃動提示！', 'warning');
         }
       },
       {
         step: 5,
         role: 'tmchan',
         title: '第五步｜代課老師在網站一鍵到班報到 (Teacher Reports Arrival on Website)',
-        desc: '演示代課老師 TMCHAN 陳大文視角：老師無須在硬件按掣，只需在手機或平板打開網站，下載附答案的工作紙並點擊「📍 到班報到」，即可解除警報並同步更新全校系統！',
+        desc: '演示代課老師 TMCHAN 陳大文視角：老師在平板打開網站，下載附答案的工作紙並點擊「📍 到班報到」，右側的 Room 207 課室門外小螢幕立即解除警報並轉為綠色「已報到 Arrived」！',
         actionLabel: '📍 示範代課老師在網站點擊「到班報到」',
         actionFn: () => {
           const req101 = appData.leaveRequests.find(r => r.id === 'REQ-101');
@@ -2363,8 +2202,8 @@ Plain text only.`;
       {
         step: 6,
         role: 'door_monitor',
-        title: '第六步｜課室門外顯示屏及 QAPASS 1602 實體同步展示 (Door Display & 1602 LCD)',
-        desc: '演示安裝在 Room 207 課室門外的 QAPASS 1602 顯示屏：只顯示最精簡關鍵的代課資訊（R207 P4 3B CL_B1 / SUB:TMCHAN [IN!]），讓學生與巡堂主任一目了然！',
+        title: '第六步｜課室門外小型顯示屏全屏展示 (Classroom Door Display Full View)',
+        desc: '演示安裝在每個課室門外的小型顯示屏：只顯示最精簡關鍵的本節及下一節代課資訊（CKKU 周嘉權 請假 ➔ TMCHAN 陳大文 代課），讓學生與巡堂主任一目了然！',
         actionLabel: '🔄 示範切換門外狀態預覽 (已簽收 ⇄ 已報到)',
         actionFn: () => {
           const req101 = appData.leaveRequests.find(r => r.id === 'REQ-101');
@@ -2482,11 +2321,11 @@ Plain text only.`;
         document.getElementById('screen-staffroom-tv').classList.remove('hidden');
         renderStaffroomTvBoard();
       } else if (roleKey === 'door_monitor') {
-        userName.textContent = '門外顯示屏 Door LCD';
+        userName.textContent = '門外顯示屏 Door Display';
         document.getElementById('screen-door-monitor').classList.remove('hidden');
         renderSmallDoorMonitor();
       }
-      updateOnScreen1602Preview();
+      renderSmallDoorMonitor();
     }
 
     function logoutToLoginScreen() {
@@ -2495,6 +2334,7 @@ Plain text only.`;
         document.getElementById(id).classList.add('hidden');
       });
       document.getElementById('screen-login').classList.remove('hidden');
+      renderSmallDoorMonitor();
     }
 
     function buildCleanStatusPill(status, ackTime, arriveTime, periodId = '') {
@@ -2879,9 +2719,9 @@ Plain text only.`;
         les.arriveTime = nowStr;
       }
 
-      saveRecords(true);
+      saveRecords();
       refreshAllActiveViews();
-      showSystemToast(`✅ Room ${les.room} (${les.rawCell.split(' ')[0]}) 已在網站更新為：${newStatus === 'arrived' ? '已到班報到 Arrived (已同步至門外 1602 螢幕)' : '已簽收 Ack'}！`, 'success');
+      showSystemToast(`✅ Room ${les.room} (${les.rawCell.split(' ')[0]}) 已更新為：${newStatus === 'arrived' ? '已到班報到 Arrived (課室門外顯示屏已同步更新)' : '已簽收 Ack'}！`, 'success');
     }
 
     // =========================================================================
@@ -3072,7 +2912,7 @@ Plain text only.`;
     }
 
     // =========================================================================
-    // 9. SINGLE CLASSROOM DOOR MONITOR + 1602 SYNC
+    // 9. CLASSROOM DOOR DISPLAY (Full Tab & Pinned Side-by-Side Widget)
     // =========================================================================
     function findRoomLessonInfo(roomNum, cycleDay, periodId) {
       if (!periodId) return { mode: 'after_school', periodMeta: { short: '-', time: '放學 After School' } };
@@ -3100,10 +2940,11 @@ Plain text only.`;
     }
 
     function renderSmallDoorMonitor() {
-      const roomSelect = document.getElementById('door-monitor-room-select');
-      const roomNum = (roomSelect && roomSelect.value) || '207';
-      const frame = document.getElementById('small-monitor-frame');
-      if (!frame) return;
+      const roomNum = appData.selectedDoorRoom || '207';
+      const sel1 = document.getElementById('door-monitor-room-select');
+      const sel2 = document.getElementById('pinned-room-select');
+      if (sel1) sel1.value = roomNum;
+      if (sel2) sel2.value = roomNum;
 
       const hk = getHongKongTimeParts();
       const currentPid = appData.activePeriodId || 'P4';
@@ -3112,51 +2953,69 @@ Plain text only.`;
       const currentInfo = findRoomLessonInfo(roomNum, appData.currentCycleDay, currentPid);
       const nextInfo = findRoomLessonInfo(roomNum, appData.currentCycleDay, nextPid);
 
-      frame.innerHTML = `
-        <div class="bg-[#68b800] text-white px-5 py-3 flex items-center justify-between gap-2 flex-wrap">
-          <div class="flex items-center gap-3">
-            <span class="bg-white text-[#2b5400] font-black text-xl sm:text-2xl px-3.5 py-1 rounded-xl shadow-sm">
-              RM ${roomNum}
-            </span>
-            <div>
-              <div class="text-sm sm:text-base font-black">仁濟醫院靚次伯紀念中學</div>
-              <div class="text-xs text-lime-100 font-bold">課室門外顯示屏 Classroom Door Display</div>
+      // 1. Render Full-Screen Door Monitor Tab
+      const frame = document.getElementById('small-monitor-frame');
+      if (frame) {
+        frame.innerHTML = `
+          <div class="bg-[#68b800] text-white px-5 py-3 flex items-center justify-between gap-2 flex-wrap">
+            <div class="flex items-center gap-3">
+              <span class="bg-white text-[#2b5400] font-black text-xl sm:text-2xl px-3.5 py-1 rounded-xl shadow-sm">
+                RM ${roomNum}
+              </span>
+              <div>
+                <div class="text-sm sm:text-base font-black">仁濟醫院靚次伯紀念中學</div>
+                <div class="text-xs text-lime-100 font-bold">課室門外顯示屏 Classroom Door Display</div>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <span class="bg-black/20 px-3 py-1 rounded-lg text-sm font-black text-yellow-200">
+                ${appData.currentCycleDay}
+              </span>
+              <span id="door-live-clock" class="bg-white text-[#2b5400] px-3 py-1 rounded-lg text-base sm:text-lg font-mono font-black">
+                ${hk.shortTimeStr}
+              </span>
             </div>
           </div>
 
-          <div class="flex items-center gap-2">
-            <span class="bg-black/20 px-3 py-1 rounded-lg text-sm font-black text-yellow-200">
-              ${appData.currentCycleDay}
-            </span>
-            <span id="door-live-clock" class="bg-white text-[#2b5400] px-3 py-1 rounded-lg text-base sm:text-lg font-mono font-black">
-              ${hk.shortTimeStr}
-            </span>
+          <div class="p-4 sm:p-5 bg-[#f4fae8] grid grid-cols-1 sm:grid-cols-2 gap-4 items-stretch">
+            ${buildDoorCardHtml('本節課堂 THIS LESSON', currentInfo, true, false)}
+            ${buildDoorCardHtml('下一節課堂 NEXT LESSON', nextInfo, false, false)}
           </div>
-        </div>
+        `;
+      }
 
-        <div class="p-4 sm:p-5 bg-[#f4fae8] grid grid-cols-1 sm:grid-cols-2 gap-4 items-stretch">
-          ${buildDoorCardHtml('本節課堂 THIS LESSON', currentInfo, true)}
-          ${buildDoorCardHtml('下一節課堂 NEXT LESSON', nextInfo, false)}
-        </div>
-      `;
-
-      updateOnScreen1602Preview();
+      // 2. Render Pinned Side-by-Side Mini Door Monitor (for Single-iPad Demo)
+      const pinnedBody = document.getElementById('pinned-door-monitor-body');
+      if (pinnedBody) {
+        pinnedBody.innerHTML = `
+          <div class="bg-[#68b800] text-white px-3 py-2 flex items-center justify-between">
+            <span class="bg-white text-[#2b5400] font-black text-sm px-2 py-0.5 rounded">RM ${roomNum}</span>
+            <span class="text-xs font-black">${appData.currentCycleDay} · ${hk.shortTimeStr}</span>
+          </div>
+          <div class="p-2.5 bg-[#f4fae8] space-y-2.5">
+            ${buildDoorCardHtml('本節 THIS LESSON', currentInfo, true, true)}
+            ${buildDoorCardHtml('下一節 NEXT LESSON', nextInfo, false, true)}
+          </div>
+        `;
+      }
     }
 
-    function buildDoorCardHtml(cardHeader, info, isCurrent) {
+    function buildDoorCardHtml(cardHeader, info, isCurrent, isCompact = false) {
       const borderClass = isCurrent ? 'border-4 border-[#f58220] shadow-md' : 'border-2 border-[#68b800]';
       const headerBadgeClass = isCurrent ? 'bg-[#f58220] text-white' : 'bg-[#eef8dc] text-[#2b5400]';
+      const padClass = isCompact ? 'p-3' : 'p-5 min-h-[240px]';
 
       if (info.mode === 'after_school' || info.mode === 'free') {
         return `
-          <div class="bg-white rounded-2xl ${borderClass} p-5 flex flex-col justify-between min-h-[260px]">
-            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-              <span class="px-2.5 py-1 rounded-lg text-xs font-black ${headerBadgeClass}">${cardHeader}</span>
-              <span class="text-sm font-mono font-black text-slate-600">${info.periodMeta.short} (${info.periodMeta.time})</span>
+          <div class="bg-white rounded-xl ${borderClass} ${padClass} flex flex-col justify-between">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+              <span class="px-2 py-0.5 rounded text-[11px] font-black ${headerBadgeClass}">${cardHeader}</span>
+              <span class="text-xs font-mono font-black text-slate-600">${info.periodMeta.short} (${info.periodMeta.time})</span>
             </div>
-            <div class="my-auto text-center py-8">
-              <div class="text-2xl font-black text-slate-400">空堂 Free Room</div>
-              <div class="text-xs font-bold text-slate-400 mt-1">本節無排課 No Scheduled Class</div>
+            <div class="my-auto text-center py-5">
+              <div class="${isCompact ? 'text-lg' : 'text-2xl'} font-black text-slate-400">空堂 Free Room</div>
+              <div class="text-[11px] font-bold text-slate-400 mt-0.5">本節無排課 No Class</div>
             </div>
           </div>
         `;
@@ -3165,21 +3024,17 @@ Plain text only.`;
       if (info.mode === 'regular') {
         const classSubject = info.rawCell.split(' ').slice(0, 2).join(' ');
         return `
-          <div class="bg-white rounded-2xl ${borderClass} p-5 flex flex-col justify-between min-h-[260px]">
-            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-              <span class="px-2.5 py-1 rounded-lg text-xs font-black ${headerBadgeClass}">${cardHeader}</span>
-              <span class="text-sm font-mono font-black text-slate-700">${info.periodMeta.short} (${info.periodMeta.time})</span>
+          <div class="bg-white rounded-xl ${borderClass} ${padClass} flex flex-col justify-between">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+              <span class="px-2 py-0.5 rounded text-[11px] font-black ${headerBadgeClass}">${cardHeader}</span>
+              <span class="text-xs font-mono font-black text-slate-700">${info.periodMeta.short} (${info.periodMeta.time})</span>
             </div>
 
-            <div class="my-auto py-4 space-y-3 text-center">
-              <div class="text-3xl font-black text-slate-900">${classSubject}</div>
-              <div class="inline-block px-4 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-base font-black text-emerald-900">
-                ${info.teacherShortName} (常規上課 Regular)
+            <div class="my-auto py-3 space-y-2 text-center">
+              <div class="${isCompact ? 'text-xl' : 'text-3xl'} font-black text-slate-900">${classSubject}</div>
+              <div class="inline-block px-3 py-1 rounded-lg bg-emerald-50 border border-emerald-200 text-xs sm:text-sm font-black text-emerald-900">
+                ${info.teacherShortName} (常規上課)
               </div>
-            </div>
-
-            <div class="text-center text-xs font-bold text-slate-400 pt-2 border-t border-slate-100">
-              常規課堂 Normal Lesson
             </div>
           </div>
         `;
@@ -3191,44 +3046,44 @@ Plain text only.`;
       const isOverdueNow = isCurrent && appData.overdueAlertActive && les.checkinStatus !== 'arrived';
 
       return `
-        <div class="bg-white rounded-2xl ${isOverdueNow ? 'border-4 overdue-alert-card' : borderClass} p-5 flex flex-col justify-between min-h-[260px] space-y-3.5">
-          <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
-            <span class="px-2.5 py-1 rounded-lg text-xs font-black ${headerBadgeClass}">${cardHeader}</span>
-            <span class="text-sm font-mono font-black text-slate-800">${info.periodMeta.short} (${info.periodMeta.time})</span>
+        <div class="bg-white rounded-xl ${isOverdueNow ? 'border-4 overdue-alert-card' : borderClass} ${padClass} flex flex-col justify-between space-y-2.5">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+            <span class="px-2 py-0.5 rounded text-[11px] font-black ${headerBadgeClass}">${cardHeader}</span>
+            <span class="text-xs font-mono font-black text-slate-800">${info.periodMeta.short} (${info.periodMeta.time})</span>
           </div>
 
           ${isOverdueNow ? `
-            <div class="bg-rose-600 text-white px-3 py-2 rounded-xl text-xs font-black flex items-center justify-between gap-2 shadow-sm">
-              <span>⚠️ 防漏堂溫馨提示：上課鐘已響，請代課老師於網站報到！</span>
-              <span class="text-[10px] bg-white text-rose-700 px-1.5 py-0.5 rounded font-mono">LATE</span>
+            <div class="bg-rose-600 text-white px-2.5 py-1.5 rounded-lg text-[11px] font-black flex items-center justify-between gap-1 shadow-sm">
+              <span>⚠️ 防漏堂提示：請代課老師於網站報到！</span>
+              <span class="text-[10px] bg-white text-rose-700 px-1 rounded font-mono">LATE</span>
             </div>
           ` : ''}
 
-          <div class="space-y-3 my-auto">
-            <div class="flex items-center justify-between gap-2 flex-wrap">
-              <span class="text-2xl sm:text-3xl font-black text-slate-900">${classSubject}</span>
+          <div class="space-y-2 my-auto">
+            <div class="flex items-center justify-between gap-1 flex-wrap">
+              <span class="${isCompact ? 'text-xl' : 'text-2xl sm:text-3xl'} font-black text-slate-900">${classSubject}</span>
               ${buildCleanStatusPill(les.checkinStatus, les.ackTime, les.arriveTime, isCurrent ? les.periodId : '')}
             </div>
 
             <div class="rounded-xl border-2 border-slate-200 overflow-hidden bg-white">
-              <div class="bg-rose-50 px-4 py-2.5 flex items-center justify-between border-b border-rose-200">
-                <span class="text-xs font-black text-rose-800 uppercase">請假 Absent</span>
-                <span class="text-base sm:text-lg font-black text-rose-900">${absentShort} 請假</span>
+              <div class="bg-rose-50 px-3 py-2 flex items-center justify-between border-b border-rose-200">
+                <span class="text-[11px] font-black text-rose-800 uppercase">請假 Absent</span>
+                <span class="${isCompact ? 'text-sm' : 'text-base sm:text-lg'} font-black text-rose-900">${absentShort} 請假</span>
               </div>
-              <div class="bg-[#eef8dc] px-4 py-3 flex items-center justify-between">
-                <span class="text-xs font-black text-[#2b5400] uppercase">代課 Cover</span>
-                <span class="text-lg sm:text-xl font-black text-[#2b5400]">${les.assignedSubName} 代課</span>
+              <div class="bg-[#eef8dc] px-3 py-2.5 flex items-center justify-between">
+                <span class="text-[11px] font-black text-[#2b5400] uppercase">代課 Cover</span>
+                <span class="${isCompact ? 'text-base' : 'text-lg sm:text-xl'} font-black text-[#2b5400]">${les.assignedSubName} 代課</span>
               </div>
             </div>
           </div>
 
-          <div class="pt-2 border-t border-slate-100">
+          <div class="pt-1.5 border-t border-slate-100">
             <button
               type="button"
               onclick="appData.overdueAlertActive = false; updateLessonCheckinStatus('${req.id}', ${lessonIdx}, 'arrived')"
-              class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white text-xs sm:text-sm font-black shadow-sm transition flex items-center justify-center gap-1.5"
+              class="w-full py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white text-xs font-black shadow-sm transition flex items-center justify-center gap-1"
             >
-              <span>📍 代課老師網上到班報到 (Web Report Arrival)</span>
+              <span>📍 代課老師網上到班報到 (Web Check-In)</span>
             </button>
           </div>
         </div>
@@ -3262,9 +3117,9 @@ Plain text only.`;
       const req = appData.leaveRequests.find(r => r.id === reqId);
       if (!req) return;
       req.approvalStatus = 'approved';
-      saveRecords(true);
+      saveRecords();
       refreshAllActiveViews();
-      showSystemToast(`✅ 校務處已批核 ${req.teacherName} 之請假申請，並同步至門外 1602 顯示屏！`, 'success');
+      showSystemToast(`✅ 校務處已批核 ${req.teacherName} 之請假申請，並同步至課室門外顯示屏！`, 'success');
     }
 
     function renderAdminApprovalList() {
@@ -3391,9 +3246,9 @@ Plain text only.`;
       if (!req || !req.lessons[lessonIdx] || !t) return;
       req.lessons[lessonIdx].assignedSubCode = t.code;
       req.lessons[lessonIdx].assignedSubName = t.shortName;
-      saveRecords(true);
+      saveRecords();
       refreshAllActiveViews();
-      showSystemToast(`✅ 已改派代課老師為：${t.shortName}（門外 1602 顯示屏已同步更新）`, 'info');
+      showSystemToast(`✅ 已改派代課老師為：${t.shortName}（課室門外顯示屏已同步更新）`, 'info');
     }
 
     function renderScheduleTable() {
@@ -3453,7 +3308,7 @@ Plain text only.`;
     function updateTeacherTimetableCell(teacherCode, day, periodId, newValue) {
       if (!appData.teachers[teacherCode]) return;
       appData.teachers[teacherCode].timetable[day][periodId] = newValue.trim();
-      saveRecords(true);
+      saveRecords();
       renderAdminTimetableInspector();
       showSystemToast(`已儲存 ${teacherCode} (${day} ${periodId}) 課表！`, 'success');
     }
@@ -3486,7 +3341,7 @@ Plain text only.`;
         renderAdminTimetableInspector();
       } else if (currentUserRole === 'staffroom_tv') renderStaffroomTvBoard();
       else if (currentUserRole === 'door_monitor') renderSmallDoorMonitor();
-      updateOnScreen1602Preview();
+      renderSmallDoorMonitor();
     }
 
     function showSystemToast(msg, type = 'success') {
@@ -3512,15 +3367,11 @@ Plain text only.`;
     }
 
     setInterval(syncWithHongKongTime, 1000);
-    setInterval(pullRecordsFromFirebase, 2500);
 
     window.onload = function() {
       syncWithHongKongTime();
       renderTeacherPortal();
-      updateOnScreen1602Preview();
-      if (firebaseBaseUrl) {
-        pushRecordsToFirebase();
-      }
+      renderSmallDoorMonitor();
     };
   </script>
 </body>
