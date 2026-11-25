@@ -124,7 +124,7 @@
        ========================================================================== -->
   <header id="app-top-header" class="slrs-header-banner border-b border-lime-300">
     <div class="max-w-7xl mx-auto px-3 sm:px-4 py-1.5 relative z-10 flex items-center justify-between gap-2 flex-wrap">
-      <!-- Left: Product Logo & Bilingual Name ONLY (No School Name) -->
+      <!-- Left: Product Logo & Bilingual Name ONLY -->
       <div class="flex items-center gap-2.5 min-w-0">
         <div class="w-9 h-9 sm:w-10 sm:h-10 flex-shrink-0 rounded-xl bg-[#2b5400] text-white flex items-center justify-center shadow-sm border-2 border-white">
           <svg viewBox="0 0 24 24" class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -188,7 +188,7 @@
           ↺ 重置 Reset
         </button>
 
-        <!-- Synchronized Simulated Bell Clock (Option B: Matches Period P4 10:50-11:30!) -->
+        <!-- Synchronized Simulated Bell Clock (Matches Period P4 10:50-11:30) -->
         <div class="bg-white/95 border border-lime-600/50 px-2.5 py-1 rounded-lg shadow-sm flex items-center gap-1.5 text-[11px] sm:text-xs whitespace-nowrap">
           <span id="auto-header-cycle" class="font-black text-[#2b5400] bg-lime-100 px-1.5 py-0.5 rounded">DAY 2</span>
           <span id="auto-header-period-badge" class="font-black text-white bg-[#68b800] px-1.5 py-0.5 rounded">本節 Now: P4 (10:50–11:30)</span>
@@ -242,12 +242,12 @@
   </nav>
 
   <!-- ==========================================================================
-       3. MAIN WORKSPACE (Left Main Operational System + Right Live Door Screen)
+       3. MAIN WORKSPACE (Left Active Screen + Right Pinned Live Door Display)
        ========================================================================== -->
   <div class="max-w-7xl mx-auto w-full px-3 sm:px-4 py-3 flex-1">
     <div id="workspace-grid" class="grid grid-cols-1 lg:grid-cols-12 gap-3.5 items-start">
 
-      <!-- LEFT 8 COLS: ACTIVE OPERATIONAL SCREEN -->
+      <!-- LEFT 8 COLS (Expands to 12 Cols automatically on Screen 5 Full Door Display!) -->
       <main id="main-content-col" class="lg:col-span-8 space-y-3.5">
 
         <!-- ====================================================================
@@ -377,7 +377,7 @@
                       <span>單元小測 Quiz</span>
                     </label>
                   </div>
-                  <button type="button" onclick="openPreviewFromForm()" class="text-[11px] font-black bg-blue-700 hover:bg-blue-800 text-white px-2.5 py-1 rounded-lg shadow-sm transition whitespace-nowrap">
+                  <button type="button" id="btn-preview-form-pack" onclick="openPreviewFromForm()" class="text-[11px] font-black bg-blue-700 hover:bg-blue-800 text-white px-2.5 py-1 rounded-lg shadow-sm transition whitespace-nowrap">
                     🖨️ 預覽完整課業包 Preview Pack
                   </button>
                 </div>
@@ -424,9 +424,9 @@
 
           </div>
 
-          <!-- SUBVIEW 1B: SUBSTITUTE TEACHER SCHEDULE & TWO-STEP CHECK-IN -->
+          <!-- SUBVIEW 1B: COMPACT 4-COLUMN SUBSTITUTE TABLE (Zero Cut-Off for Two-Step Check-In!) -->
           <div id="teacher-subview-substitutions" class="hidden space-y-3.5">
-            <div class="bg-white rounded-xl p-4 shadow-sm border-2 border-[#68b800] space-y-3">
+            <div class="bg-white rounded-xl p-3.5 shadow-sm border-2 border-[#68b800] space-y-2.5">
               <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2">
                 <div class="flex items-center gap-2">
                   <span class="slrs-orange-arrow">↘</span>
@@ -435,25 +435,23 @@
                       代課全日表、匿名 SEN 提示及兩步報到 · Cover Duties, SEN Care &amp; Two-Step Check-In
                     </h2>
                     <p class="text-[11px] text-slate-500">
-                      第 1 步「簽收確認」 ➔ 第 2 步「到班報到」，門外顯示屏及教員室看板即時同步 · Step 1 Ack ➔ Step 2 Arrived updates all live screens
+                      第 1 步「簽收確認」 ➔ 第 2 步「到班報到」，右側門外螢幕即時轉綠 · Step 1 Ack ➔ Step 2 Arrived updates door screen instantly
                     </p>
                   </div>
                 </div>
-                <label class="flex items-center gap-1.5 text-xs font-bold text-[#2b5400] bg-[#eef8dc] px-3 py-1 rounded-lg border border-lime-300 cursor-pointer">
+                <label class="flex items-center gap-1.5 text-xs font-bold text-[#2b5400] bg-[#eef8dc] px-2.5 py-1 rounded-lg border border-lime-300 cursor-pointer">
                   <input type="checkbox" id="filter-my-duties-only" onchange="renderTeacherAssignedSubstitutions()" class="rounded text-[#68b800]" />
-                  <span>只顯示本人代課 My Duties Only</span>
+                  <span>只看本人 My Duties</span>
                 </label>
               </div>
               <div class="overflow-x-auto rounded-xl border border-lime-300">
-                <table class="w-full text-left border-collapse school-table text-xs">
+                <table class="w-full text-left border-collapse school-table text-xs table-fixed">
                   <thead>
-                    <tr class="bg-[#eef8dc] text-[#2b5400] font-black whitespace-nowrap">
-                      <th class="p-2.5">課節 Period</th>
-                      <th class="p-2.5">班別及課室 Class &amp; Room</th>
-                      <th class="p-2.5">請假原任 Absent</th>
-                      <th class="p-2.5">指派代課 Cover</th>
-                      <th class="p-2.5">課業包及匿名 SEN 提示 Lesson Pack &amp; SEN</th>
-                      <th class="p-2.5 text-center">兩步報到 Two-Step Check-In</th>
+                    <tr class="bg-[#eef8dc] text-[#2b5400] font-black">
+                      <th class="p-2 w-[20%]">課節及班別<br/><span class="text-[10px] font-bold">Period &amp; Room</span></th>
+                      <th class="p-2 w-[21%]">原任 ➔ 代課<br/><span class="text-[10px] font-bold">Absent ➔ Cover</span></th>
+                      <th class="p-2 w-[31%]">課業包及匿名 SEN<br/><span class="text-[10px] font-bold">Lesson Pack &amp; SEN</span></th>
+                      <th class="p-2 w-[28%] text-center">兩步報到<br/><span class="text-[10px] font-bold">Two-Step Check-In</span></th>
                     </tr>
                   </thead>
                   <tbody id="teacher-assigned-duties-tbody" class="bg-white divide-y divide-slate-200"></tbody>
@@ -570,7 +568,7 @@
                     <span class="slrs-orange-arrow">↘</span>
                     <h3 class="text-xs font-black text-[#2b5400]">已批核請假 Absent Staff</h3>
                   </div>
-                  <span id="tv-absent-teacher-count" class="px-2 py-0.5 rounded-full text-[11px] font-black bg-[#68b800] text-white whitespace-nowrap">2 人</span>
+                  <span id="tv-absent-teacher-count" class="px-2 py-0.5 rounded-full text-[11px] font-black bg-[#68b800] text-white whitespace-nowrap">2 位</span>
                 </div>
                 <div class="p-2.5 space-y-2" id="tv-absent-teachers-list"></div>
                 <div class="bg-slate-50 px-2 py-2 border-t border-slate-200 grid grid-cols-3 gap-1 text-center">
@@ -613,13 +611,13 @@
         </section>
 
         <!-- ====================================================================
-             SCREEN 5: FULL-SCREEN CLASSROOM DOOR DISPLAY
+             SCREEN 5: FULL-SCREEN CLASSROOM DOOR DISPLAY (Auto-Hides Right Duplicate!)
              ==================================================================== -->
         <section id="screen-door-monitor" class="hidden space-y-3">
           <div id="door-control-bar" class="bg-white rounded-xl px-4 py-2 shadow-sm border border-lime-300 flex flex-wrap items-center justify-between gap-2">
             <div class="flex items-center gap-2">
               <span class="slrs-orange-arrow">↘</span>
-              <span class="text-xs sm:text-sm font-black text-slate-900">課室門外小型顯示屏 · Classroom Door Display</span>
+              <span class="text-xs sm:text-sm font-black text-slate-900">課室門外小型顯示屏全屏總覽 · Classroom Door Display Full View</span>
             </div>
             <div class="flex items-center gap-2 flex-wrap">
               <span class="text-xs font-bold text-slate-700">課室 Room:</span>
@@ -639,13 +637,13 @@
               </button>
             </div>
           </div>
-          <div id="small-monitor-frame" class="max-w-4xl mx-auto bg-white rounded-2xl border-4 border-[#68b800] shadow-lg overflow-hidden"></div>
+          <div id="small-monitor-frame" class="max-w-5xl mx-auto bg-white rounded-2xl border-4 border-[#68b800] shadow-lg overflow-hidden"></div>
         </section>
 
       </main>
 
       <!-- ======================================================================
-           RIGHT 4 COLS: PINNED LIVE CLASSROOM DOOR MONITOR (Compact, Zero-Scroll)
+           RIGHT 4 COLS: PINNED LIVE CLASSROOM DOOR MONITOR (Auto-Hidden on Screen 5)
            ====================================================================== -->
       <aside id="pinned-door-col" class="lg:col-span-4 sticky top-12 space-y-2">
         <div id="pinned-door-wrapper" class="bg-slate-900 text-white rounded-2xl p-3 shadow-xl border-2 border-sky-400 space-y-2 transition-all">
@@ -675,16 +673,14 @@
   </div>
 
   <!-- ==========================================================================
-       4. BOTTOM AUTO-DEMO DIRECTOR DOCK (Bilingual Now + Next Action Preview!)
+       4. BOTTOM AUTO-DEMO DIRECTOR DOCK (Bilingual Now + Next Action Preview)
        ========================================================================== -->
   <div id="presentation-dock" class="fixed bottom-0 inset-x-0 z-40 bg-slate-900/95 text-white border-t-4 border-amber-400 shadow-2xl backdrop-blur-md">
-    <!-- Progress Bar -->
     <div class="w-full h-1.5 bg-slate-800">
       <div id="dock-progress-bar" class="h-full bg-gradient-to-r from-amber-400 to-emerald-400 transition-all duration-700" style="width: 14%;"></div>
     </div>
 
     <div class="max-w-7xl mx-auto px-3 sm:px-4 py-2 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-2">
-      <!-- Left: Current Explanation + Next Action Callout (Both Bilingual) -->
       <div class="flex items-start gap-2.5 min-w-0 flex-1">
         <div class="flex flex-col items-center gap-1 shrink-0 mt-0.5">
           <span class="bg-amber-400 text-slate-950 font-black text-xs px-2.5 py-0.5 rounded-lg" id="pres-step-badge">STEP 1 / 6</span>
@@ -698,7 +694,6 @@
           <p class="text-[11px] text-slate-200 leading-snug" id="pres-step-desc">
             系統將以慢速清晰展示每一步並自動高亮變化，無須手動點擊多個按鈕 · Press Auto-Play to showcase the entire workflow automatically at a clear pace.
           </p>
-          <!-- Explicit Next Action Banner -->
           <div id="pres-next-action-box" class="inline-flex items-center gap-1.5 bg-sky-900/80 border border-sky-400/60 text-sky-100 px-2.5 py-0.5 rounded-lg text-[11px] font-bold">
             <span class="text-amber-300 font-black shrink-0">🔜 下一步 Next Action:</span>
             <span id="pres-next-action-text">點擊「▶ 自動演示」開始示範 CKKU 請假及 40 分鐘 SEN 課業包 · Click Auto-Play to start CKKU leave &amp; SEN pack demo</span>
@@ -706,7 +701,6 @@
         </div>
       </div>
 
-      <!-- Right: Play / Pause / Prev / Next Controls -->
       <div class="flex items-center gap-1.5 self-end lg:self-center shrink-0 flex-wrap">
         <button type="button" onclick="startOrStopAutoDemo()" id="btn-autoplay-dock" class="px-3 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-black transition shadow-md whitespace-nowrap">
           ▶ 自動演示 Auto-Play
@@ -725,15 +719,20 @@
   </div>
 
   <!-- ==========================================================================
-       5. WORKSHEET & ANSWER KEY PREVIEW MODAL
+       5. WORKSHEET & ANSWER KEY PREVIEW MODAL (Auto-Opens Briefly in Demo!)
        ========================================================================== -->
-  <div id="worksheet-modal" class="hidden fixed inset-0 z-[60] bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-3xl w-full p-5 shadow-2xl border-2 border-[#68b800] space-y-3 max-h-[90vh] flex flex-col">
-      <div class="flex items-center justify-between border-b border-lime-200 pb-2.5">
+  <div id="worksheet-modal" class="hidden fixed inset-0 z-[60] bg-slate-900/55 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-3xl w-full p-5 shadow-2xl border-4 border-[#68b800] space-y-3 max-h-[86vh] flex flex-col">
+      <div class="flex items-center justify-between border-b border-lime-200 pb-2.5 gap-2">
         <div class="flex items-center gap-2 min-w-0">
           <span class="slrs-orange-arrow">↘</span>
           <div class="min-w-0">
-            <h3 id="modal-worksheet-title" class="text-sm sm:text-base font-black text-slate-900 truncate">40分鐘溫習課業包預覽 · 40-Min Lesson Pack Preview</h3>
+            <div class="flex items-center gap-2 flex-wrap">
+              <h3 id="modal-worksheet-title" class="text-sm sm:text-base font-black text-slate-900 truncate">40分鐘溫習課業包預覽 · 40-Min Lesson Pack Preview</h3>
+              <span id="modal-auto-preview-badge" class="hidden text-[10px] font-black bg-amber-100 text-amber-900 border border-amber-400 px-2 py-0.5 rounded-full whitespace-nowrap">
+                ✨ 自動預覽中 Auto-Preview
+              </span>
+            </div>
             <p id="modal-worksheet-subtitle" class="text-xs text-slate-500 truncate"></p>
           </div>
         </div>
@@ -754,13 +753,13 @@
       </div>
     </div>
   </div>
-  <!-- ====== PART A 結束（請回覆「Part B」獲取方案 B 模擬鐘聲、慢速自動播放與全中英腳本） ====== -->
-  <!-- ==========================================================================
-       6. CORE SYSTEM SCRIPT (SmartSchool SLRS - Simulated Bell Clock & Auto-Demo)
+  <!-- ====== PART A 結束（請回覆「Part B」獲取完整修復版系統腳本） ====== -->
+<!-- ==========================================================================
+       6. CORE SYSTEM SCRIPT (SmartSchool SLRS - Final Video-Ready Edition)
        ========================================================================== -->
   <script>
     // =========================================================================
-    // 1. SCHOOL BELL SCHEDULE & SIMULATED CLOCK (Option B: Always Synced to Period)
+    // 1. SCHOOL BELL SCHEDULE & SIMULATED CLOCK (Option B: Always Synced to P4)
     // =========================================================================
     const PERIOD_SLOTS = [
       { id: 'P1', short: 'P1', time: '08:30–09:10', defaultSim: '08:35', label: '第1節 P1 (08:30–09:10)' },
@@ -774,10 +773,10 @@
     ];
 
     const CYCLE_DAYS = ['DAY 1', 'DAY 2', 'DAY 3', 'DAY 4', 'DAY 5', 'DAY 6'];
-    const STORAGE_KEY = 'smartschool_slrs_competition_final_v6';
+    const STORAGE_KEY = 'smartschool_slrs_competition_final_v7';
 
     // Cross-Tab Instant Sync (for Split View on iPad)
-    const syncChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('smartschool_slrs_chan_v6') : null;
+    const syncChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('smartschool_slrs_chan_v7') : null;
     if (syncChannel) {
       syncChannel.onmessage = (e) => {
         if (e.data && e.data.type === 'STATE_UPDATED') {
@@ -875,7 +874,7 @@
     }
 
     // =========================================================================
-    // 3. TEACHING PROGRESS SCHEDULE & LESSON PACK GENERATOR (Zero School Name)
+    // 3. TEACHING PROGRESS SCHEDULE & LESSON PACK GENERATOR (Product Name Only)
     // =========================================================================
     const TEACHING_SCHEDULE_DATA = {
       'F3_CL': {
@@ -1176,7 +1175,7 @@
         <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
         <head><meta charset="utf-8"><title>${rawCell} Lesson Pack</title></head>
         <body style="font-family:'Times New Roman','Noto Sans HK',serif;font-size:11pt;">
-          <h2 style="text-align:center;margin:0;">SmartSchool SLRS — Intelligent Leave &amp; Relief System</h2>
+          <h2 style="text-align:center;margin:0;">SmartSchool SLRS — School Leave &amp; Relief System</h2>
           <h3 style="text-align:center;margin:4pt 0 10pt 0;">${paperMode} (40-Minute Classwork)</h3>
           <p><strong>Calendar:</strong> Term 1 · Week 10 · ${appData.currentCycleDay} &nbsp;|&nbsp; <strong>Class &amp; Subject:</strong> ${rawCell} &nbsp;|&nbsp; <strong>Teacher:</strong> ${absentTeacherName}</p>
           <p><strong>Topic:</strong> ${topicTitle}</p>
@@ -1436,7 +1435,7 @@
       descEl.textContent = desc;
 
       if (toastTimer) clearTimeout(toastTimer);
-      toastTimer = setTimeout(hideSystemToast, 5800);
+      toastTimer = setTimeout(hideSystemToast, 5600);
     }
 
     function hideSystemToast() {
@@ -1447,9 +1446,11 @@
     function resetAllSystemData(showNotice = false) {
       stopAutoDemoDirector();
       clearAllSpotlights();
+      closeWorksheetModal();
       appData = createDefaultRecords();
       selectedLeaveDay = 'DAY 2';
       currentTeacherCode = 'CKKU';
+      pinnedDoorVisible = true;
       const overdueBtn = document.getElementById('nav-overdue-btn');
       if (overdueBtn) overdueBtn.textContent = '🔔 模擬逾時提示 Late Alert';
       saveRecords();
@@ -1471,7 +1472,7 @@
     }
 
     // =========================================================================
-    // 7. SLOWER AUTO-PLAY DIRECTOR WITH PAUSE/RESUME & NEXT-ACTION EXPLANATIONS
+    // 7. AUTO-PLAY DIRECTOR (With Lesson Pack Popup & Clean Full-Screen Finale)
     // =========================================================================
     let autoPlayActive = false;
     let autoPlayPaused = false;
@@ -1555,6 +1556,7 @@
       autoPlayActive = false;
       autoPlayPaused = false;
       autoPlayRunId++;
+      closeWorksheetModal();
       updateAutoPlayButtonsUI();
     }
 
@@ -1571,7 +1573,6 @@
       );
     }
 
-    // Pause-aware timer so user can pause mid-recording at any moment!
     async function waitMs(ms, runId) {
       let elapsed = 0;
       const tick = 120;
@@ -1600,18 +1601,17 @@
       appData = createDefaultRecords();
       selectedLeaveDay = 'DAY 2';
       currentTeacherCode = 'CKKU';
+      pinnedDoorVisible = true;
       const overdueBtn = document.getElementById('nav-overdue-btn');
       if (overdueBtn) overdueBtn.textContent = '🔔 模擬逾時提示 Late Alert';
       saveRecords();
-
-      if (!pinnedDoorVisible) togglePinnedDoorPreview(true);
 
       autoPlayActive = true;
       autoPlayPaused = false;
       const myRunId = ++autoPlayRunId;
       updateAutoPlayButtonsUI();
 
-      // ==================== SCENE 1: CKKU LEAVE + SEN + 40-MIN PACK ====================
+      // ==================== SCENE 1: CKKU LEAVE + SEN + 40-MIN LESSON PACK POPUP ====================
       setSimulatedClock('10:42', 'P4');
       loginAsRole('ckku');
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1620,32 +1620,36 @@
         '第一步 Step 1｜科任請假與自動備課 · Subject Teacher Leave & Lesson Pack (10:42)',
         'CKKU 周嘉權老師於平板請假，無須校工派紙。系統自動對照 Week 10 教學進度 · Mr. Chau applies on tablet without paper forms; system matches Week 10 schedule.',
         '即將高亮「💙 匿名 SEN 課堂照顧提示」· Highlighting Anonymous SEN Classroom Reminder next',
-        12
+        10
       );
-      if (!(await waitMs(4800, myRunId))) return;
+      if (!(await waitMs(4400, myRunId))) return;
 
       spotlightElement('sen-preview-card', true);
       updateDock(
         1,
         '第一步 Step 1｜匿名 SEN 課堂照顧提示 · Anonymous SEN Classroom Reminder',
         '系統自動載入 3B 班不記名 SEN 支援提示（+5分鐘作答及黑板重點），絕不顯示學生姓名 · Loads anonymous Class 3B SEN care tips (+5 min & board cues) with strict privacy.',
-        '即將展示自動生成的「📄 40 分鐘溫習課業包連答案」· Showing auto-generated 40-min worksheet & answer key next',
-        20
+        '即將彈出預覽自動生成的「📄 40 分鐘溫習工作紙連評分答案」· Opening full 40-min worksheet & answer key preview next',
+        18
       );
-      if (!(await waitMs(5200, myRunId))) return;
+      if (!(await waitMs(4600, myRunId))) return;
 
-      spotlightElement('worksheet-box-card', true);
+      // Auto-Preview Full 40-Min Worksheet Modal (Fix #3!)
+      spotlightElement('btn-preview-form-pack', true);
+      if (!(await waitMs(1400, myRunId))) return;
+      openPreviewFromForm(true);
       updateDock(
         1,
-        '第一步 Step 1｜40 分鐘溫習工作紙連答案 · 40-Min Worksheet & Answer Key',
-        '自動生成包含選擇題、填充題、問答題及教師評分答案的課業包 · Auto-generates MC, fill-in-the-blanks, structured questions & teacher marking key.',
-        '👉 即將自動點擊「📨 提交請假申請」· Auto-clicking "Submit Leave Application" next',
-        28
+        '第一步 Step 1｜完整 40 分鐘課業包預覽 · Full 40-Min Worksheet & Answer Key Preview',
+        '即時生成包含選擇題、填充題、問答題、教師評分參考及匿名 SEN 提示的完整課業包 · Auto-generates MC, fill-in-the-blanks, structured questions, answer key & SEN tips.',
+        '👉 預覽後即將自動點擊「📨 提交請假申請」· Closing preview & auto-clicking "Submit Leave" next',
+        26
       );
-      if (!(await waitMs(4800, myRunId))) return;
+      if (!(await waitMs(4600, myRunId))) return;
+      closeWorksheetModal();
 
       spotlightElement('btn-submit-leave', true);
-      if (!(await waitMs(2200, myRunId))) return;
+      if (!(await waitMs(1800, myRunId))) return;
 
       // Auto-Submit Leave at 10:43
       setSimulatedClock('10:43', 'P4');
@@ -1658,7 +1662,7 @@
         '即將切換至「② 副校長批核與零衝突公平派課」· Switching to Vice Principal Approval & Fair Matching next',
         36
       );
-      if (!(await waitMs(5600, myRunId))) return;
+      if (!(await waitMs(5200, myRunId))) return;
 
       // ==================== SCENE 2: VICE PRINCIPAL APPROVAL & FAIR MATCHING ====================
       loginAsRole('vp_admin');
@@ -1668,15 +1672,15 @@
         2,
         '第二步 Step 2｜零衝突公平派課演算法 · Conflict-Free Fair Matching (10:44)',
         '系統即時比對全校空堂及本月累計代課節數，自動排除撞堂及請假教師，公平指派 TMCHAN 陳大文 · Checks free periods & monthly quota to fairly assign TMCHAN with zero clashes.',
-        '👉 即將自動點擊「✅ 一鍵確認批核 Approve」· Auto-clicking "Approve" button next',
+        '👉 即將自動點擊「✅ 一鍵批核 Approve」· Auto-clicking "Approve" button next',
         46
       );
-      if (!(await waitMs(5500, myRunId))) return;
+      if (!(await waitMs(5200, myRunId))) return;
 
       const pendingReq = appData.leaveRequests.find(r => r.approvalStatus === 'pending');
       if (pendingReq) {
         spotlightElement(`btn-approve-${pendingReq.id}`, true);
-        if (!(await waitMs(2600, myRunId))) return;
+        if (!(await waitMs(2400, myRunId))) return;
         setSimulatedClock('10:44', 'P4');
         approveLeaveRequest(pendingReq.id);
       }
@@ -1688,7 +1692,7 @@
         '即將切換至「③ 教員室實時看板」查看 10:50 上課鐘響時段 · Switching to Staffroom Live Board at 10:50 P4 bell next',
         56
       );
-      if (!(await waitMs(5800, myRunId))) return;
+      if (!(await waitMs(5400, myRunId))) return;
 
       // ==================== SCENE 3 & 4: STAFFROOM BOARD + OVERDUE ALERT ====================
       setSimulatedClock('10:50', 'P4');
@@ -1702,9 +1706,8 @@
         '👉 即將推進時間至 10:55（鐘響後 5 分鐘），觸發「🚨 防漏堂逾時警報」· Advancing to 10:55 (+5 min late) to trigger Overdue Alert next',
         66
       );
-      if (!(await waitMs(5500, myRunId))) return;
+      if (!(await waitMs(5200, myRunId))) return;
 
-      // Trigger Overdue Alert at 10:55!
       setSimulatedClock('10:55', 'P4');
       if (!appData.overdueAlertActive) toggleOverdueSimulation();
       spotlightElement('pinned-door-wrapper', false);
@@ -1715,9 +1718,9 @@
         '即將切換至「④ 代課老師 TMCHAN 視角」進行兩步網上報到 · Switching to Cover Teacher TMCHAN for Two-Step Check-In next',
         76
       );
-      if (!(await waitMs(6000, myRunId))) return;
+      if (!(await waitMs(5600, myRunId))) return;
 
-      // ==================== SCENE 5: TMCHAN SEN CARE + TWO-STEP CHECK-IN ====================
+      // ==================== SCENE 5: TMCHAN SEN CARE + TWO-STEP CHECK-IN (Full Buttons Visible!) ====================
       loginAsRole('tmchan');
       window.scrollTo({ top: 0, behavior: 'smooth' });
       spotlightElement('cover-row-P4-207', true);
@@ -1725,12 +1728,14 @@
         5,
         '第五步 Step 5｜代課老師查閱 SEN 提示及兩步報到 · SEN Care & Two-Step Check-In',
         'TMCHAN 陳大文老師於平板查看課業包及 3B 班匿名 SEN 提示（門外屏隱藏 SEN 以保私隱）· TMCHAN views lesson pack & anonymous 3B SEN care tip on tablet.',
-        '👉 即將執行兩步報到第 1 步：「1. 簽收 Ack」· Executing Step 1 of Two-Step Check-In: "1. Ack" next',
+        '👉 即將點擊第 1 步按鈕：「1. 簽收 Ack」· Clicking Step 1 button: "1. Ack" next',
         84
       );
-      if (!(await waitMs(5200, myRunId))) return;
+      if (!(await waitMs(4800, myRunId))) return;
 
-      // Two-Step Check-In: Step 1 Ack at 10:55
+      // Highlight & Click Step 1 Ack at 10:55
+      spotlightElement('btn-ack-P4-207', true);
+      if (!(await waitMs(1400, myRunId))) return;
       const p4Match1 = findActiveSubLessonByRoom('207', 'DAY 2', 'P4');
       if (p4Match1) {
         updateLessonCheckinStatus(p4Match1.req.id, p4Match1.lessonIdx, 'ack');
@@ -1739,12 +1744,14 @@
         5,
         '第五步 Step 5｜已完成第 1 步「簽收確認 Ack」 (10:55)',
         '老師已確認知悉代課安排並取得課業包 · Teacher acknowledged duty and received lesson pack.',
-        '👉 抵達課室（10:56），即將執行第 2 步：「2. 📍 到班報到 Arrived」解除警報 · Arriving at RM 207 (10:56): clicking "2. Arrived" to clear alert next',
+        '👉 抵達課室（10:56），即將點擊第 2 步按鈕：「2. 📍 報到 Arrived」解除警報 · Arriving at RM 207 (10:56): clicking "2. Arrived" to clear alert next',
         90
       );
-      if (!(await waitMs(4200, myRunId))) return;
+      if (!(await waitMs(3800, myRunId))) return;
 
-      // Two-Step Check-In: Step 2 Arrived at 10:56 -> Clears Alert!
+      // Highlight & Click Step 2 Arrived at 10:56 -> Clears Alert!
+      spotlightElement('btn-arrive-P4-207', true);
+      if (!(await waitMs(1400, myRunId))) return;
       setSimulatedClock('10:56', 'P4');
       appData.overdueAlertActive = false;
       if (overdueBtn) overdueBtn.textContent = '🔔 模擬逾時提示 Late Alert';
@@ -1757,13 +1764,13 @@
         5,
         '✅ 到班報到完成 Arrived (10:56)｜紅框警報即時解除並轉綠！',
         '請留意右側 RM 207 課室門外螢幕即時消除紅框，轉為綠色「● 已報到 Arrived (10:56)」· RM 207 Door Screen clears red alert and turns green "Arrived (10:56)" instantly!',
-        '即將切換至「⑤ 課室門外顯示屏全屏總覽」作結尾展示 · Switching to Full-Screen Classroom Door Display finale next',
+        '即將切換至「⑤ 課室門外顯示屏全屏總覽」（自動收起重複側欄）· Switching to Full-Screen Door Display finale next',
         95
       );
-      if (!(await waitMs(5500, myRunId))) return;
+      if (!(await waitMs(5200, myRunId))) return;
 
-      // ==================== SCENE 6: FULL-SCREEN DOOR DISPLAY FINALE ====================
-      loginAsRole('door_monitor');
+      // ==================== SCENE 6: CLEAN FULL-SCREEN DOOR DISPLAY FINALE (Fix #2!) ====================
+      loginAsRole('door_monitor'); // Automatically hides right duplicate sidebar!
       window.scrollTo({ top: 0, behavior: 'smooth' });
       spotlightElement('small-monitor-frame', true);
       updateDock(
@@ -1812,7 +1819,7 @@
           2,
           '第二步 Step 2｜副校長一鍵批核與公平派課 · VP Approval & Fair Matching',
           '查看每月累計代課配額及無衝突自動配對結果 · Review monthly substitution quota & conflict-free matching.',
-          '點擊「✅ 一鍵確認批核 Approve」同步至門外顯示屏 · Click Approve to sync with door screen',
+          '點擊「✅ 一鍵批核 Approve」同步至門外顯示屏 · Click Approve to sync with door screen',
           34
         );
       } else if (stepNum === 3) {
@@ -1846,7 +1853,7 @@
         updateDock(
           5,
           '第五步 Step 5｜代課老師查閱匿名 SEN 提示及兩步報到 · SEN Care & Two-Step Check-In',
-          '查看 3B 班匿名 SEN 提示並依次點擊「1. 簽收」及「2. 📍 到班報到」· View anonymous SEN reminder and click Ack ➔ Arrived.',
+          '查看 3B 班匿名 SEN 提示並依次點擊「1. 簽收」及「2. 📍 報到」· View anonymous SEN reminder and click Ack ➔ Arrived.',
           '完成報到後按「下一步」檢視門外顯示屏全屏 · Click Next for Full-Screen Door Display',
           86
         );
@@ -1863,8 +1870,38 @@
     }
 
     // =========================================================================
-    // 8. NAVIGATION, PINNED DOOR SCREEN & SIMULATED PERIOD SELECTOR
+    // 8. NAVIGATION & SMART PINNED SIDEBAR LAYOUT (Auto-Hides Duplicate on Tab 5!)
     // =========================================================================
+    function applyPinnedDoorLayout() {
+      const mainCol = document.getElementById('main-content-col');
+      const pinnedCol = document.getElementById('pinned-door-col');
+      const topBtn = document.getElementById('top-btn-pin-door');
+
+      // Automatically hide right pinned duplicate whenever user is on Screen 5 (door_monitor)
+      const shouldShowPinned = pinnedDoorVisible && (currentUserRole !== 'door_monitor');
+
+      if (shouldShowPinned) {
+        mainCol.className = 'lg:col-span-8 space-y-3.5';
+        pinnedCol.classList.remove('hidden');
+      } else {
+        mainCol.className = 'lg:col-span-12 space-y-3.5';
+        pinnedCol.classList.add('hidden');
+      }
+
+      if (topBtn) {
+        if (currentUserRole === 'door_monitor') {
+          topBtn.className = 'px-2.5 py-1 rounded-lg text-[11px] sm:text-xs font-black bg-slate-600 text-white shadow-sm transition whitespace-nowrap';
+          topBtn.innerHTML = '<span>🪟 全屏模式 Full View</span>';
+        } else if (pinnedDoorVisible) {
+          topBtn.className = 'px-2.5 py-1 rounded-lg text-[11px] sm:text-xs font-black bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition whitespace-nowrap';
+          topBtn.innerHTML = '<span>🪟 門外屏 Door: ON</span>';
+        } else {
+          topBtn.className = 'px-2.5 py-1 rounded-lg text-[11px] sm:text-xs font-black bg-slate-700 hover:bg-slate-800 text-white shadow-sm transition whitespace-nowrap';
+          topBtn.innerHTML = '<span>🪟 門外屏 Door: OFF</span>';
+        }
+      }
+    }
+
     function manualSelectRole(roleKey) {
       stopAutoDemoDirector();
       clearAllSpotlights();
@@ -1910,28 +1947,20 @@
         document.getElementById('screen-door-monitor').classList.remove('hidden');
         renderSmallDoorMonitor();
       }
+      applyPinnedDoorLayout();
       updateClockDisplays();
       renderSmallDoorMonitor();
     }
 
     function togglePinnedDoorPreview(forceState = null) {
-      pinnedDoorVisible = (forceState !== null) ? forceState : !pinnedDoorVisible;
-      const mainCol = document.getElementById('main-content-col');
-      const pinnedCol = document.getElementById('pinned-door-col');
-      const topBtn = document.getElementById('top-btn-pin-door');
-
-      if (pinnedDoorVisible) {
-        mainCol.className = 'lg:col-span-8 space-y-3.5';
-        pinnedCol.classList.remove('hidden');
-        topBtn.className = 'px-2.5 py-1 rounded-lg text-[11px] sm:text-xs font-black bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition whitespace-nowrap';
-        topBtn.innerHTML = '<span>🪟 門外屏 Door: ON</span>';
-        renderSmallDoorMonitor();
+      if (currentUserRole === 'door_monitor' && forceState === null) {
+        loginAsRole('ckku');
+        pinnedDoorVisible = true;
       } else {
-        mainCol.className = 'lg:col-span-12 space-y-3.5';
-        pinnedCol.classList.add('hidden');
-        topBtn.className = 'px-2.5 py-1 rounded-lg text-[11px] sm:text-xs font-black bg-slate-700 hover:bg-slate-800 text-white shadow-sm transition whitespace-nowrap';
-        topBtn.innerHTML = '<span>🪟 門外屏 Door: OFF</span>';
+        pinnedDoorVisible = (forceState !== null) ? forceState : !pinnedDoorVisible;
       }
+      applyPinnedDoorLayout();
+      renderSmallDoorMonitor();
     }
 
     function syncSelectedRoom(newRoom) {
@@ -1997,7 +2026,7 @@
       if (approvalStatus === 'pending') {
         return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-black bg-amber-100 text-amber-900 border border-amber-400 whitespace-nowrap">
           <span class="w-2 h-2 rounded-full bg-amber-500 pulse-dot flex-shrink-0"></span>
-          <span>⏳ 審批中 Pending VP</span>
+          <span>⏳ 審批中 Pending</span>
         </span>`;
       }
       const isCurrentPeriod = (periodId && periodId === appData.activePeriodId);
@@ -2009,7 +2038,7 @@
       }
       if (appData.overdueAlertActive && isCurrentPeriod) {
         return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-black bg-rose-600 text-white border border-rose-700 shadow-sm pulse-dot whitespace-nowrap">
-          <span>🚨 逾時未報到 Overdue</span>
+          <span>🚨 逾時 Overdue</span>
         </span>`;
       }
       if (status === 'ack') {
@@ -2025,7 +2054,7 @@
     }
 
     // =========================================================================
-    // 10. TEACHER PORTAL (CKKU Leave + TMCHAN Two-Step Check-In)
+    // 10. TEACHER PORTAL (CKKU Leave + 4-Column Zero-Clip Two-Step Check-In)
     // =========================================================================
     function switchActiveTeacherAccount(code) { currentTeacherCode = code; renderTeacherPortal(); }
 
@@ -2179,13 +2208,13 @@
       outputArea.value = generateWorksheetAndAnswerKeyText(targetCell, customVal, getSelectedPaperMode(), teacher.shortName, scopeMode);
     }
 
-    function openPreviewFromForm() {
+    function openPreviewFromForm(isAutoDemo = false) {
       const checkedBoxes = Array.from(document.querySelectorAll('input[name="affected-lesson-chk"]:checked'));
       const activeBox = checkedBoxes.find(cb => cb.value === 'P4') || checkedBoxes[0];
       const targetCell = activeBox ? activeBox.getAttribute('data-cell') : '3B CL_B1 207';
       const customVal = (document.getElementById('leave-progress-input').value || '').trim();
       const teacher = appData.teachers[currentTeacherCode] || appData.teachers.CKKU;
-      openWorksheetModal(targetCell, customVal, getSelectedPaperMode(), teacher.shortName, getSelectedScopeMode());
+      openWorksheetModal(targetCell, customVal, getSelectedPaperMode(), teacher.shortName, getSelectedScopeMode(), isAutoDemo);
     }
 
     function submitTeacherLeaveRequest(silent = false) {
@@ -2264,6 +2293,7 @@
       }
     }
 
+    // FIX #1: Compact 4-Column Layout — Guarantees Two-Step Check-In Buttons NEVER Clip!
     function renderTeacherAssignedSubstitutions() {
       const tbody = document.getElementById('teacher-assigned-duties-tbody');
       const badge = document.getElementById('teacher-sub-count-badge');
@@ -2280,7 +2310,7 @@
 
       const filtered = onlyMine ? allLessons.filter(item => item.les.assignedSubCode === currentTeacherCode) : allLessons;
       if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="p-5 text-center text-slate-500 font-bold">目前沒有已批核之代課課節 · No approved substitution duties yet.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="4" class="p-5 text-center text-slate-500 font-bold">目前沒有已批核之代課課節 · No approved substitution duties yet.</td></tr>`;
         return;
       }
 
@@ -2290,34 +2320,55 @@
         const isCurrentPeriod = (les.periodId === appData.activePeriodId);
         const topicLabel = req.customTopic || (req.scopeMode === 'prior' ? sched.priorTopics : sched.currentWeekTopic);
         const rowId = `cover-row-${les.periodId}-${les.room}`;
+        const ackBtnId = `btn-ack-${les.periodId}-${les.room}`;
+        const arriveBtnId = `btn-arrive-${les.periodId}-${les.room}`;
+        const absentShort = req.teacherName.replace('老師', '');
 
         return `
-          <tr id="${rowId}" class="${isCurrentPeriod ? 'bg-lime-50/90' : 'hover:bg-slate-50'}">
-            <td class="p-2.5 font-black text-[#2b5400] whitespace-nowrap">
-              <div>${les.periodId} <span class="text-[11px] font-bold text-slate-500">(${getPeriodMeta(les.periodId).time})</span></div>
-              ${isCurrentPeriod ? '<span class="text-[10px] bg-[#68b800] text-white px-1.5 py-0.2 rounded">本節 Now</span>' : ''}
-            </td>
-            <td class="p-2.5 whitespace-nowrap">
-              <span class="font-black text-slate-900">${les.rawCell.split(' ').slice(0, 2).join(' ')}</span>
-              <span class="ml-1 text-[11px] font-bold text-[#2b5400] bg-lime-100 px-1.5 py-0.5 rounded">Rm ${les.room}</span>
-            </td>
-            <td class="p-2.5 font-bold text-slate-700 whitespace-nowrap">${req.teacherName}</td>
-            <td class="p-2.5 font-black text-[#2b5400] whitespace-nowrap">${les.assignedSubName}</td>
-            <td class="p-2.5 space-y-1">
-              <div class="text-[11px] font-bold text-slate-800 truncate max-w-[200px]">${topicLabel}</div>
-              <div class="text-[10px] font-bold text-indigo-900 bg-indigo-50 border border-indigo-200 px-2 py-0.5 rounded leading-snug max-w-[250px]">
-                💙 SEN 匿名提示 Anonymous: ${sen.badge}
+          <tr id="${rowId}" class="${isCurrentPeriod ? 'bg-lime-50/95' : 'hover:bg-slate-50'}">
+            <!-- Col 1: Period + Class & Room -->
+            <td class="p-2 align-top">
+              <div class="flex items-center gap-1 flex-wrap">
+                <span class="font-black text-[#2b5400]">${les.periodId}</span>
+                ${isCurrentPeriod ? '<span class="text-[9px] bg-[#68b800] text-white px-1 rounded font-black">本節 Now</span>' : ''}
               </div>
-              <div class="flex items-center gap-1.5 pt-0.5">
-                <button type="button" onclick="openWorksheetModal('${les.rawCell}', '${(req.customTopic || '').replace(/'/g, '')}', '${req.paperMode}', '${req.teacherName}', '${req.scopeMode || 'current'}')" class="px-2 py-0.5 rounded bg-white hover:bg-lime-100 text-[#2b5400] border border-[#68b800] text-[10px] font-bold whitespace-nowrap">預覽 Preview</button>
-                <button type="button" onclick="exportWordLessonPack('${les.rawCell}', '${(req.customTopic || '').replace(/'/g, '')}', '${req.paperMode}', '${req.teacherName}')" class="px-2 py-0.5 rounded bg-blue-700 hover:bg-blue-800 text-white text-[10px] font-bold whitespace-nowrap">📄 匯出 Export</button>
+              <div class="text-[10px] font-mono text-slate-500">${getPeriodMeta(les.periodId).time}</div>
+              <div class="mt-1 font-black text-slate-900 leading-tight">${les.rawCell.split(' ').slice(0, 2).join(' ')}</div>
+              <span class="inline-block mt-0.5 text-[10px] font-black text-[#2b5400] bg-lime-100 border border-lime-300 px-1.5 rounded">Rm ${les.room}</span>
+            </td>
+
+            <!-- Col 2: Absent -> Cover -->
+            <td class="p-2 align-top space-y-1">
+              <div class="text-[11px] font-bold text-rose-800 truncate" title="${absentShort}">
+                <span class="text-[9px] uppercase bg-rose-100 px-1 rounded">請假</span> ${absentShort}
+              </div>
+              <div class="text-[11px] font-black text-[#2b5400] truncate" title="${les.assignedSubName}">
+                <span class="text-[9px] uppercase bg-lime-200 px-1 rounded">代課</span> ${les.assignedSubName}
               </div>
             </td>
-            <td class="p-2.5 text-center whitespace-nowrap space-y-1">
+
+            <!-- Col 3: Lesson Pack + Anonymous SEN -->
+            <td class="p-2 align-top space-y-1">
+              <div class="text-[11px] font-bold text-slate-800 truncate" title="${topicLabel}">${topicLabel}</div>
+              <div class="text-[10px] font-bold text-indigo-900 bg-indigo-50 border border-indigo-200 px-1.5 py-0.5 rounded leading-tight">
+                💙 SEN: ${sen.badge}
+              </div>
+              <div class="flex items-center gap-1 pt-0.5 flex-wrap">
+                <button type="button" onclick="openWorksheetModal('${les.rawCell}', '${(req.customTopic || '').replace(/'/g, '')}', '${req.paperMode}', '${req.teacherName}', '${req.scopeMode || 'current'}', false)" class="px-1.5 py-0.5 rounded bg-white hover:bg-lime-100 text-[#2b5400] border border-[#68b800] text-[10px] font-bold">預覽 Preview</button>
+                <button type="button" onclick="exportWordLessonPack('${les.rawCell}', '${(req.customTopic || '').replace(/'/g, '')}', '${req.paperMode}', '${req.teacherName}')" class="px-1.5 py-0.5 rounded bg-blue-700 hover:bg-blue-800 text-white text-[10px] font-bold">📄 Word</button>
+              </div>
+            </td>
+
+            <!-- Col 4: Two-Step Check-In (100% Visible Without Horizontal Scroll!) -->
+            <td class="p-2 align-top text-center space-y-1.5">
               <div>${buildCleanStatusPill(les.checkinStatus, les.ackTime, les.arriveTime, les.periodId, req.approvalStatus)}</div>
-              <div class="flex items-center justify-center gap-1">
-                <button onclick="updateLessonCheckinStatus('${req.id}', ${lessonIdx}, 'ack')" class="px-2 py-0.5 rounded bg-amber-500 hover:bg-amber-600 text-white text-[10px] font-black">1. 簽收 Ack</button>
-                <button onclick="appData.overdueAlertActive = false; updateLessonCheckinStatus('${req.id}', ${lessonIdx}, 'arrived')" class="px-2.5 py-0.5 rounded bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-black shadow-sm">2. 📍 報到 Arrived</button>
+              <div class="flex flex-col gap-1">
+                <button id="${ackBtnId}" type="button" onclick="updateLessonCheckinStatus('${req.id}', ${lessonIdx}, 'ack')" class="w-full py-1 px-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-[10px] font-black shadow-sm transition">
+                  1. 簽收 Ack
+                </button>
+                <button id="${arriveBtnId}" type="button" onclick="appData.overdueAlertActive = false; setSimulatedClock('10:56', 'P4'); updateLessonCheckinStatus('${req.id}', ${lessonIdx}, 'arrived')" class="w-full py-1 px-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-black shadow-sm transition">
+                  2. 📍 到班報到 Arrived
+                </button>
               </div>
             </td>
           </tr>`;
@@ -2427,10 +2478,10 @@
               <td class="p-2 font-bold text-slate-900 whitespace-nowrap">${les.rawCell}</td>
               <td class="p-2"><select onchange="changeAssignedCoverTeacher('${req.id}', ${idx}, this.value)" class="w-full px-2 py-1 rounded border border-lime-500 bg-white text-xs font-bold text-slate-900">${optionsHtml}</select></td>
               <td class="p-2 text-[11px] space-y-0.5">
-                <div class="font-bold text-emerald-900 truncate max-w-[175px]">${req.customTopic || sched.currentWeekTopic}</div>
+                <div class="font-bold text-emerald-900 truncate max-w-[165px]">${req.customTopic || sched.currentWeekTopic}</div>
                 <div class="flex items-center gap-1.5">
                   <span class="text-[10px] font-bold bg-indigo-50 text-indigo-800 border border-indigo-200 px-1.5 rounded">💙 SEN 提示</span>
-                  <button type="button" onclick="openWorksheetModal('${les.rawCell}', '${(req.customTopic || '').replace(/'/g, '')}', '${req.paperMode}', '${req.teacherName}', '${req.scopeMode || 'current'}')" class="text-blue-700 font-black hover:underline">預覽 Preview</button>
+                  <button type="button" onclick="openWorksheetModal('${les.rawCell}', '${(req.customTopic || '').replace(/'/g, '')}', '${req.paperMode}', '${req.teacherName}', '${req.scopeMode || 'current'}', false)" class="text-blue-700 font-black hover:underline">預覽</button>
                 </div>
               </td>
               <td class="p-2 text-center whitespace-nowrap">${buildCleanStatusPill(les.checkinStatus, les.ackTime, les.arriveTime, les.periodId, req.approvalStatus)}</td>
@@ -2500,7 +2551,7 @@
           <td class="p-2.5 text-slate-600">${item.priorTopics}</td>
           <td class="p-2.5 font-bold text-emerald-900 bg-emerald-50/50">${item.currentWeekTopic}</td>
           <td class="p-2.5 text-center whitespace-nowrap">
-            <button type="button" onclick="openWorksheetModal('${item.classes.split(',')[0].trim()} ${item.key.split('_')[1]} 207', '', 'Revision Worksheet & Short Quiz', 'Subject Panel', 'current')" class="px-2.5 py-1 rounded bg-blue-700 hover:bg-blue-800 text-white text-[11px] font-black">📄 預覽 Preview</button>
+            <button type="button" onclick="openWorksheetModal('${item.classes.split(',')[0].trim()} ${item.key.split('_')[1]} 207', '', 'Revision Worksheet & Short Quiz', 'Subject Panel', 'current', false)" class="px-2.5 py-1 rounded bg-blue-700 hover:bg-blue-800 text-white text-[11px] font-black">📄 預覽 Preview</button>
           </td>
         </tr>`).join('');
     }
@@ -2597,18 +2648,18 @@
         const classSubjectOnly = les.rawCell.split(' ').slice(0, 2).join(' ');
         const isOverdueRow = appData.overdueAlertActive && les.periodId === appData.activePeriodId && les.checkinStatus !== 'arrived';
         return `<tr class="${isOverdueRow ? 'bg-rose-50' : 'hover:bg-[#f4fae8]'} transition">
-          ${showPeriodCol ? `<td class="p-2.5 font-black text-[#2b5400] whitespace-nowrap">${les.periodId}</td>` : ''}
-          <td class="p-2.5 whitespace-nowrap"><span class="text-sm font-black text-slate-900">${classSubjectOnly}</span><span class="ml-1.5 text-[11px] font-black bg-[#eef8dc] text-[#2b5400] border border-lime-400 px-1.5 py-0.5 rounded">Rm ${les.room}</span></td>
-          <td class="p-2.5 font-bold text-slate-800 whitespace-nowrap">${req.teacherName}</td>
-          <td class="p-2.5 font-black text-[#2b5400] text-sm whitespace-nowrap">${les.assignedSubName}</td>
-          <td class="p-2.5 text-center whitespace-nowrap">${buildCleanStatusPill(les.checkinStatus, les.ackTime, les.arriveTime, les.periodId, req.approvalStatus)}</td>
+          ${showPeriodCol ? `<td class="p-2 font-black text-[#2b5400] whitespace-nowrap">${les.periodId}</td>` : ''}
+          <td class="p-2 whitespace-nowrap"><span class="text-xs sm:text-sm font-black text-slate-900">${classSubjectOnly}</span><span class="ml-1 text-[10px] font-black bg-[#eef8dc] text-[#2b5400] border border-lime-400 px-1.5 py-0.5 rounded">Rm ${les.room}</span></td>
+          <td class="p-2 font-bold text-slate-800 whitespace-nowrap">${req.teacherName.replace('老師', '')}</td>
+          <td class="p-2 font-black text-[#2b5400] text-xs sm:text-sm whitespace-nowrap">${les.assignedSubName}</td>
+          <td class="p-2 text-center whitespace-nowrap">${buildCleanStatusPill(les.checkinStatus, les.ackTime, les.arriveTime, les.periodId, req.approvalStatus)}</td>
         </tr>`;
       }).join('');
-      return `<div class="bg-white rounded-xl border-2 border-[#68b800] shadow-sm overflow-hidden"><div class="${headerBgClass} px-3.5 py-2 text-xs sm:text-sm font-black flex items-center justify-between"><span>${headerTitle}</span><span class="text-[11px] bg-white/20 px-2 py-0.5 rounded whitespace-nowrap">共 ${lessonItems.length} 班 Classes</span></div><div class="overflow-x-auto"><table class="w-full text-left border-collapse school-table text-xs"><thead><tr class="bg-[#eef8dc] text-[#2b5400] font-black whitespace-nowrap">${showPeriodCol ? '<th class="p-2.5">節數</th>' : ''}<th class="p-2.5">班別及課室 Class</th><th class="p-2.5">請假原任 Absent</th><th class="p-2.5">指派代課 Cover</th><th class="p-2.5 text-center">狀態 Status</th></tr></thead><tbody class="divide-y divide-slate-200 bg-white">${rows}</tbody></table></div></div>`;
+      return `<div class="bg-white rounded-xl border-2 border-[#68b800] shadow-sm overflow-hidden"><div class="${headerBgClass} px-3.5 py-2 text-xs sm:text-sm font-black flex items-center justify-between"><span>${headerTitle}</span><span class="text-[11px] bg-white/20 px-2 py-0.5 rounded whitespace-nowrap">共 ${lessonItems.length} 班 Classes</span></div><div class="overflow-x-auto"><table class="w-full text-left border-collapse school-table text-xs"><thead><tr class="bg-[#eef8dc] text-[#2b5400] font-black whitespace-nowrap">${showPeriodCol ? '<th class="p-2">節數</th>' : ''}<th class="p-2">班別課室 Class</th><th class="p-2">請假原任 Absent</th><th class="p-2">指派代課 Cover</th><th class="p-2 text-center">狀態 Status</th></tr></thead><tbody class="divide-y divide-slate-200 bg-white">${rows}</tbody></table></div></div>`;
     }
 
     // =========================================================================
-    // 13. CLASSROOM DOOR DISPLAY (Bilingual, Product-Only Branding, Compact Next Bar)
+    // 13. CLASSROOM DOOR DISPLAY (Bilingual, Product-Only Branding)
     // =========================================================================
     function findRoomLessonInfo(roomNum, cycleDay, periodId) {
       if (!periodId) return { mode: 'after_school', periodMeta: { short: '-', time: '放學 After School' } };
@@ -2650,7 +2701,7 @@
       const currentInfo = findRoomLessonInfo(roomNum, appData.currentCycleDay, currentPid);
       const nextInfo = findRoomLessonInfo(roomNum, appData.currentCycleDay, nextPid);
 
-      // 1. Full-Screen Door Monitor Tab (No School Name — SmartSchool SLRS Only)
+      // 1. Full-Screen Door Monitor Tab (Clean, Centered, Zero Duplicate)
       const frame = document.getElementById('small-monitor-frame');
       if (frame) {
         frame.innerHTML = `
@@ -2673,7 +2724,7 @@
           </div>`;
       }
 
-      // 2. Pinned Side-by-Side Door Monitor (Current = Big Card, Next = Compact Zero-Scroll Bar!)
+      // 2. Pinned Side-by-Side Door Monitor (Current = Big Card, Next = Compact Bar)
       const pinnedBody = document.getElementById('pinned-door-monitor-body');
       if (pinnedBody) {
         pinnedBody.innerHTML = `
@@ -2812,7 +2863,7 @@
     // =========================================================================
     // 14. MODAL & INITIALIZATION
     // =========================================================================
-    function openWorksheetModal(rawCell, customTopic, paperMode, absentTeacherName, scopeMode = 'current') {
+    function openWorksheetModal(rawCell, customTopic, paperMode, absentTeacherName, scopeMode = 'current', isAutoPreview = false) {
       const sched = matchScheduleByCell(rawCell);
       const sen = getSenReminderByCell(rawCell);
       document.getElementById('modal-worksheet-title').textContent = `${rawCell} — ${paperMode}`;
@@ -2820,10 +2871,19 @@
       document.getElementById('modal-sen-banner').innerHTML = `💙 匿名 SEN 課堂照顧提示 (Anonymous SEN Reminder)：${sen.zh}<br/><span class="text-indigo-700">${sen.en}</span>`;
       document.getElementById('modal-worksheet-body').textContent = generateWorksheetAndAnswerKeyText(rawCell, customTopic, paperMode, absentTeacherName, scopeMode);
       document.getElementById('modal-print-btn').onclick = () => exportWordLessonPack(rawCell, customTopic, paperMode, absentTeacherName);
+
+      const autoBadge = document.getElementById('modal-auto-preview-badge');
+      if (autoBadge) {
+        if (isAutoPreview) autoBadge.classList.remove('hidden');
+        else autoBadge.classList.add('hidden');
+      }
       document.getElementById('worksheet-modal').classList.remove('hidden');
     }
 
-    function closeWorksheetModal() { document.getElementById('worksheet-modal').classList.add('hidden'); }
+    function closeWorksheetModal() {
+      const modal = document.getElementById('worksheet-modal');
+      if (modal) modal.classList.add('hidden');
+    }
 
     function refreshAllActiveViews() {
       if (currentUserRole === 'ckku' || currentUserRole === 'tmchan') renderTeacherPortal();
@@ -2835,11 +2895,10 @@
     }
 
     window.onload = function() {
-      // Launch directly in clean SmartSchool SLRS Competition Mode at simulated 10:42 before P4
       updateClockDisplays();
-      togglePinnedDoorPreview(true);
+      pinnedDoorVisible = true;
       loginAsRole('ckku');
     };
   </script>
 </body>
-</html>
+</html>  
