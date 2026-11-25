@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>仁濟醫院靚次伯紀念中學 - 智能請假及代課管理系統 (SmartSchool SLRS)</title>
+  <title>SmartSchool SLRS - 智能請假及代課管理系統 | School Leave &amp; Relief System</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,48 +11,48 @@
 
   <style>
     :root {
-      --lcp-green-bar: #68b800;
-      --lcp-green-dark: #4d8a00;
-      --lcp-bg-soft: #f2f9e9;
-      --lcp-orange-accent: #f58220;
+      --slrs-green-bar: #68b800;
+      --slrs-green-dark: #3f7300;
+      --slrs-bg-soft: #f2f9e9;
+      --slrs-orange-accent: #f58220;
     }
 
     body {
       font-family: 'Noto Sans HK', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background-color: var(--lcp-bg-soft);
+      background-color: var(--slrs-bg-soft);
       color: #1e293b;
       min-height: 100vh;
       overflow-x: hidden;
       scroll-behavior: smooth;
     }
 
-    .lcp-header-banner {
+    .slrs-header-banner {
       background: linear-gradient(90deg, #dcf4a2 0%, #bfe663 45%, #d6f093 80%, #ecf8ce 100%);
       position: relative;
       overflow: hidden;
     }
 
-    .lcp-title-stroke {
-      color: #111827;
+    .slrs-title-stroke {
+      color: #0f172a;
       text-shadow:
-        -1.5px -1.5px 0 #ffffff,
-         1.5px -1.5px 0 #ffffff,
-        -1.5px  1.5px 0 #ffffff,
-         1.5px  1.5px 0 #ffffff;
+        -1px -1px 0 #ffffff,
+         1px -1px 0 #ffffff,
+        -1px  1px 0 #ffffff,
+         1px  1px 0 #ffffff;
     }
 
-    .lcp-main-navbar {
-      background-color: var(--lcp-green-bar);
-      box-shadow: 0 2px 6px rgba(68, 120, 0, 0.15);
+    .slrs-main-navbar {
+      background-color: var(--slrs-green-bar);
+      box-shadow: 0 2px 6px rgba(68, 120, 0, 0.16);
     }
 
-    .lcp-orange-arrow {
+    .slrs-orange-arrow {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       width: 18px;
       height: 18px;
-      background-color: var(--lcp-orange-accent);
+      background-color: var(--slrs-orange-accent);
       color: #ffffff;
       border-radius: 4px;
       font-weight: 900;
@@ -77,20 +77,20 @@
 
     @keyframes overdue-flash {
       0%, 100% { border-color: #dc2626; background-color: #fef2f2; box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.25); }
-      50% { border-color: #f97316; background-color: #fff7ed; box-shadow: 0 0 0 8px rgba(249, 115, 22, 0.4); }
+      50% { border-color: #f97316; background-color: #fff7ed; box-shadow: 0 0 0 8px rgba(249, 115, 22, 0.42); }
     }
     .overdue-alert-card { animation: overdue-flash 1.2s infinite ease-in-out; }
 
     /* Judge Spotlight Glow for Auto-Demo Recording */
     @keyframes spotlight-glow {
-      0%, 100% { box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.95), 0 0 24px rgba(245, 158, 11, 0.65); transform: scale(1); }
-      50% { box-shadow: 0 0 0 8px rgba(234, 88, 12, 0.95), 0 0 32px rgba(234, 88, 12, 0.75); transform: scale(1.008); }
+      0%, 100% { box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.95), 0 0 22px rgba(245, 158, 11, 0.65); transform: scale(1); }
+      50% { box-shadow: 0 0 0 8px rgba(234, 88, 12, 0.95), 0 0 32px rgba(234, 88, 12, 0.78); transform: scale(1.008); }
     }
     .demo-spotlight {
       position: relative;
       z-index: 25;
       border-radius: 0.75rem;
-      animation: spotlight-glow 1.1s infinite ease-in-out;
+      animation: spotlight-glow 1.15s infinite ease-in-out;
       transition: all 0.25s ease;
     }
 
@@ -103,120 +103,125 @@
     }
   </style>
 </head>
-<body class="flex flex-col min-h-screen text-slate-800 pb-32">
+<body class="flex flex-col min-h-screen text-slate-800 pb-36">
 
   <!-- ==========================================================================
-       0. FLOATING TOP-CENTER TOAST (Always Visible During Video Recording!)
+       0. FLOATING TOP-CENTER BILINGUAL TOAST (Always Visible During Recording)
        ========================================================================== -->
-  <div id="floating-toast" class="hidden fixed top-4 left-1/2 -translate-x-1/2 z-[70] w-[92%] max-w-xl rounded-2xl px-4 py-3 border-2 shadow-2xl flex items-start justify-between gap-3 toast-animate">
+  <div id="floating-toast" class="hidden fixed top-3 left-1/2 -translate-x-1/2 z-[70] w-[94%] max-w-2xl rounded-2xl px-4 py-3 border-2 shadow-2xl flex items-start justify-between gap-3 toast-animate">
     <div class="flex items-start gap-2.5 min-w-0">
       <span id="floating-toast-icon" class="text-xl flex-shrink-0 leading-none mt-0.5">✅</span>
       <div class="min-w-0">
         <div id="floating-toast-title" class="text-xs sm:text-sm font-black leading-tight">操作成功 Success</div>
-        <p id="floating-toast-desc" class="text-[11px] sm:text-xs font-bold opacity-90 mt-0.5 leading-snug"></p>
+        <p id="floating-toast-desc" class="text-[11px] sm:text-xs font-bold opacity-95 mt-0.5 leading-snug"></p>
       </div>
     </div>
     <button type="button" onclick="hideSystemToast()" class="text-xs font-black px-2 py-1 rounded-lg hover:bg-black/10 flex-shrink-0">✕</button>
   </div>
 
   <!-- ==========================================================================
-       1. COMPETITION HEADER BAR (One-Click Auto-Play + Live Clock)
+       1. COMPACT SINGLE-ROW PRODUCT HEADER (SmartSchool SLRS Only + Sim Clock)
        ========================================================================== -->
-  <header id="app-top-header" class="lcp-header-banner border-b border-lime-300">
-    <div class="max-w-7xl mx-auto px-3 sm:px-4 py-2 relative z-10 flex items-center justify-between gap-2 flex-wrap">
-      <!-- Left: School Crest & Product Title -->
+  <header id="app-top-header" class="slrs-header-banner border-b border-lime-300">
+    <div class="max-w-7xl mx-auto px-3 sm:px-4 py-1.5 relative z-10 flex items-center justify-between gap-2 flex-wrap">
+      <!-- Left: Product Logo & Bilingual Name ONLY (No School Name) -->
       <div class="flex items-center gap-2.5 min-w-0">
-        <div class="w-10 h-11 sm:w-12 sm:h-14 flex-shrink-0 flex items-center justify-center">
-          <svg viewBox="0 0 100 115" class="w-full h-full drop-shadow-sm">
-            <path d="M50 4 L92 18 L92 56 C92 84 50 108 50 108 C50 108 8 84 8 56 L8 18 Z" fill="#ffffff" stroke="#1e3a8a" stroke-width="4"/>
-            <path d="M50 10 L86 22 L86 55 C86 79 50 100 50 100 C50 100 14 79 14 55 L14 22 Z" fill="#ffffff" stroke="#dc2626" stroke-width="2.5"/>
-            <circle cx="50" cy="54" r="20" fill="#eff6ff" stroke="#1e3a8a" stroke-width="2.5"/>
-            <path d="M36 54 H64 M50 40 V68" stroke="#dc2626" stroke-width="4" stroke-linecap="round"/>
-            <path d="M18 92 Q50 104 82 92 L86 100 Q50 112 14 100 Z" fill="#1e3a8a"/>
-            <text x="50" y="99" text-anchor="middle" fill="#ffffff" font-size="6.8" font-weight="bold">仁濟醫院靚次伯紀念中學</text>
+        <div class="w-9 h-9 sm:w-10 sm:h-10 flex-shrink-0 rounded-xl bg-[#2b5400] text-white flex items-center justify-center shadow-sm border-2 border-white">
+          <svg viewBox="0 0 24 24" class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="14" rx="2"></rect>
+            <path d="M8 20h8"></path>
+            <path d="M12 18v2"></path>
+            <path d="M8 10l2.5 2.5L16 7.5" stroke="#bef264" stroke-width="2.6"></path>
           </svg>
         </div>
 
         <div class="min-w-0">
-          <div class="flex items-center gap-2 flex-wrap">
-            <h1 class="text-base sm:text-xl font-black tracking-wide lcp-title-stroke truncate">
-              SmartSchool SLRS 智能請假及代課管理系統
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <h1 class="text-sm sm:text-lg font-black tracking-wide slrs-title-stroke truncate">
+              SmartSchool SLRS
             </h1>
-            <span class="hidden md:inline-block bg-[#2b5400] text-white text-[10px] font-bold px-2 py-0.5 rounded whitespace-nowrap">
-              🏆 比賽實時演示版 Competition Live Edition
+            <span class="hidden sm:inline-block bg-[#2b5400] text-white text-[10px] font-bold px-2 py-0.5 rounded whitespace-nowrap">
+              智能請假及代課系統 · School Leave &amp; Relief System
             </span>
           </div>
-          <p class="text-[11px] sm:text-xs font-extrabold tracking-tight lcp-title-stroke truncate">
-            仁濟醫院靚次伯紀念中學 · School Leave &amp; Relief System
+          <p class="sm:hidden text-[10px] font-extrabold text-slate-800 truncate">
+            智能請假及代課系統 · School Leave &amp; Relief System
           </p>
         </div>
       </div>
 
-      <!-- Right: One-Click Auto-Demo Controls & Calendar Badge -->
-      <div class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0 flex-wrap">
+      <!-- Right: Compact Auto-Demo Controls & Synchronized Simulated Lesson Clock -->
+      <div class="flex items-center gap-1.5 flex-shrink-0 flex-wrap">
         <button
           type="button"
-          onclick="toggleAutoDemoDirector()"
+          onclick="startOrStopAutoDemo()"
           id="btn-autoplay-top"
-          class="px-3 py-1.5 rounded-xl text-xs font-black bg-amber-500 hover:bg-amber-600 text-slate-950 shadow-md border-2 border-amber-300 transition flex items-center gap-1.5 whitespace-nowrap"
+          class="px-2.5 py-1 rounded-lg text-[11px] sm:text-xs font-black bg-amber-500 hover:bg-amber-600 text-slate-950 shadow-sm border border-amber-300 transition flex items-center gap-1 whitespace-nowrap"
         >
-          <span>▶ 一鍵自動播放演示 Auto-Play</span>
+          <span>▶ 自動演示 Auto-Play</span>
+        </button>
+
+        <button
+          type="button"
+          onclick="togglePauseAutoDemo()"
+          id="btn-pause-top"
+          class="hidden px-2.5 py-1 rounded-lg text-[11px] sm:text-xs font-black bg-sky-600 hover:bg-sky-700 text-white shadow-sm transition whitespace-nowrap"
+        >
+          ⏸ 暫停 Pause
         </button>
 
         <button
           type="button"
           onclick="togglePinnedDoorPreview()"
           id="top-btn-pin-door"
-          class="px-2.5 py-1.5 rounded-xl text-xs font-black bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition flex items-center gap-1 whitespace-nowrap"
+          class="px-2.5 py-1 rounded-lg text-[11px] sm:text-xs font-black bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition whitespace-nowrap"
         >
-          <span>🪟 門外小螢幕：開啟</span>
+          🪟 門外屏 Door: ON
         </button>
 
         <button
           type="button"
           onclick="resetAllSystemData(true)"
-          class="px-2.5 py-1.5 rounded-xl text-xs font-black bg-white hover:bg-rose-50 text-rose-700 border border-rose-300 shadow-sm transition whitespace-nowrap"
-          title="重設回請假前初始狀態，方便重新錄影"
+          class="px-2 py-1 rounded-lg text-[11px] sm:text-xs font-black bg-white hover:bg-rose-50 text-rose-700 border border-rose-300 shadow-sm transition whitespace-nowrap"
+          title="重設演示狀態 Reset Demo"
         >
-          ↺ 重置重錄 Reset
+          ↺ 重置 Reset
         </button>
 
-        <div class="bg-white/95 border border-lime-600/50 px-2.5 py-1 rounded-lg shadow-sm flex items-center gap-2 text-xs whitespace-nowrap">
-          <div class="flex items-center gap-1">
-            <span class="w-2 h-2 rounded-full bg-emerald-500 pulse-dot"></span>
-            <span id="auto-header-date" class="font-bold text-slate-700">--</span>
-          </div>
-          <span class="text-slate-300">|</span>
+        <!-- Synchronized Simulated Bell Clock (Option B: Matches Period P4 10:50-11:30!) -->
+        <div class="bg-white/95 border border-lime-600/50 px-2.5 py-1 rounded-lg shadow-sm flex items-center gap-1.5 text-[11px] sm:text-xs whitespace-nowrap">
           <span id="auto-header-cycle" class="font-black text-[#2b5400] bg-lime-100 px-1.5 py-0.5 rounded">DAY 2</span>
-          <span class="hidden sm:inline text-slate-300">|</span>
-          <span id="auto-header-period-badge" class="hidden sm:inline-block font-black text-white bg-[#68b800] px-2 py-0.5 rounded">本節 P4</span>
-          <span id="auto-header-clock" class="font-mono font-black text-slate-900 bg-slate-100 px-1.5 py-0.5 rounded">10:55:00</span>
+          <span id="auto-header-period-badge" class="font-black text-white bg-[#68b800] px-1.5 py-0.5 rounded">本節 Now: P4 (10:50–11:30)</span>
+          <span class="font-mono font-black text-slate-900 bg-slate-100 px-1.5 py-0.5 rounded flex items-center gap-1">
+            <span>🕒</span>
+            <span id="sim-header-clock">10:42</span>
+          </span>
         </div>
       </div>
     </div>
   </header>
 
   <!-- ==========================================================================
-       2. WORKFLOW NAVIGATION BAR (Ordered Strictly by Story Flow 1 -> 5)
+       2. BILINGUAL WORKFLOW NAVIGATION BAR (Ordered Strictly 1 -> 5)
        ========================================================================== -->
-  <nav id="app-main-nav" class="lcp-main-navbar text-white sticky top-0 z-40">
+  <nav id="app-main-nav" class="slrs-main-navbar text-white sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-3 sm:px-4">
       <div class="flex items-center justify-between py-1.5 gap-2 overflow-x-auto no-scrollbar">
 
         <div class="flex items-center gap-1 sm:gap-1.5 flex-nowrap">
-          <button onclick="manualSelectRole('ckku')" id="nav-tab-ckku" class="px-2.5 py-1.5 rounded-lg text-xs font-black transition bg-white text-[#2b5400] shadow-sm whitespace-nowrap">
+          <button onclick="manualSelectRole('ckku')" id="nav-tab-ckku" class="px-2.5 py-1 rounded-lg text-xs font-black transition bg-white text-[#2b5400] shadow-sm whitespace-nowrap">
             ① 科任請假 Leave (CKKU)
           </button>
-          <button onclick="manualSelectRole('vp_admin')" id="nav-tab-vp" class="px-2.5 py-1.5 rounded-lg text-xs font-bold transition bg-black/15 hover:bg-white/20 text-white whitespace-nowrap">
+          <button onclick="manualSelectRole('vp_admin')" id="nav-tab-vp" class="px-2.5 py-1 rounded-lg text-xs font-bold transition bg-black/15 hover:bg-white/20 text-white whitespace-nowrap">
             ② 副校長批核 VP Approve
           </button>
-          <button onclick="manualSelectRole('staffroom_tv')" id="nav-tab-tv" class="px-2.5 py-1.5 rounded-lg text-xs font-bold transition bg-black/15 hover:bg-white/20 text-white whitespace-nowrap">
+          <button onclick="manualSelectRole('staffroom_tv')" id="nav-tab-tv" class="px-2.5 py-1 rounded-lg text-xs font-bold transition bg-black/15 hover:bg-white/20 text-white whitespace-nowrap">
             ③ 教員室看板 Staffroom Board
           </button>
-          <button onclick="manualSelectRole('tmchan')" id="nav-tab-tmchan" class="px-2.5 py-1.5 rounded-lg text-xs font-bold transition bg-black/15 hover:bg-white/20 text-white whitespace-nowrap">
+          <button onclick="manualSelectRole('tmchan')" id="nav-tab-tmchan" class="px-2.5 py-1 rounded-lg text-xs font-bold transition bg-black/15 hover:bg-white/20 text-white whitespace-nowrap">
             ④ 代課報到 Cover (TMCHAN)
           </button>
-          <button onclick="manualSelectRole('door_monitor')" id="nav-tab-door" class="px-2.5 py-1.5 rounded-lg text-xs font-bold transition bg-black/15 hover:bg-white/20 text-white whitespace-nowrap">
+          <button onclick="manualSelectRole('door_monitor')" id="nav-tab-door" class="px-2.5 py-1 rounded-lg text-xs font-bold transition bg-black/15 hover:bg-white/20 text-white whitespace-nowrap">
             ⑤ 門外全屏 Door Display
           </button>
         </div>
@@ -228,7 +233,7 @@
             id="nav-overdue-btn"
             class="px-2.5 py-1 rounded-lg text-[11px] font-black bg-rose-600 hover:bg-rose-700 text-white shadow-sm transition whitespace-nowrap"
           >
-            🔔 模擬未到班提示 Late Alert
+            🔔 模擬逾時提示 Late Alert
           </button>
         </div>
 
@@ -239,25 +244,25 @@
   <!-- ==========================================================================
        3. MAIN WORKSPACE (Left Main Operational System + Right Live Door Screen)
        ========================================================================== -->
-  <div class="max-w-7xl mx-auto w-full px-3 sm:px-4 py-4 flex-1">
-    <div id="workspace-grid" class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+  <div class="max-w-7xl mx-auto w-full px-3 sm:px-4 py-3 flex-1">
+    <div id="workspace-grid" class="grid grid-cols-1 lg:grid-cols-12 gap-3.5 items-start">
 
       <!-- LEFT 8 COLS: ACTIVE OPERATIONAL SCREEN -->
-      <main id="main-content-col" class="lg:col-span-8 space-y-4">
+      <main id="main-content-col" class="lg:col-span-8 space-y-3.5">
 
         <!-- ====================================================================
              SCREEN 1 & 4: TEACHER PORTAL (CKKU Leave + TMCHAN Cover Check-In)
              ==================================================================== -->
-        <section id="screen-teacher" class="space-y-4">
+        <section id="screen-teacher" class="space-y-3.5">
 
           <!-- Sub-Tab & Staff Switcher -->
-          <div class="bg-white rounded-xl p-2.5 shadow-sm border border-lime-300 flex flex-wrap items-center justify-between gap-2">
+          <div class="bg-white rounded-xl px-3 py-2 shadow-sm border border-lime-300 flex flex-wrap items-center justify-between gap-2">
             <div class="flex flex-wrap items-center gap-1.5">
-              <button onclick="switchTeacherSubTab('timetable-leave')" id="teacher-subtab-btn-leave" class="px-3 py-1.5 rounded-lg text-xs font-black transition bg-[#68b800] text-white">
-                📅 個人全日課表及請假申請 (Leave &amp; Lesson Pack)
+              <button onclick="switchTeacherSubTab('timetable-leave')" id="teacher-subtab-btn-leave" class="px-3 py-1 rounded-lg text-xs font-black transition bg-[#68b800] text-white">
+                📅 請假及課業包 Leave &amp; Lesson Pack
               </button>
-              <button onclick="switchTeacherSubTab('my-substitutions')" id="teacher-subtab-btn-sub" class="px-3 py-1.5 rounded-lg text-xs font-black transition text-slate-700 hover:bg-lime-50 flex items-center gap-1.5">
-                <span>📋 代課表、SEN 提示及兩步報到 (Cover &amp; Check-In)</span>
+              <button onclick="switchTeacherSubTab('my-substitutions')" id="teacher-subtab-btn-sub" class="px-3 py-1 rounded-lg text-xs font-black transition text-slate-700 hover:bg-lime-50 flex items-center gap-1.5">
+                <span>📋 代課表、SEN 提示及報到 Cover &amp; Check-In</span>
                 <span id="teacher-sub-count-badge" class="px-2 py-0.2 rounded-full text-[11px] bg-amber-500 text-white font-black">0</span>
               </button>
             </div>
@@ -268,31 +273,30 @@
             </div>
           </div>
 
-          <!-- SUBVIEW 1A: LEAVE APPLICATION + AUTO LESSON PACK + SEN REMINDER -->
-          <div id="teacher-subview-leave" class="space-y-4">
+          <!-- SUBVIEW 1A: COMPACT LEAVE APPLICATION + SEN + 40-MIN LESSON PACK -->
+          <div id="teacher-subview-leave" class="space-y-3.5">
 
-            <!-- Top Action Card: Leave Submission + SEN + 40-Min Lesson Pack -->
-            <div id="leave-form-card" class="bg-white rounded-xl p-4 shadow-sm border-2 border-[#68b800] space-y-3">
+            <div id="leave-form-card" class="bg-white rounded-xl p-3.5 shadow-sm border-2 border-[#68b800] space-y-2.5">
               <div class="flex items-center justify-between gap-2 border-b border-slate-100 pb-2 flex-wrap">
                 <div class="flex items-center gap-2">
-                  <span class="lcp-orange-arrow">↘</span>
+                  <span class="slrs-orange-arrow">↘</span>
                   <div>
                     <h2 class="text-sm sm:text-base font-black text-slate-900">
-                      手機／平板一鍵請假及 40 分鐘課業包 Leave Application &amp; Lesson Pack
+                      手機／平板一鍵請假及 40 分鐘課業包 · One-Click Leave &amp; 40-Min Lesson Pack
                     </h2>
                     <p class="text-[11px] text-slate-500">
-                      免校工逐層派紙：自動按周次生成 40 分鐘溫習工作紙連評分答案及匿名 SEN 提示
+                      免校工逐層派紙，自動按周次生成溫習工作紙連答案及匿名 SEN 提示 · No paper forms; auto-generates worksheets &amp; anonymous SEN reminders
                     </p>
                   </div>
                 </div>
-                <span id="ckku-leave-status-badge" class="text-[11px] font-black px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 border border-slate-300 whitespace-nowrap">
-                  📝 準備提交請假申請 Ready to Submit
+                <span id="ckku-leave-status-badge" class="text-[11px] font-black px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-300 whitespace-nowrap">
+                  📝 準備提交 Ready to Submit
                 </span>
               </div>
 
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <div>
-                  <label class="block text-[11px] font-bold text-slate-700 mb-1">請假循環日 Cycle Day</label>
+                  <label class="block text-[11px] font-bold text-slate-700 mb-0.5">請假循環日 Cycle Day</label>
                   <select id="leave-form-day" onchange="selectLeaveDay(this.value)" class="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 text-xs font-black bg-lime-50 text-lime-950">
                     <option value="DAY 1">DAY 1</option>
                     <option value="DAY 2" selected>DAY 2 (今日 Today)</option>
@@ -303,7 +307,7 @@
                   </select>
                 </div>
                 <div>
-                  <label class="block text-[11px] font-bold text-slate-700 mb-1">請假類別 Leave Type</label>
+                  <label class="block text-[11px] font-bold text-slate-700 mb-0.5">請假類別 Leave Type</label>
                   <select id="leave-form-reason" class="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 text-xs font-bold bg-white">
                     <option value="[OD] 公假 Official Duty">[OD] 公假 Official Duty</option>
                     <option value="[SL] 病假 Sick Leave">[SL] 病假 Sick Leave</option>
@@ -316,51 +320,51 @@
               <!-- Affected Lessons List -->
               <div id="affected-lessons-wrapper">
                 <label class="block text-[11px] font-bold text-slate-700 mb-1">
-                  當日受影響課節及自動對應進度 Affected Lessons:
+                  當日受影響課節 Affected Lessons (Auto-Matched to Schedule):
                 </label>
-                <div id="leave-affected-lessons-list" class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 max-h-36 overflow-y-auto pr-1"></div>
+                <div id="leave-affected-lessons-list" class="grid grid-cols-2 sm:grid-cols-3 gap-1.5"></div>
               </div>
 
-              <!-- Anonymous SEN Classroom Care Box -->
-              <div id="sen-preview-card" class="p-3 rounded-xl bg-indigo-50 border-2 border-indigo-300 space-y-1">
+              <!-- Anonymous SEN Classroom Care Box (Bilingual) -->
+              <div id="sen-preview-card" class="p-2.5 rounded-xl bg-indigo-50 border-2 border-indigo-300 space-y-1">
                 <div class="flex items-center justify-between gap-2 flex-wrap">
-                  <span class="text-xs font-black text-indigo-950">💙 匿名 SEN 課堂照顧提示 (Anonymous SEN Reminder)</span>
+                  <span class="text-xs font-black text-indigo-950">💙 匿名 SEN 課堂照顧提示 · Anonymous SEN Classroom Reminder</span>
                   <span class="text-[10px] font-black bg-white text-indigo-800 px-2 py-0.5 rounded border border-indigo-200">
-                    🔒 校內私隱保障 · 絕不顯示學生姓名
+                    🔒 校內私隱保障 · On-Campus &amp; No Student Names
                   </span>
                 </div>
-                <p id="leave-sen-preview-text" class="text-xs text-indigo-900 font-bold leading-snug"></p>
+                <p id="leave-sen-preview-text" class="text-[11px] text-indigo-950 font-bold leading-snug"></p>
               </div>
 
-              <!-- 40-Min Worksheet Generator Box -->
-              <div id="worksheet-box-card" class="p-3 rounded-xl bg-[#f4fae8] border border-[#68b800] space-y-2">
+              <!-- 40-Min Worksheet Generator Box (Bilingual) -->
+              <div id="worksheet-box-card" class="p-2.5 rounded-xl bg-[#f4fae8] border border-[#68b800] space-y-2">
                 <div class="flex items-center justify-between gap-1 flex-wrap">
-                  <span class="text-xs font-black text-[#2b5400]">📄 40 分鐘溫習工作紙連評分答案 (40-Min Lesson Pack)</span>
+                  <span class="text-xs font-black text-[#2b5400]">📄 40 分鐘溫習課業包連答案 · 40-Min Lesson Pack &amp; Answer Key</span>
                   <span id="schedule-tracking-status-badge" class="text-[10px] font-black bg-emerald-100 text-emerald-900 px-2 py-0.5 rounded border border-emerald-300 whitespace-nowrap">
-                    ⚡ 已對照 Week 10 教學進度
+                    ⚡ Week 10 進度 Current Week
                   </span>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   <div>
-                    <label class="block text-[11px] font-bold text-slate-700 mb-1">出題範圍 Curriculum Scope:</label>
-                    <select id="leave-scope-select" onchange="refreshWorksheetPreviewFromForm()" class="w-full px-2.5 py-1.5 rounded-lg border border-lime-500 text-xs font-bold bg-white text-slate-900">
-                      <option value="current" selected>📌 本周教學進度 (Week 9–10 Current)</option>
-                      <option value="prior">🔄 前期溫習範圍 (Week 1–8 Prior Revision)</option>
+                    <label class="block text-[10px] font-bold text-slate-700 mb-0.5">出題範圍 Curriculum Scope:</label>
+                    <select id="leave-scope-select" onchange="refreshWorksheetPreviewFromForm()" class="w-full px-2 py-1 rounded-lg border border-lime-500 text-xs font-bold bg-white text-slate-900">
+                      <option value="current" selected>📌 本周進度 Current Progress (Weeks 9–10)</option>
+                      <option value="prior">🔄 前期溫習 Prior Revision (Weeks 1–8)</option>
                     </select>
                   </div>
                   <div>
-                    <label class="block text-[11px] font-bold text-slate-700 mb-1">自訂課題 Custom Topic (選填):</label>
+                    <label class="block text-[10px] font-bold text-slate-700 mb-0.5">自訂課題 Custom Topic (選填 Optional):</label>
                     <div class="flex items-center gap-1">
-                      <input type="text" id="leave-progress-input" value="" placeholder="留空即按校本進度自動出題..." oninput="refreshWorksheetPreviewFromForm()" class="flex-1 min-w-0 px-2.5 py-1.5 rounded-lg border border-lime-500 text-xs font-bold bg-white" />
-                      <button type="button" onclick="generateSmartWorksheet()" id="btn-smart-gen" class="px-2.5 py-1.5 rounded-lg bg-purple-700 hover:bg-purple-800 text-white text-[11px] font-black whitespace-nowrap">
-                        ✨ 即時生成
+                      <input type="text" id="leave-progress-input" value="" placeholder="留空即按進度出題 Leave blank for auto..." oninput="refreshWorksheetPreviewFromForm()" class="flex-1 min-w-0 px-2 py-1 rounded-lg border border-lime-500 text-xs font-bold bg-white" />
+                      <button type="button" onclick="generateSmartWorksheet()" id="btn-smart-gen" class="px-2 py-1 rounded-lg bg-purple-700 hover:bg-purple-800 text-white text-[11px] font-black whitespace-nowrap">
+                        ✨ 生成 Generate
                       </button>
                     </div>
                   </div>
                 </div>
 
-                <textarea id="leave-generated-classwork" rows="4" class="w-full p-2 rounded-lg border border-slate-300 text-[11px] text-slate-800 leading-snug bg-white font-mono"></textarea>
+                <textarea id="leave-generated-classwork" rows="3" class="w-full p-2 rounded-lg border border-slate-300 text-[11px] text-slate-800 leading-snug bg-white font-mono"></textarea>
 
                 <div class="flex items-center justify-between gap-2 flex-wrap">
                   <div class="flex items-center gap-3 text-[11px] font-bold">
@@ -373,8 +377,8 @@
                       <span>單元小測 Quiz</span>
                     </label>
                   </div>
-                  <button type="button" onclick="openPreviewFromForm()" class="text-[11px] font-black bg-blue-700 hover:bg-blue-800 text-white px-3 py-1 rounded-lg shadow-sm transition whitespace-nowrap">
-                    🖨️ 預覽及列印課業包 Preview / Print
+                  <button type="button" onclick="openPreviewFromForm()" class="text-[11px] font-black bg-blue-700 hover:bg-blue-800 text-white px-2.5 py-1 rounded-lg shadow-sm transition whitespace-nowrap">
+                    🖨️ 預覽完整課業包 Preview Pack
                   </button>
                 </div>
               </div>
@@ -384,19 +388,19 @@
                 type="button"
                 id="btn-submit-leave"
                 onclick="submitTeacherLeaveRequest()"
-                class="w-full py-3 rounded-xl font-black text-white text-sm shadow-md transition hover:opacity-95 active:scale-[0.99] flex items-center justify-center gap-2"
-                style="background-color: var(--lcp-green-bar);"
+                class="w-full py-2.5 rounded-xl font-black text-white text-xs sm:text-sm shadow-md transition hover:opacity-95 active:scale-[0.99] flex items-center justify-center gap-2"
+                style="background-color: var(--slrs-green-bar);"
               >
-                <span>📨 提交請假申請並附上 40 分鐘課業包 Submit Leave Application</span>
+                <span>📨 提交請假申請並附上 40 分鐘課業包 · Submit Leave Application</span>
               </button>
             </div>
 
-            <!-- Bottom Card: Full 6-Day Timetable -->
-            <div class="bg-white rounded-xl p-4 shadow-sm border border-lime-300 space-y-2.5">
-              <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2">
+            <!-- Full 6-Day Timetable Card -->
+            <div class="bg-white rounded-xl p-3.5 shadow-sm border border-lime-300 space-y-2">
+              <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-1.5">
                 <div class="flex items-center gap-2">
-                  <span class="lcp-orange-arrow">↘</span>
-                  <h3 id="timetable-owner-title" class="text-sm font-black text-slate-900">個人全日時間表 Full-Day Timetable (P1–P8)</h3>
+                  <span class="slrs-orange-arrow">↘</span>
+                  <h3 id="timetable-owner-title" class="text-xs sm:text-sm font-black text-slate-900">個人全日時間表 Full-Day Timetable (P1–P8)</h3>
                 </div>
                 <div id="timetable-day-pills" class="flex items-center gap-1"></div>
               </div>
@@ -404,7 +408,7 @@
                 <table class="w-full text-center border-collapse school-table text-xs">
                   <thead>
                     <tr class="bg-[#eef8dc] text-[#2b5400] font-black">
-                      <th class="p-2 w-24 text-left">課節 Period</th>
+                      <th class="p-1.5 w-24 text-left">課節 Period</th>
                       <th onclick="selectLeaveDay('DAY 1')" id="th-DAY-1" class="p-1.5 cursor-pointer hover:bg-lime-200">DAY 1</th>
                       <th onclick="selectLeaveDay('DAY 2')" id="th-DAY-2" class="p-1.5 cursor-pointer hover:bg-lime-200">DAY 2</th>
                       <th onclick="selectLeaveDay('DAY 3')" id="th-DAY-3" class="p-1.5 cursor-pointer hover:bg-lime-200">DAY 3</th>
@@ -421,17 +425,17 @@
           </div>
 
           <!-- SUBVIEW 1B: SUBSTITUTE TEACHER SCHEDULE & TWO-STEP CHECK-IN -->
-          <div id="teacher-subview-substitutions" class="hidden space-y-4">
+          <div id="teacher-subview-substitutions" class="hidden space-y-3.5">
             <div class="bg-white rounded-xl p-4 shadow-sm border-2 border-[#68b800] space-y-3">
-              <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
+              <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2">
                 <div class="flex items-center gap-2">
-                  <span class="lcp-orange-arrow">↘</span>
+                  <span class="slrs-orange-arrow">↘</span>
                   <div>
                     <h2 class="text-sm sm:text-base font-black text-slate-900">
-                      代課全日表、匿名 SEN 提示及兩步報到 (Cover Duties &amp; Two-Step Check-In)
+                      代課全日表、匿名 SEN 提示及兩步報到 · Cover Duties, SEN Care &amp; Two-Step Check-In
                     </h2>
                     <p class="text-[11px] text-slate-500">
-                      第 1 步「簽收確認」 ➔ 第 2 步「到班報到」，右側門外顯示屏及教員室看板將即時同步轉綠
+                      第 1 步「簽收確認」 ➔ 第 2 步「到班報到」，門外顯示屏及教員室看板即時同步 · Step 1 Ack ➔ Step 2 Arrived updates all live screens
                     </p>
                   </div>
                 </div>
@@ -445,10 +449,10 @@
                   <thead>
                     <tr class="bg-[#eef8dc] text-[#2b5400] font-black whitespace-nowrap">
                       <th class="p-2.5">課節 Period</th>
-                      <th class="p-2.5">班別及課室</th>
-                      <th class="p-2.5">請假原任</th>
-                      <th class="p-2.5">指派代課</th>
-                      <th class="p-2.5">課業包及匿名 SEN 提示</th>
+                      <th class="p-2.5">班別及課室 Class &amp; Room</th>
+                      <th class="p-2.5">請假原任 Absent</th>
+                      <th class="p-2.5">指派代課 Cover</th>
+                      <th class="p-2.5">課業包及匿名 SEN 提示 Lesson Pack &amp; SEN</th>
                       <th class="p-2.5 text-center">兩步報到 Two-Step Check-In</th>
                     </tr>
                   </thead>
@@ -461,42 +465,42 @@
         </section>
 
         <!-- ====================================================================
-             SCREEN 2: VICE PRINCIPAL / GENERAL OFFICE APPROVAL PORTAL
+             SCREEN 2: VICE PRINCIPAL APPROVAL & FAIR MATCHING PORTAL
              ==================================================================== -->
-        <section id="screen-admin" class="hidden space-y-4">
-          <div class="bg-white rounded-xl p-2.5 shadow-sm border border-lime-300 flex flex-wrap items-center justify-between gap-2">
+        <section id="screen-admin" class="hidden space-y-3.5">
+          <div class="bg-white rounded-xl px-3 py-2 shadow-sm border border-lime-300 flex flex-wrap items-center justify-between gap-2">
             <div class="flex flex-wrap items-center gap-1.5">
-              <button onclick="switchAdminSubTab('approval')" id="admin-subtab-btn-approval" class="px-3 py-1.5 rounded-lg text-xs font-black transition bg-[#68b800] text-white">
-                ✅ 請假批核及公平代課編排 (VP Approval &amp; Fair Matching)
+              <button onclick="switchAdminSubTab('approval')" id="admin-subtab-btn-approval" class="px-3 py-1 rounded-lg text-xs font-black transition bg-[#68b800] text-white">
+                ✅ 請假批核及公平派課 VP Approval &amp; Fair Matching
               </button>
-              <button onclick="switchAdminSubTab('schedule_table')" id="admin-subtab-btn-schedule_table" class="px-3 py-1.5 rounded-lg text-xs font-black transition text-slate-700 hover:bg-lime-50">
-                📚 各科教學進度表 (Teaching Progress)
+              <button onclick="switchAdminSubTab('schedule_table')" id="admin-subtab-btn-schedule_table" class="px-3 py-1 rounded-lg text-xs font-black transition text-slate-700 hover:bg-lime-50">
+                📚 各科教學進度表 Teaching Progress
               </button>
-              <button onclick="switchAdminSubTab('timetables')" id="admin-subtab-btn-timetables" class="px-3 py-1.5 rounded-lg text-xs font-black transition text-slate-700 hover:bg-lime-50">
-                🗂️ 教師時間表管理 (Staff Timetables)
+              <button onclick="switchAdminSubTab('timetables')" id="admin-subtab-btn-timetables" class="px-3 py-1 rounded-lg text-xs font-black transition text-slate-700 hover:bg-lime-50">
+                🗂️ 教師時間表管理 Staff Timetables
               </button>
             </div>
           </div>
 
-          <div id="admin-subview-approval" class="space-y-4">
-            <div id="admin-quota-card" class="bg-white rounded-xl p-4 shadow-sm border border-lime-300">
+          <div id="admin-subview-approval" class="space-y-3.5">
+            <div id="admin-quota-card" class="bg-white rounded-xl p-3.5 shadow-sm border border-lime-300">
               <div class="flex items-center justify-between flex-wrap gap-2 mb-2">
                 <div class="text-xs font-black text-[#2b5400]">
-                  📊 教職員本月累計代課節數及今日空堂 (Monthly Substitution Quota &amp; Free Periods)
+                  📊 教職員本月累計代課節數及空堂 · Monthly Substitution Quota &amp; Free Periods
                 </div>
                 <span class="text-[11px] font-bold text-slate-500">
-                  零衝突演算法：自動排除撞堂及同節已代課老師，並優先指派代課最少者
+                  零衝突公平配對：自動排除撞堂及請假教師，優先指派代課最少者 · Conflict-free fair assignment
                 </span>
               </div>
               <div id="admin-quota-ledger-bar" class="grid grid-cols-2 sm:grid-cols-3 gap-2"></div>
             </div>
-            <div id="admin-leave-requests-container" class="space-y-4"></div>
+            <div id="admin-leave-requests-container" class="space-y-3.5"></div>
           </div>
 
-          <div id="admin-subview-schedule_table" class="hidden space-y-4">
+          <div id="admin-subview-schedule_table" class="hidden space-y-3.5">
             <div class="bg-white rounded-xl p-4 shadow-sm border-2 border-[#68b800] space-y-3">
               <div class="border-b border-slate-100 pb-2">
-                <h3 class="text-sm sm:text-base font-black text-slate-900">全校各科教學進度表及校本題庫 Teaching Progress &amp; Question Bank</h3>
+                <h3 class="text-sm sm:text-base font-black text-slate-900">全校各科教學進度表及校本題庫 · Teaching Progress &amp; Question Bank</h3>
               </div>
               <div class="overflow-x-auto rounded-xl border border-lime-300">
                 <table class="w-full text-left border-collapse school-table text-xs">
@@ -504,9 +508,9 @@
                     <tr class="bg-[#eef8dc] text-[#2b5400] font-black">
                       <th class="p-2.5">科目 Subject</th>
                       <th class="p-2.5">班別 Classes</th>
-                      <th class="p-2.5">第 1–8 周溫習範圍</th>
-                      <th class="p-2.5">第 9–10 周當前進度</th>
-                      <th class="p-2.5 text-center">預覽課業包</th>
+                      <th class="p-2.5">第 1–8 周溫習範圍 Weeks 1–8</th>
+                      <th class="p-2.5">第 9–10 周當前進度 Weeks 9–10</th>
+                      <th class="p-2.5 text-center">預覽 Preview</th>
                     </tr>
                   </thead>
                   <tbody id="schedule-table-tbody" class="bg-white divide-y divide-slate-200"></tbody>
@@ -515,17 +519,17 @@
             </div>
           </div>
 
-          <div id="admin-subview-timetables" class="hidden space-y-4">
+          <div id="admin-subview-timetables" class="hidden space-y-3.5">
             <div class="bg-white rounded-xl p-4 shadow-sm border border-lime-300 space-y-3">
               <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2">
-                <h3 class="text-sm sm:text-base font-black text-slate-900">全校教師 6 循環日時間表編輯器 Staff Timetable Editor</h3>
+                <h3 class="text-sm sm:text-base font-black text-slate-900">全校教師 6 循環日時間表編輯器 · Staff 6-Day Timetable Editor</h3>
                 <select id="admin-inspect-teacher-select" onchange="renderAdminTimetableInspector()" class="px-3 py-1 rounded-lg border border-[#68b800] bg-lime-50 text-xs font-black text-lime-950"></select>
               </div>
               <div class="overflow-x-auto">
                 <table class="w-full text-center border-collapse school-table text-xs">
                   <thead>
                     <tr class="bg-[#eef8dc] text-[#2b5400] font-black">
-                      <th class="p-2 w-24 text-left">課節</th>
+                      <th class="p-2 w-24 text-left">課節 Period</th>
                       <th class="p-2">D1</th><th class="p-2">D2</th><th class="p-2">D3</th>
                       <th class="p-2">D4</th><th class="p-2">D5</th><th class="p-2">D6</th>
                     </tr>
@@ -542,19 +546,19 @@
              ==================================================================== -->
         <section id="screen-staffroom-tv" class="hidden space-y-3">
           <div class="bg-white border-2 border-[#68b800] shadow-md rounded-xl overflow-hidden">
-            <div class="bg-[#68b800] text-white px-4 py-2.5 flex flex-wrap items-center justify-between gap-2">
+            <div class="bg-[#68b800] text-white px-4 py-2 flex flex-wrap items-center justify-between gap-2">
               <div class="flex items-center gap-2 text-xs sm:text-sm font-black">
                 <span>📺</span>
-                <span>教員室實時請假及代課電子看板 Staffroom Live Substitution Board</span>
+                <span>教員室實時請假及代課電子看板 · Staffroom Live Substitution Board</span>
               </div>
               <div class="flex items-center gap-2 flex-wrap">
-                <button type="button" onclick="toggleTvFullDayMode()" id="tv-mode-toggle-btn" class="bg-black/25 hover:bg-black/40 text-white px-2.5 py-1 rounded text-[11px] font-bold transition whitespace-nowrap">
-                  🔍 展開全日 (Full Day)
+                <button type="button" onclick="toggleTvFullDayMode()" id="tv-mode-toggle-btn" class="bg-black/25 hover:bg-black/40 text-white px-2.5 py-0.5 rounded text-[11px] font-bold transition whitespace-nowrap">
+                  🔍 展開全日 Full Day
                 </button>
-                <span class="bg-white/20 px-2.5 py-0.5 rounded text-xs font-bold whitespace-nowrap">
-                  校曆: <strong id="tv-cycle-day-label" class="text-yellow-200">DAY 2</strong>
+                <span class="bg-white/20 px-2 py-0.5 rounded text-xs font-bold whitespace-nowrap">
+                  校曆 Cycle: <strong id="tv-cycle-day-label" class="text-yellow-200">DAY 2</strong>
                 </span>
-                <span class="bg-white text-[#2b5400] px-2.5 py-0.5 rounded text-xs font-mono font-black whitespace-nowrap" id="tv-live-clock">10:55:00</span>
+                <span class="bg-white text-[#2b5400] px-2 py-0.5 rounded text-xs font-mono font-black whitespace-nowrap" id="tv-live-clock">10:50</span>
               </div>
             </div>
 
@@ -563,23 +567,23 @@
               <div id="tv-absent-card" class="md:col-span-4 bg-white rounded-xl border-2 border-lime-300 shadow-sm overflow-hidden">
                 <div class="bg-[#eef8dc] px-3 py-2 border-b border-lime-300 flex items-center justify-between">
                   <div class="flex items-center gap-1.5">
-                    <span class="lcp-orange-arrow">↘</span>
-                    <h3 class="text-xs font-black text-[#2b5400]">今日已批核請假 Absent Staff</h3>
+                    <span class="slrs-orange-arrow">↘</span>
+                    <h3 class="text-xs font-black text-[#2b5400]">已批核請假 Absent Staff</h3>
                   </div>
                   <span id="tv-absent-teacher-count" class="px-2 py-0.5 rounded-full text-[11px] font-black bg-[#68b800] text-white whitespace-nowrap">2 人</span>
                 </div>
                 <div class="p-2.5 space-y-2" id="tv-absent-teachers-list"></div>
                 <div class="bg-slate-50 px-2 py-2 border-t border-slate-200 grid grid-cols-3 gap-1 text-center">
-                  <div class="p-1.5 rounded bg-rose-50 border border-rose-200">
-                    <div class="text-[10px] font-bold text-rose-800">待簽收</div>
+                  <div class="p-1 rounded bg-rose-50 border border-rose-200">
+                    <div class="text-[10px] font-bold text-rose-800">待簽收<br/>Pending</div>
                     <div id="tv-stat-pending" class="text-sm font-black text-rose-700">0</div>
                   </div>
-                  <div class="p-1.5 rounded bg-amber-50 border border-amber-200">
-                    <div class="text-[10px] font-bold text-amber-900">已簽收</div>
+                  <div class="p-1 rounded bg-amber-50 border border-amber-200">
+                    <div class="text-[10px] font-bold text-amber-900">已簽收<br/>Ack</div>
                     <div id="tv-stat-ack" class="text-sm font-black text-amber-700">0</div>
                   </div>
-                  <div class="p-1.5 rounded bg-emerald-50 border border-emerald-200">
-                    <div class="text-[10px] font-bold text-emerald-900">已報到</div>
+                  <div class="p-1 rounded bg-emerald-50 border border-emerald-200">
+                    <div class="text-[10px] font-bold text-emerald-900">已報到<br/>Arrived</div>
                     <div id="tv-stat-arrived" class="text-sm font-black text-emerald-700">0</div>
                   </div>
                 </div>
@@ -590,7 +594,7 @@
                 <div class="bg-white rounded-xl px-3.5 py-2 border border-lime-300 shadow-sm flex flex-wrap items-center justify-between gap-2">
                   <div class="flex items-center gap-2 text-xs font-bold text-slate-700">
                     <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 pulse-dot flex-shrink-0"></span>
-                    <span id="tv-auto-sync-status-text">已鎖定本節 P4 及下一節 P5（防止全日大表看漏眼）</span>
+                    <span id="tv-auto-sync-status-text">已鎖定本節 P4 及下一節 P5 · Locked to Current (P4) &amp; Next (P5)</span>
                   </div>
                   <button type="button" onclick="document.getElementById('demo-time-override-bar').classList.toggle('hidden')" class="text-[11px] text-slate-600 hover:text-[#2b5400] font-bold px-2 py-0.5 rounded bg-slate-100 hover:bg-lime-100 transition whitespace-nowrap">
                     ⚙️ 切換課節 Period
@@ -598,11 +602,8 @@
                 </div>
 
                 <div id="demo-time-override-bar" class="hidden bg-amber-50 border border-amber-300 rounded-xl px-3 py-2 flex flex-wrap items-center justify-between gap-2 text-xs">
-                  <span class="font-bold text-amber-900">🛠️ 切換演示課節：</span>
-                  <div class="flex items-center gap-1 flex-wrap">
-                    <button type="button" onclick="setClockModeAuto()" class="px-2 py-0.5 rounded font-black bg-[#68b800] text-white text-[11px]">🕒 實時香港時間</button>
-                    <div id="tv-period-quick-pills" class="flex items-center gap-1 flex-wrap"></div>
-                  </div>
+                  <span class="font-bold text-amber-900">🛠️ 切換演示課節 Select Period:</span>
+                  <div id="tv-period-quick-pills" class="flex items-center gap-1 flex-wrap"></div>
                 </div>
 
                 <div id="tv-time-filtered-container" class="space-y-3"></div>
@@ -615,10 +616,10 @@
              SCREEN 5: FULL-SCREEN CLASSROOM DOOR DISPLAY
              ==================================================================== -->
         <section id="screen-door-monitor" class="hidden space-y-3">
-          <div id="door-control-bar" class="bg-white rounded-xl px-4 py-2.5 shadow-sm border border-lime-300 flex flex-wrap items-center justify-between gap-2">
+          <div id="door-control-bar" class="bg-white rounded-xl px-4 py-2 shadow-sm border border-lime-300 flex flex-wrap items-center justify-between gap-2">
             <div class="flex items-center gap-2">
-              <span class="lcp-orange-arrow">↘</span>
-              <span class="text-xs sm:text-sm font-black text-slate-900">課室門外小型顯示屏 Classroom Door Display</span>
+              <span class="slrs-orange-arrow">↘</span>
+              <span class="text-xs sm:text-sm font-black text-slate-900">課室門外小型顯示屏 · Classroom Door Display</span>
             </div>
             <div class="flex items-center gap-2 flex-wrap">
               <span class="text-xs font-bold text-slate-700">課室 Room:</span>
@@ -631,10 +632,10 @@
                 <option value="221">Room 221 (創科室 Maker Lab)</option>
               </select>
               <button type="button" onclick="toggleOverdueSimulation()" class="px-3 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-black transition whitespace-nowrap">
-                🔔 切換「未到班提示」
+                🔔 切換逾時提示 Late Alert
               </button>
               <button type="button" onclick="toggleDoorFullscreen()" class="px-3 py-1 rounded-lg bg-[#2b5400] hover:bg-lime-900 text-white text-xs font-black transition whitespace-nowrap">
-                ⛶ 全螢幕顯示 Fullscreen
+                ⛶ 全螢幕 Fullscreen
               </button>
             </div>
           </div>
@@ -644,14 +645,14 @@
       </main>
 
       <!-- ======================================================================
-           RIGHT 4 COLS: PINNED LIVE CLASSROOM DOOR MONITOR (Always On by Default!)
+           RIGHT 4 COLS: PINNED LIVE CLASSROOM DOOR MONITOR (Compact, Zero-Scroll)
            ====================================================================== -->
-      <aside id="pinned-door-col" class="lg:col-span-4 sticky top-14 space-y-2">
-        <div id="pinned-door-wrapper" class="bg-slate-900 text-white rounded-2xl p-3 shadow-xl border-2 border-sky-400 space-y-2.5 transition-all">
-          <div class="flex items-center justify-between border-b border-slate-700 pb-2">
+      <aside id="pinned-door-col" class="lg:col-span-4 sticky top-12 space-y-2">
+        <div id="pinned-door-wrapper" class="bg-slate-900 text-white rounded-2xl p-3 shadow-xl border-2 border-sky-400 space-y-2 transition-all">
+          <div class="flex items-center justify-between border-b border-slate-700 pb-1.5">
             <div class="flex items-center gap-1.5">
               <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 pulse-dot"></span>
-              <span class="text-xs font-black text-sky-300">🖥️ 課室門外小螢幕實時同步 Door Screen</span>
+              <span class="text-xs font-black text-sky-300">🖥️ 門外小螢幕實時同步 Door Display</span>
             </div>
             <select id="pinned-room-select" onchange="syncSelectedRoom(this.value)" class="px-2 py-0.5 rounded bg-slate-800 border border-sky-400 text-[11px] font-black text-white">
               <option value="207" selected>RM 207</option>
@@ -663,9 +664,9 @@
             </select>
           </div>
           <div id="pinned-door-monitor-body" class="bg-white text-slate-900 rounded-xl overflow-hidden border-2 border-[#68b800]"></div>
-          <div class="text-[11px] text-slate-300 leading-snug flex items-center justify-between">
-            <span>🔒 門外螢幕不顯示 SEN 資料以保私隱</span>
-            <button type="button" onclick="manualSelectRole('door_monitor')" class="text-amber-300 hover:underline font-bold whitespace-nowrap ml-2">放大全屏 ➔</button>
+          <div class="text-[10px] text-slate-300 leading-snug flex items-center justify-between gap-2">
+            <span>🔒 門外不顯示 SEN 資料以保私隱 · SEN hidden on door for privacy</span>
+            <button type="button" onclick="manualSelectRole('door_monitor')" class="text-amber-300 hover:underline font-bold whitespace-nowrap">全屏 Full ➔</button>
           </div>
         </div>
       </aside>
@@ -674,60 +675,65 @@
   </div>
 
   <!-- ==========================================================================
-       4. BOTTOM AUTO-DEMO DIRECTOR & JUDGE NARRATION DOCK (Always Visible)
+       4. BOTTOM AUTO-DEMO DIRECTOR DOCK (Bilingual Now + Next Action Preview!)
        ========================================================================== -->
   <div id="presentation-dock" class="fixed bottom-0 inset-x-0 z-40 bg-slate-900/95 text-white border-t-4 border-amber-400 shadow-2xl backdrop-blur-md">
-    <!-- Live Auto-Demo Progress Bar -->
+    <!-- Progress Bar -->
     <div class="w-full h-1.5 bg-slate-800">
-      <div id="dock-progress-bar" class="h-full bg-gradient-to-r from-amber-400 to-emerald-400 transition-all duration-500" style="width: 16%;"></div>
+      <div id="dock-progress-bar" class="h-full bg-gradient-to-r from-amber-400 to-emerald-400 transition-all duration-700" style="width: 14%;"></div>
     </div>
 
-    <div class="max-w-7xl mx-auto px-3 sm:px-4 py-2.5 flex flex-col md:flex-row items-start md:items-center justify-between gap-2.5">
-      <div class="flex items-start gap-3 min-w-0 flex-1">
+    <div class="max-w-7xl mx-auto px-3 sm:px-4 py-2 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-2">
+      <!-- Left: Current Explanation + Next Action Callout (Both Bilingual) -->
+      <div class="flex items-start gap-2.5 min-w-0 flex-1">
         <div class="flex flex-col items-center gap-1 shrink-0 mt-0.5">
           <span class="bg-amber-400 text-slate-950 font-black text-xs px-2.5 py-0.5 rounded-lg" id="pres-step-badge">STEP 1 / 6</span>
-          <span class="text-[10px] font-black text-emerald-300 hidden" id="pres-auto-indicator">● 自動播放中</span>
+          <span class="text-[10px] font-black text-emerald-300 hidden" id="pres-auto-indicator">● 播放中 Playing</span>
         </div>
-        <div class="min-w-0">
-          <div class="text-xs sm:text-sm font-black text-amber-300 truncate" id="pres-step-title">
-            準備就緒：點擊「▶ 一鍵自動播放演示」即可全自動展示完整流程
+
+        <div class="min-w-0 flex-1 space-y-1">
+          <div class="text-xs sm:text-sm font-black text-amber-300 leading-tight" id="pres-step-title">
+            準備就緒 Ready：點擊「▶ 自動演示 Auto-Play」一鍵展示完整中英流程
           </div>
-          <p class="text-[11px] sm:text-xs text-slate-200 leading-snug mt-0.5" id="pres-step-desc">
-            系統會自動切換角色、高亮重點變化並同步更新右側 Room 207 課室門外小螢幕；錄影時只需按一次按鈕！
+          <p class="text-[11px] text-slate-200 leading-snug" id="pres-step-desc">
+            系統將以慢速清晰展示每一步並自動高亮變化，無須手動點擊多個按鈕 · Press Auto-Play to showcase the entire workflow automatically at a clear pace.
           </p>
+          <!-- Explicit Next Action Banner -->
+          <div id="pres-next-action-box" class="inline-flex items-center gap-1.5 bg-sky-900/80 border border-sky-400/60 text-sky-100 px-2.5 py-0.5 rounded-lg text-[11px] font-bold">
+            <span class="text-amber-300 font-black shrink-0">🔜 下一步 Next Action:</span>
+            <span id="pres-next-action-text">點擊「▶ 自動演示」開始示範 CKKU 請假及 40 分鐘 SEN 課業包 · Click Auto-Play to start CKKU leave &amp; SEN pack demo</span>
+          </div>
         </div>
       </div>
 
-      <div class="flex items-center gap-1.5 self-end md:self-center shrink-0 flex-wrap">
-        <button
-          type="button"
-          onclick="toggleAutoDemoDirector()"
-          id="btn-autoplay-dock"
-          class="px-3.5 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-black transition shadow-md whitespace-nowrap"
-        >
-          ▶ 一鍵自動播放 Auto-Play
+      <!-- Right: Play / Pause / Prev / Next Controls -->
+      <div class="flex items-center gap-1.5 self-end lg:self-center shrink-0 flex-wrap">
+        <button type="button" onclick="startOrStopAutoDemo()" id="btn-autoplay-dock" class="px-3 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-black transition shadow-md whitespace-nowrap">
+          ▶ 自動演示 Auto-Play
         </button>
-
-        <button type="button" onclick="stepManualDemo(-1)" class="px-2.5 py-1.5 rounded-xl bg-white/15 hover:bg-white/25 text-white text-xs font-bold transition">
-          ◀ 上一步
+        <button type="button" onclick="togglePauseAutoDemo()" id="btn-pause-dock" class="hidden px-3 py-1.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 text-xs font-black transition shadow-md whitespace-nowrap">
+          ⏸ 暫停 Pause
         </button>
-        <button type="button" onclick="stepManualDemo(1)" class="px-3 py-1.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-black transition">
-          下一步 ▶
+        <button type="button" onclick="stepManualDemo(-1)" class="px-2.5 py-1.5 rounded-xl bg-white/15 hover:bg-white/25 text-white text-xs font-bold transition whitespace-nowrap">
+          ◀ 上一步 Prev
+        </button>
+        <button type="button" onclick="stepManualDemo(1)" class="px-3 py-1.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-black transition whitespace-nowrap">
+          下一步 Next ▶
         </button>
       </div>
     </div>
   </div>
 
   <!-- ==========================================================================
-       5. WORKSHEET & ANSWER KEY PREVIEW / PRINT MODAL
+       5. WORKSHEET & ANSWER KEY PREVIEW MODAL
        ========================================================================== -->
   <div id="worksheet-modal" class="hidden fixed inset-0 z-[60] bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-3xl w-full p-5 shadow-2xl border-2 border-[#68b800] space-y-3 max-h-[90vh] flex flex-col">
       <div class="flex items-center justify-between border-b border-lime-200 pb-2.5">
         <div class="flex items-center gap-2 min-w-0">
-          <span class="lcp-orange-arrow">↘</span>
+          <span class="slrs-orange-arrow">↘</span>
           <div class="min-w-0">
-            <h3 id="modal-worksheet-title" class="text-sm sm:text-base font-black text-slate-900 truncate">40分鐘溫習課業包預覽 Lesson Pack Preview</h3>
+            <h3 id="modal-worksheet-title" class="text-sm sm:text-base font-black text-slate-900 truncate">40分鐘溫習課業包預覽 · 40-Min Lesson Pack Preview</h3>
             <p id="modal-worksheet-subtitle" class="text-xs text-slate-500 truncate"></p>
           </div>
         </div>
@@ -736,10 +742,10 @@
       <div id="modal-sen-banner" class="p-2.5 rounded-xl bg-indigo-50 border border-indigo-200 text-xs text-indigo-950 font-bold"></div>
       <div id="modal-worksheet-body" class="flex-1 overflow-y-auto p-3.5 rounded-xl bg-slate-50 border border-slate-200 font-mono text-xs whitespace-pre-wrap leading-relaxed text-slate-800"></div>
       <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100">
-        <span class="text-[11px] font-bold text-[#2b5400]">💡 內含學生工作紙、教師評分答案及不記名 SEN 照顧提示</span>
+        <span class="text-[11px] font-bold text-[#2b5400]">💡 內含學生工作紙、評分答案及不記名 SEN 提示 · Includes Worksheet, Answer Key &amp; Anonymous SEN Care</span>
         <div class="flex items-center gap-2">
           <button type="button" id="modal-print-btn" class="px-4 py-2 rounded-xl bg-blue-700 hover:bg-blue-800 text-white text-xs font-black shadow-sm transition">
-            🖨️ 匯出 / 列印課業包 Export / Print
+            🖨️ 匯出課業包 Export Word Pack
           </button>
           <button type="button" onclick="closeWorksheetModal()" class="px-4 py-2 rounded-xl bg-[#68b800] text-white text-xs font-black">
             關閉 Close
@@ -748,30 +754,30 @@
       </div>
     </div>
   </div>
-  <!-- ====== PART 1 結束（請回覆「Part 2」獲取完整系統邏輯與一鍵自動演示引擎） ====== -->
+  <!-- ====== PART A 結束（請回覆「Part B」獲取方案 B 模擬鐘聲、慢速自動播放與全中英腳本） ====== -->
   <!-- ==========================================================================
-       6. CORE SYSTEM SCRIPT (Competition Edition + Auto-Play Director Engine)
+       6. CORE SYSTEM SCRIPT (SmartSchool SLRS - Simulated Bell Clock & Auto-Demo)
        ========================================================================== -->
   <script>
     // =========================================================================
-    // 1. SCHOOL BELL SCHEDULE & HONG KONG TIME ENGINE
+    // 1. SCHOOL BELL SCHEDULE & SIMULATED CLOCK (Option B: Always Synced to Period)
     // =========================================================================
     const PERIOD_SLOTS = [
-      { id: 'P1', short: 'P1', time: '08:30-09:10', label: '第1節 P1 (08:30-09:10)' },
-      { id: 'P2', short: 'P2', time: '09:10-09:50', label: '第2節 P2 (09:10-09:50)' },
-      { id: 'P3', short: 'P3', time: '10:10-10:50', label: '第3節 P3 (10:10-10:50)' },
-      { id: 'P4', short: 'P4', time: '10:50-11:30', label: '第4節 P4 (10:50-11:30)' },
-      { id: 'P5', short: 'P5', time: '11:50-12:30', label: '第5節 P5 (11:50-12:30)' },
-      { id: 'P6', short: 'P6', time: '12:30-13:10', label: '第6節 P6 (12:30-13:10)' },
-      { id: 'P7', short: 'P7', time: '14:20-15:00', label: '第7節 P7 (14:20-15:00)' },
-      { id: 'P8', short: 'P8', time: '15:00-15:40', label: '第8節 P8 (15:00-15:40)' }
+      { id: 'P1', short: 'P1', time: '08:30–09:10', defaultSim: '08:35', label: '第1節 P1 (08:30–09:10)' },
+      { id: 'P2', short: 'P2', time: '09:10–09:50', defaultSim: '09:15', label: '第2節 P2 (09:10–09:50)' },
+      { id: 'P3', short: 'P3', time: '10:10–10:50', defaultSim: '10:15', label: '第3節 P3 (10:10–10:50)' },
+      { id: 'P4', short: 'P4', time: '10:50–11:30', defaultSim: '10:50', label: '第4節 P4 (10:50–11:30)' },
+      { id: 'P5', short: 'P5', time: '11:50–12:30', defaultSim: '11:55', label: '第5節 P5 (11:50–12:30)' },
+      { id: 'P6', short: 'P6', time: '12:30–13:10', defaultSim: '12:35', label: '第6節 P6 (12:30–13:10)' },
+      { id: 'P7', short: 'P7', time: '14:20–15:00', defaultSim: '14:25', label: '第7節 P7 (14:20–15:00)' },
+      { id: 'P8', short: 'P8', time: '15:00–15:40', defaultSim: '15:05', label: '第8節 P8 (15:00–15:40)' }
     ];
 
     const CYCLE_DAYS = ['DAY 1', 'DAY 2', 'DAY 3', 'DAY 4', 'DAY 5', 'DAY 6'];
-    const STORAGE_KEY = 'ychlcp_slrs_competition_director_v5';
+    const STORAGE_KEY = 'smartschool_slrs_competition_final_v6';
 
-    // Cross-Tab Instant Sync (for iPad Safari Split View)
-    const syncChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('ychlcp_slrs_director_v5') : null;
+    // Cross-Tab Instant Sync (for Split View on iPad)
+    const syncChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('smartschool_slrs_chan_v6') : null;
     if (syncChannel) {
       syncChannel.onmessage = (e) => {
         if (e.data && e.data.type === 'STATE_UPDATED') {
@@ -781,81 +787,84 @@
       };
     }
 
-    function getHongKongTimeParts() {
-      const now = new Date();
-      const hkStr = now.toLocaleString('en-US', { timeZone: 'Asia/Hong_Kong' });
-      const hkDate = new Date(hkStr);
-      const yyyy = hkDate.getFullYear();
-      const mm = String(hkDate.getMonth() + 1).padStart(2, '0');
-      const dd = String(hkDate.getDate()).padStart(2, '0');
-      const hh = String(hkDate.getHours()).padStart(2, '0');
-      const min = String(hkDate.getMinutes()).padStart(2, '0');
-      const ss = String(hkDate.getSeconds()).padStart(2, '0');
-      const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-      return {
-        dateStr: `${yyyy}-${mm}-${dd} (${dayNames[hkDate.getDay()]})`,
-        isoDate: `${yyyy}-${mm}-${dd}`,
-        timeStr: `${hh}:${min}:${ss}`,
-        shortTimeStr: `${hh}:${min}`,
-        totalMinutes: hkDate.getHours() * 60 + hkDate.getMinutes(),
-        hkDate
-      };
+    function getPeriodMeta(pid) {
+      return PERIOD_SLOTS.find(p => p.id === pid) || PERIOD_SLOTS[3];
     }
 
-    // 15:00/16:00 後、午休或早上 08:00 前自動鎖定 P4，確保任何時段錄影皆有完整課節展示
-    function detectPeriodFromHKMinutes(totalMin) {
-      if (totalMin < 8 * 60) return 'P4';
-      if (totalMin < 9 * 60 + 10) return 'P1';
-      if (totalMin < 10 * 60 + 10) return 'P2';
-      if (totalMin < 10 * 60 + 50) return 'P3';
-      if (totalMin < 11 * 60 + 50) return 'P4';
-      if (totalMin < 12 * 60 + 30) return 'P5';
-      if (totalMin < 14 * 60 + 20) return 'P4';
-      if (totalMin < 15 * 60 + 0) return 'P7';
-      return 'P4';
+    function getNextPeriodId(currentPid) {
+      const idx = PERIOD_SLOTS.findIndex(p => p.id === currentPid);
+      return (idx === -1 || idx + 1 >= PERIOD_SLOTS.length) ? null : PERIOD_SLOTS[idx + 1].id;
     }
 
-    function isAfterHoursDemoSlot(totalMin) {
-      return (totalMin < 8 * 60 || totalMin >= 15 * 60 || (totalMin >= 12 * 60 + 30 && totalMin < 14 * 60 + 20));
+    function setSimulatedClock(timeStr, periodId = null) {
+      if (periodId) appData.activePeriodId = periodId;
+      appData.simTimeStr = timeStr;
+      updateClockDisplays();
+    }
+
+    function updateClockDisplays() {
+      const pMeta = getPeriodMeta(appData.activePeriodId);
+      const nextPid = getNextPeriodId(appData.activePeriodId);
+      const simT = appData.simTimeStr || '10:42';
+
+      const cycleEl = document.getElementById('auto-header-cycle');
+      const pBadgeEl = document.getElementById('auto-header-period-badge');
+      const clockEl = document.getElementById('sim-header-clock');
+      const tvClockEl = document.getElementById('tv-live-clock');
+      const doorClockEl = document.getElementById('door-live-clock');
+      const pinnedClockEl = document.getElementById('pinned-door-clock');
+
+      if (cycleEl) cycleEl.textContent = appData.currentCycleDay;
+      if (pBadgeEl) pBadgeEl.textContent = `本節 Now: ${pMeta.short} (${pMeta.time})`;
+      if (clockEl) clockEl.textContent = simT;
+      if (tvClockEl) tvClockEl.textContent = simT;
+      if (doorClockEl) doorClockEl.textContent = simT;
+      if (pinnedClockEl) pinnedClockEl.textContent = simT;
+
+      const syncTextEl = document.getElementById('tv-auto-sync-status-text');
+      if (syncTextEl) {
+        const nextLabel = nextPid ? nextPid : '放學 End';
+        syncTextEl.innerHTML = `🕒 課堂模擬鐘聲 Bell Time <strong>${simT}</strong> · 鎖定本節 Current <strong>${pMeta.short}</strong> 及下一節 Next <strong>${nextLabel}</strong>`;
+      }
     }
 
     // =========================================================================
-    // 2. ANONYMOUS CLASS SEN CARE REMINDERS (Privacy-Safe, No Student Names)
+    // 2. ANONYMOUS CLASS SEN CARE REMINDERS (Bilingual, Privacy-Safe)
     // =========================================================================
     const CLASS_SEN_REMINDERS = {
       '3B': {
-        badge: '讀寫及專注力支援 SpLD & Focus Care',
-        zh: '3B 班有讀寫及專注力支援需要：請將工作紙重點寫於黑板、給予額外 5 分鐘作答時間。（匿名保密，絕不顯示姓名）',
-        en: 'Class 3B includes SpLD & focus support needs: write key steps on the board and allow +5 min extra time. (Anonymous)'
+        badge: '讀寫及專注力支援 · SpLD & Focus Care',
+        zh: '3B 班有讀寫及專注力支援需要：請將重點寫於黑板並給予額外 5 分鐘作答。（匿名保密，不顯姓名）',
+        en: 'Class 3B (SpLD & Focus): Write key steps on the board and allow +5 min extra time. (Anonymous, no student names)'
       },
       '3C': {
-        badge: '視覺及分段進度支援 Visual & Pacing Care',
-        zh: '3C 班有專注及視覺支援需要：請確保前排座位清晰，每 15 分鐘口頭提示作答進度。（匿名保密，絕不顯示姓名）',
-        en: 'Class 3C includes visual & pacing support needs: ensure clear front-row view and give 15-min progress cues. (Anonymous)'
+        badge: '視覺及分段提示 · Visual & Pacing Care',
+        zh: '3C 班有專注及視覺支援需要：請確保前排清晰，每 15 分鐘提示作答進度。（匿名保密，不顯姓名）',
+        en: 'Class 3C (Visual & Pacing): Keep front-row view clear and give 15-min progress cues. (Anonymous)'
       },
       '2A': {
-        badge: '閱讀理解及分步指引支援 Reading Support',
-        zh: '2A 班有閱讀理解支援需要：建議分步驟口頭朗讀題目指示，並鼓勵同伴協作。（匿名保密，絕不顯示姓名）',
-        en: 'Class 2A includes reading support needs: read instructions aloud step-by-step and encourage peer guidance. (Anonymous)'
+        badge: '閱讀理解及分步指引 · Reading Support',
+        zh: '2A 班有閱讀理解支援需要：建議分步驟朗讀指示，並鼓勵同伴協作。（匿名保密，不顯姓名）',
+        en: 'Class 2A (Reading Support): Read instructions aloud step-by-step and encourage peer guidance. (Anonymous)'
       },
       '2C': {
-        badge: '清晰常規及轉堂提示 Routine Support',
-        zh: '2C 班有清晰常規支援需要：請維持清晰課堂結構，收卷前預早 3 分鐘口頭預告。（匿名保密，絕不顯示姓名）',
-        en: 'Class 2C includes structured routine needs: give a clear 3-min verbal notice before collecting worksheets. (Anonymous)'
+        badge: '清晰常規及轉堂預告 · Routine Support',
+        zh: '2C 班有清晰常規支援需要：請維持清晰課堂步驟，收卷前預早 3 分鐘口頭預告。（匿名保密，不顯姓名）',
+        en: 'Class 2C (Routine Support): Maintain clear lesson structure and give a 3-min notice before collection. (Anonymous)'
       },
       '4A': {
-        badge: '作答框架及正向鼓勵 Structured Support',
-        zh: '4A 班有書寫及情緒支援需要：建議多給予正面鼓勵，並於黑板提供簡明答題框架。（匿名保密，絕不顯示姓名）',
-        en: 'Class 4A includes structured writing support needs: provide a clear answer outline and positive reinforcement. (Anonymous)'
+        badge: '作答框架及正向鼓勵 · Structured Support',
+        zh: '4A 班有書寫及情緒支援需要：多給予正面鼓勵，並於黑板提供簡明答題框架。（匿名保密，不顯姓名）',
+        en: 'Class 4A (Writing Support): Provide a clear answer outline on the board with positive encouragement. (Anonymous)'
       },
       '4C': {
-        badge: '閱讀拆題及引導支援 Learning Support',
-        zh: '4C 班有閱讀理解支援需要：建議把長題目拆細講解，引導學生分步完成。（匿名保密，絕不顯示姓名）',
-        en: 'Class 4C includes guided reading support needs: break structured questions into smaller steps. (Anonymous)'
+        badge: '長題拆解及閱讀引導 · Learning Support',
+        zh: '4C 班有閱讀理解支援需要：建議將長題目拆細講解，引導學生分步完成。（匿名保密，不顯姓名）',
+        en: 'Class 4C (Guided Reading): Break structured questions into smaller manageable steps. (Anonymous)'
       },
       'DEFAULT': {
-        badge: '一般課堂照顧支援 General Inclusion Care',
-        zh: '請留意課室個別學習差異，適時給予清晰的口頭及黑板指示。（匿名保密，絕不顯示姓名）',
+        badge: '一般學習差異照顧 · General Inclusion Care',
+        zh: '請留意個別學習差異，適時給予清晰的口頭及黑板指示。（匿名保密，不顯姓名）',
         en: 'Support diverse learning needs with clear verbal and board instructions. (Anonymous)'
       }
     };
@@ -866,7 +875,7 @@
     }
 
     // =========================================================================
-    // 3. TEACHING PROGRESS SCHEDULE & LESSON PACK GENERATOR
+    // 3. TEACHING PROGRESS SCHEDULE & LESSON PACK GENERATOR (Zero School Name)
     // =========================================================================
     const TEACHING_SCHEDULE_DATA = {
       'F3_CL': {
@@ -946,7 +955,7 @@
             { q: '2. A push button generates a ____________ signal (HIGH or LOW).', ans: 'digital' }
           ],
           structured: [
-            { q: 'Question 1 (6 marks): State the Input, Process, and Output of a smart classroom door sign showing cover teacher status.', ans: 'Input: Teacher check-in; Process: System matches room & period; Output: Door screen shows cover status.' }
+            { q: 'Question 1 (6 marks): State the Input, Process, and Output of a smart classroom door display showing cover teacher status.', ans: 'Input: Teacher check-in; Process: System matches room & period; Output: Door screen shows cover status.' }
           ]
         },
         questionsPrior: {
@@ -1017,7 +1026,6 @@
     function generateWorksheetAndAnswerKeyText(rawCell, customTopicInput, paperMode = 'Revision Worksheet & Short Quiz', absentTeacherName = '', scopeMode = 'current') {
       const schedEntry = matchScheduleByCell(rawCell);
       const senInfo = getSenReminderByCell(rawCell);
-      const hkNow = getHongKongTimeParts();
       const cycleStr = (appData && appData.currentCycleDay) ? appData.currentCycleDay : 'DAY 2';
 
       if (customTopicInput && customGeneratedWorksheets[customTopicInput.trim()]) {
@@ -1038,15 +1046,14 @@
 
       return [
         `================================================================`,
-        `YAN CHAI HOSPITAL LAN CHI PAT MEMORIAL SECONDARY SCHOOL`,
-        `40-MINUTE ${paperMode.toUpperCase()} (WITH ANSWER KEY)`,
+        `SMARTSCHOOL SLRS — 40-MINUTE ${paperMode.toUpperCase()}`,
         `================================================================`,
         `Class & Subject : ${rawCell || schedEntry.subjectName}`,
-        `Date / Calendar : ${hkNow.isoDate} (Term 1 · Week 10 · ${cycleStr})`,
+        `School Calendar : Term 1 · Week 10 · ${cycleStr}`,
         `Lesson Topic    : ${effectiveTopic}`,
-        `Absent Teacher  : ${absentTeacherName || 'Subject Teacher'}`,
+        `Subject Teacher : ${absentTeacherName || 'Subject Teacher'}`,
         `----------------------------------------------------------------`,
-        `[SEN CLASSROOM REMINDER - FOR TEACHER REFERENCE ONLY (ANONYMOUS)]`,
+        `[SEN CLASSROOM REMINDER - TEACHER REFERENCE ONLY (ANONYMOUS)]`,
         `• ${senInfo.en}`,
         `• ${senInfo.zh}`,
         `----------------------------------------------------------------`,
@@ -1078,7 +1085,11 @@
       const customTopic = (inputEl.value || '').trim();
 
       if (!customTopic) {
-        showSystemToast('請先輸入自訂課題', '例如輸入「Python 迴圈」或「二進制轉換」，再點擊即時生成！', 'warning');
+        showSystemToast(
+          '請先輸入自訂課題 · Enter a Custom Topic First',
+          '請輸入課題（如 Python 迴圈）再點擊生成 · Please enter a topic before clicking Generate.',
+          'warning'
+        );
         inputEl.focus();
         return;
       }
@@ -1087,8 +1098,7 @@
       btn.textContent = '⏳ 生成中...';
       btn.disabled = true;
 
-      const hkNow = getHongKongTimeParts();
-      const promptText = `Create a 40-minute Hong Kong secondary school revision worksheet with Teacher's Answer Key for Class "${firstCell}" on topic "${customTopic}". Date: ${hkNow.isoDate}. Include SEN Reminder (${senInfo.en}), Section A (3 MC), Section B (2 Fill-in-blanks), Section C (1 Structured Q, 6 marks), and Answer Key. Plain text only.`;
+      const promptText = `Create a 40-minute secondary school revision worksheet with Teacher's Answer Key for Class "${firstCell}" on topic "${customTopic}". Include SEN Reminder (${senInfo.en}), Section A (3 MC), Section B (2 Fill-in-blanks), Section C (1 Structured Q, 6 marks), and Answer Key. Plain text only.`;
 
       try {
         const controller = new AbortController();
@@ -1099,22 +1109,25 @@
         if (generatedText && generatedText.trim().length > 60) {
           customGeneratedWorksheets[customTopic] = generatedText.trim();
           outputArea.value = generatedText.trim();
-          showSystemToast('✨ 專屬課業包生成成功！', `已按課題「${customTopic}」生成 40 分鐘工作紙連答案及匿名 SEN 提示。`, 'success');
+          showSystemToast(
+            '✨ 專屬課業包生成成功 · Lesson Pack Generated!',
+            `已按課題「${customTopic}」生成 40 分鐘課業包連匿名 SEN 提示 · Generated 40-min pack & SEN reminder.`,
+            'success'
+          );
         } else {
           throw new Error('Offline fallback');
         }
       } catch (err) {
         const fallbackSheet = [
           `================================================================`,
-          `YAN CHAI HOSPITAL LAN CHI PAT MEMORIAL SECONDARY SCHOOL`,
-          `40-MINUTE REVISION WORKSHEET & SHORT QUIZ (WITH ANSWER KEY)`,
+          `SMARTSCHOOL SLRS — 40-MINUTE REVISION WORKSHEET & ANSWER KEY`,
           `================================================================`,
           `Class & Subject : ${firstCell}`,
-          `Date / Calendar : ${hkNow.isoDate} (Term 1 · Week 10 · ${appData.currentCycleDay})`,
+          `School Calendar : Term 1 · Week 10 · ${appData.currentCycleDay}`,
           `Custom Topic    : ${customTopic}`,
-          `Absent Teacher  : ${teacher.shortName}`,
+          `Subject Teacher : ${teacher.shortName}`,
           `----------------------------------------------------------------`,
-          `[SEN CLASSROOM REMINDER - FOR TEACHER REFERENCE ONLY (ANONYMOUS)]`,
+          `[SEN CLASSROOM REMINDER - TEACHER REFERENCE ONLY (ANONYMOUS)]`,
           `• ${senInfo.en}`,
           `• ${senInfo.zh}`,
           `----------------------------------------------------------------`,
@@ -1142,7 +1155,11 @@
         ].join('\n');
         customGeneratedWorksheets[customTopic] = fallbackSheet;
         outputArea.value = fallbackSheet;
-        showSystemToast('✅ 校本離線課業包生成成功！', `已離線為課題「${customTopic}」生成 40 分鐘試卷連答案及匿名 SEN 提示。`, 'success');
+        showSystemToast(
+          '✅ 校本離線課業包生成成功 · Offline Pack Generated!',
+          `已離線為課題「${customTopic}」生成 40 分鐘課業包連 SEN 提示 · Created offline 40-min pack & SEN care.`,
+          'success'
+        );
       } finally {
         btn.textContent = origText;
         btn.disabled = false;
@@ -1152,7 +1169,6 @@
     function exportWordLessonPack(rawCell, customTopic, paperMode, absentTeacherName) {
       const schedEntry = matchScheduleByCell(rawCell);
       const senInfo = getSenReminderByCell(rawCell);
-      const hkNow = getHongKongTimeParts();
       const topicTitle = (!customTopic || customTopic.trim() === '') ? schedEntry.currentWeekTopic : customTopic.trim();
       const sheetText = generateWorksheetAndAnswerKeyText(rawCell, customTopic, paperMode, absentTeacherName, 'current');
 
@@ -1160,12 +1176,12 @@
         <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
         <head><meta charset="utf-8"><title>${rawCell} Lesson Pack</title></head>
         <body style="font-family:'Times New Roman','Noto Sans HK',serif;font-size:11pt;">
-          <h2 style="text-align:center;margin:0;">仁濟醫院靚次伯紀念中學 YAN CHAI HOSPITAL LAN CHI PAT MEMORIAL SECONDARY SCHOOL</h2>
+          <h2 style="text-align:center;margin:0;">SmartSchool SLRS — Intelligent Leave &amp; Relief System</h2>
           <h3 style="text-align:center;margin:4pt 0 10pt 0;">${paperMode} (40-Minute Classwork)</h3>
-          <p><strong>Date:</strong> ${hkNow.isoDate} (${appData.currentCycleDay}) &nbsp;|&nbsp; <strong>Class &amp; Subject:</strong> ${rawCell} &nbsp;|&nbsp; <strong>Teacher:</strong> ${absentTeacherName}</p>
+          <p><strong>Calendar:</strong> Term 1 · Week 10 · ${appData.currentCycleDay} &nbsp;|&nbsp; <strong>Class &amp; Subject:</strong> ${rawCell} &nbsp;|&nbsp; <strong>Teacher:</strong> ${absentTeacherName}</p>
           <p><strong>Topic:</strong> ${topicTitle}</p>
           <div style="border:1pt solid #4338ca;background-color:#eef2ff;padding:6pt;margin:6pt 0;">
-            <strong>[匿名 SEN 課堂照顧提示 Anonymous SEN Reminder - 僅供代課老師參閱]</strong><br/>
+            <strong>[匿名 SEN 課堂照顧提示 Anonymous SEN Reminder - Teacher Reference Only]</strong><br/>
             ${senInfo.zh}<br/>${senInfo.en}
           </div>
           <p><strong>Name:</strong> ____________________ &nbsp;&nbsp; <strong>Class &amp; No.:</strong> ______ ( &nbsp;&nbsp; ) &nbsp;&nbsp; <strong>Marks:</strong> _____ / 25</p>
@@ -1179,28 +1195,29 @@
         const a = document.createElement('a');
         const safeName = (rawCell || 'Classwork').replace(/[^a-zA-Z0-9_-]/g, '_');
         a.href = url;
-        a.download = `YCHLCP_40Min_LessonPack_${safeName}.doc`;
+        a.download = `SmartSchool_SLRS_LessonPack_${safeName}.doc`;
         document.body.appendChild(a);
         a.click();
         a.remove();
         URL.revokeObjectURL(url);
-        showSystemToast('📄 課業包匯出成功！', `已下載 ${rawCell} 之 40 分鐘溫習工作紙連評分答案及 SEN 提示。`, 'success');
+        showSystemToast(
+          '📄 課業包已匯出 · Lesson Pack Exported!',
+          `已下載 ${rawCell} 之 40 分鐘 Word 課業包連答案及匿名 SEN 提示 · Downloaded worksheet, answer key & SEN reminder.`,
+          'success'
+        );
       } catch (e) {
         window.print();
       }
     }
 
     // =========================================================================
-    // 4. DEFAULT COMPETITION DATASET (Clean Starting State Before CKKU Applies!)
-    //    - SMLI & MYCHEUNG already have approved leaves on DAY 2
-    //    - CKKU has NOT yet submitted leave -> allows live demonstration of:
-    //      Normal Class -> Submit Leave (Pending VP) -> VP Approve -> Overdue Alert -> Two-Step Check-In -> Arrived!
+    // 4. DEFAULT COMPETITION DATASET (Clean Pre-Leave State at Simulated 10:42)
     // =========================================================================
     function createDefaultRecords() {
       return {
         currentCycleDay: 'DAY 2',
         activePeriodId: 'P4',
-        clockMode: 'manual', // Locked to golden period P4 for reliable competition video recording
+        simTimeStr: '10:42',
         tvShowFullDay: false,
         overdueAlertActive: false,
         selectedDoorRoom: '207',
@@ -1278,9 +1295,9 @@
             leaveType: '[SL] 病假 Sick Leave', customTopic: '', scopeMode: 'current',
             paperMode: '40-Minute Revision Short Test', approvalStatus: 'approved', submittedAt: '07:42',
             lessons: [
-              { periodId: 'P2', periodLabel: '第2節 P2 (09:10-09:50)', rawCell: '2A ENG 201', room: '201', assignedSubCode: 'KHWONG', assignedSubName: 'KHWONG 黃家豪', checkinStatus: 'arrived', ackTime: '08:15', arriveTime: '09:09' },
-              { periodId: 'P3', periodLabel: '第3節 P3 (10:10-10:50)', rawCell: '3B ENG 302', room: '302', assignedSubCode: 'WKLAM', assignedSubName: 'WKLAM 林偉強', checkinStatus: 'arrived', ackTime: '08:25', arriveTime: '10:08' },
-              { periodId: 'P5', periodLabel: '第5節 P5 (11:50-12:30)', rawCell: '3B ENG 302', room: '302', assignedSubCode: 'KHWONG', assignedSubName: 'KHWONG 黃家豪', checkinStatus: 'ack', ackTime: '08:30', arriveTime: '' }
+              { periodId: 'P2', periodLabel: '第2節 P2 (09:10–09:50)', rawCell: '2A ENG 201', room: '201', assignedSubCode: 'KHWONG', assignedSubName: 'KHWONG 黃家豪', checkinStatus: 'arrived', ackTime: '08:15', arriveTime: '09:09' },
+              { periodId: 'P3', periodLabel: '第3節 P3 (10:10–10:50)', rawCell: '3B ENG 302', room: '302', assignedSubCode: 'WKLAM', assignedSubName: 'WKLAM 林偉強', checkinStatus: 'arrived', ackTime: '08:25', arriveTime: '10:08' },
+              { periodId: 'P5', periodLabel: '第5節 P5 (11:50–12:30)', rawCell: '3B ENG 302', room: '302', assignedSubCode: 'KHWONG', assignedSubName: 'KHWONG 黃家豪', checkinStatus: 'ack', ackTime: '08:30', arriveTime: '' }
             ]
           },
           {
@@ -1288,9 +1305,9 @@
             leaveType: '[TR] 進修研討會 Seminar', customTopic: '', scopeMode: 'current',
             paperMode: 'Revision Worksheet & Short Quiz', approvalStatus: 'approved', submittedAt: '08:00',
             lessons: [
-              { periodId: 'P1', periodLabel: '第1節 P1 (08:30-09:10)', rawCell: '4A CHIN 401', room: '401', assignedSubCode: 'WKLAM', assignedSubName: 'WKLAM 林偉強', checkinStatus: 'arrived', ackTime: '08:05', arriveTime: '08:29' },
-              { periodId: 'P2', periodLabel: '第2節 P2 (09:10-09:50)', rawCell: '4A CHIN 401', room: '401', assignedSubCode: 'WKLAM', assignedSubName: 'WKLAM 林偉強', checkinStatus: 'arrived', ackTime: '08:05', arriveTime: '09:09' },
-              { periodId: 'P4', periodLabel: '第4節 P4 (10:50-11:30)', rawCell: '4C OLE 407', room: '407', assignedSubCode: 'WKLAM', assignedSubName: 'WKLAM 林偉強', checkinStatus: 'ack', ackTime: '08:05', arriveTime: '' }
+              { periodId: 'P1', periodLabel: '第1節 P1 (08:30–09:10)', rawCell: '4A CHIN 401', room: '401', assignedSubCode: 'WKLAM', assignedSubName: 'WKLAM 林偉強', checkinStatus: 'arrived', ackTime: '08:05', arriveTime: '08:29' },
+              { periodId: 'P2', periodLabel: '第2節 P2 (09:10–09:50)', rawCell: '4A CHIN 401', room: '401', assignedSubCode: 'WKLAM', assignedSubName: 'WKLAM 林偉強', checkinStatus: 'arrived', ackTime: '08:05', arriveTime: '09:09' },
+              { periodId: 'P4', periodLabel: '第4節 P4 (10:50–11:30)', rawCell: '4C OLE 407', room: '407', assignedSubCode: 'WKLAM', assignedSubName: 'WKLAM 林偉強', checkinStatus: 'ack', ackTime: '08:05', arriveTime: '' }
             ]
           }
         ]
@@ -1312,7 +1329,6 @@
       return (t.baseQuota || 0) + assigned;
     }
 
-    // Bug Fix: Prevent assigning a teacher who is ALSO on leave that day!
     function isTeacherAbsentOnDay(teacherCode, cycleDay) {
       return appData.leaveRequests.some(req => req.teacherCode === teacherCode && req.cycleDay === cycleDay);
     }
@@ -1346,7 +1362,6 @@
       return pool[0];
     }
 
-    // Dynamic lookup by room + cycleDay + periodId (Never breaks even after new requests!)
     function findActiveSubLessonByRoom(roomNum, cycleDay, periodId) {
       for (const req of appData.leaveRequests) {
         if (req.cycleDay !== cycleDay) continue;
@@ -1361,7 +1376,7 @@
     }
 
     // =========================================================================
-    // 6. CORE STATE, STORAGE & FLOATING TOAST
+    // 6. CORE STATE, STORAGE & BILINGUAL FLOATING TOAST
     // =========================================================================
     let appData = loadRecords();
     let currentUserRole = 'ckku';
@@ -1388,6 +1403,7 @@
         localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
         if (syncChannel) syncChannel.postMessage({ type: 'STATE_UPDATED', ts: Date.now() });
       } catch (e) {}
+      updateClockDisplays();
       renderSmallDoorMonitor();
     }
 
@@ -1405,7 +1421,7 @@
       const descEl = document.getElementById('floating-toast-desc');
       if (!box) return;
 
-      box.className = 'fixed top-4 left-1/2 -translate-x-1/2 z-[70] w-[92%] max-w-xl rounded-2xl px-4 py-3 border-2 shadow-2xl flex items-start justify-between gap-3 toast-animate ';
+      box.className = 'fixed top-3 left-1/2 -translate-x-1/2 z-[70] w-[94%] max-w-2xl rounded-2xl px-4 py-3 border-2 shadow-2xl flex items-start justify-between gap-3 toast-animate ';
       if (type === 'warning') {
         box.classList.add('bg-rose-600', 'border-rose-300', 'text-white');
         iconEl.textContent = '🚨';
@@ -1420,7 +1436,7 @@
       descEl.textContent = desc;
 
       if (toastTimer) clearTimeout(toastTimer);
-      toastTimer = setTimeout(hideSystemToast, 5000);
+      toastTimer = setTimeout(hideSystemToast, 5800);
     }
 
     function hideSystemToast() {
@@ -1435,19 +1451,30 @@
       selectedLeaveDay = 'DAY 2';
       currentTeacherCode = 'CKKU';
       const overdueBtn = document.getElementById('nav-overdue-btn');
-      if (overdueBtn) overdueBtn.textContent = '🔔 模擬未到班提示 Late Alert';
+      if (overdueBtn) overdueBtn.textContent = '🔔 模擬逾時提示 Late Alert';
       saveRecords();
       loginAsRole('ckku');
-      updateDockText(1, '準備就緒：點擊「▶ 一鍵自動播放演示」即可全自動展示完整流程', '系統已重設回「CKKU 請假前」初始狀態（Room 207 常規上課），隨時可開始一鍵錄影演示！', 16);
+      updateDock(
+        1,
+        '準備就緒 Ready：點擊「▶ 自動演示 Auto-Play」一鍵展示完整中英流程',
+        '系統已重設回課前 10:42（Room 207 常規上課），隨時可開始錄影演示 · Reset to 10:42 pre-lesson state (Room 207 Regular Class).',
+        '點擊「▶ 自動演示」開始示範 CKKU 請假及 40 分鐘 SEN 課業包 · Click Auto-Play to start CKKU leave & SEN pack demo',
+        14
+      );
       if (showNotice) {
-        showSystemToast('↺ 已重設回比賽初始狀態！', 'Room 207 已恢復為常規上課，隨時可按「▶ 一鍵自動播放演示」開始錄影。', 'info');
+        showSystemToast(
+          '↺ 系統已重設回初始狀態 · Demo Reset Complete',
+          '課堂模擬時間已重設為 10:42（P4 課前），可立即點擊「▶ 自動演示」開始錄影 · Clock reset to 10:42 before P4.',
+          'info'
+        );
       }
     }
 
     // =========================================================================
-    // 7. SPOTLIGHT HIGHLIGHT & ONE-CLICK AUTO-PLAY DIRECTOR ENGINE
+    // 7. SLOWER AUTO-PLAY DIRECTOR WITH PAUSE/RESUME & NEXT-ACTION EXPLANATIONS
     // =========================================================================
     let autoPlayActive = false;
+    let autoPlayPaused = false;
     let autoPlayRunId = 0;
     let currentManualStep = 1;
 
@@ -1465,163 +1492,294 @@
       }
     }
 
-    function updateDockText(stepNum, title, desc, progressPct) {
+    function updateDock(stepNum, title, desc, nextActionText, progressPct) {
       currentManualStep = stepNum;
       const badgeEl = document.getElementById('pres-step-badge');
       const titleEl = document.getElementById('pres-step-title');
       const descEl = document.getElementById('pres-step-desc');
+      const nextEl = document.getElementById('pres-next-action-text');
       const barEl = document.getElementById('dock-progress-bar');
+
       if (badgeEl) badgeEl.textContent = `STEP ${stepNum} / 6`;
       if (titleEl) titleEl.textContent = title;
       if (descEl) descEl.textContent = desc;
+      if (nextEl) nextEl.textContent = nextActionText;
       if (barEl) barEl.style.width = `${progressPct}%`;
     }
 
-    function updateAutoPlayButtonsUI(isRunning) {
+    function updateAutoPlayButtonsUI() {
       const topBtn = document.getElementById('btn-autoplay-top');
       const dockBtn = document.getElementById('btn-autoplay-dock');
+      const topPause = document.getElementById('btn-pause-top');
+      const dockPause = document.getElementById('btn-pause-dock');
       const indicator = document.getElementById('pres-auto-indicator');
-      if (isRunning) {
+
+      if (autoPlayActive) {
         if (topBtn) {
-          topBtn.className = 'px-3 py-1.5 rounded-xl text-xs font-black bg-rose-600 hover:bg-rose-700 text-white shadow-md border-2 border-rose-300 transition flex items-center gap-1.5 whitespace-nowrap';
-          topBtn.innerHTML = '<span>⏹ 停止自動播放 Stop</span>';
+          topBtn.className = 'px-2.5 py-1 rounded-lg text-[11px] sm:text-xs font-black bg-rose-600 hover:bg-rose-700 text-white shadow-sm border border-rose-300 transition flex items-center gap-1 whitespace-nowrap';
+          topBtn.innerHTML = '<span>⏹ 停止 Stop</span>';
         }
         if (dockBtn) {
-          dockBtn.className = 'px-3.5 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-black transition shadow-md whitespace-nowrap';
-          dockBtn.textContent = '⏹ 停止自動播放 Stop';
+          dockBtn.className = 'px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-black transition shadow-md whitespace-nowrap';
+          dockBtn.textContent = '⏹ 停止 Stop';
         }
-        if (indicator) indicator.classList.remove('hidden');
+        if (topPause) {
+          topPause.classList.remove('hidden');
+          topPause.textContent = autoPlayPaused ? '▶ 繼續 Resume' : '⏸ 暫停 Pause';
+        }
+        if (dockPause) {
+          dockPause.classList.remove('hidden');
+          dockPause.textContent = autoPlayPaused ? '▶ 繼續 Resume' : '⏸ 暫停 Pause';
+        }
+        if (indicator) {
+          indicator.classList.remove('hidden');
+          indicator.textContent = autoPlayPaused ? '⏸ 已暫停 Paused' : '● 播放中 Playing';
+          indicator.className = autoPlayPaused ? 'text-[10px] font-black text-amber-300' : 'text-[10px] font-black text-emerald-300';
+        }
       } else {
         if (topBtn) {
-          topBtn.className = 'px-3 py-1.5 rounded-xl text-xs font-black bg-amber-500 hover:bg-amber-600 text-slate-950 shadow-md border-2 border-amber-300 transition flex items-center gap-1.5 whitespace-nowrap';
-          topBtn.innerHTML = '<span>▶ 一鍵自動播放演示 Auto-Play</span>';
+          topBtn.className = 'px-2.5 py-1 rounded-lg text-[11px] sm:text-xs font-black bg-amber-500 hover:bg-amber-600 text-slate-950 shadow-sm border border-amber-300 transition flex items-center gap-1 whitespace-nowrap';
+          topBtn.innerHTML = '<span>▶ 自動演示 Auto-Play</span>';
         }
         if (dockBtn) {
-          dockBtn.className = 'px-3.5 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-black transition shadow-md whitespace-nowrap';
-          dockBtn.textContent = '▶ 一鍵自動播放 Auto-Play';
+          dockBtn.className = 'px-3 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-black transition shadow-md whitespace-nowrap';
+          dockBtn.textContent = '▶ 自動演示 Auto-Play';
         }
+        if (topPause) topPause.classList.add('hidden');
+        if (dockPause) dockPause.classList.add('hidden');
         if (indicator) indicator.classList.add('hidden');
       }
     }
 
     function stopAutoDemoDirector() {
       autoPlayActive = false;
+      autoPlayPaused = false;
       autoPlayRunId++;
-      updateAutoPlayButtonsUI(false);
+      updateAutoPlayButtonsUI();
     }
 
-    function waitMs(ms, runId) {
-      return new Promise(resolve => {
-        setTimeout(() => resolve(runId === autoPlayRunId && autoPlayActive), ms);
-      });
+    function togglePauseAutoDemo() {
+      if (!autoPlayActive) return;
+      autoPlayPaused = !autoPlayPaused;
+      updateAutoPlayButtonsUI();
+      showSystemToast(
+        autoPlayPaused ? '⏸ 自動演示已暫停 · Demo Paused' : '▶ 繼續自動演示 · Demo Resumed',
+        autoPlayPaused
+          ? '畫面已停定方便詳細講解，點擊「▶ 繼續 Resume」即可接續播放 · Paused for explanation.'
+          : '系統將繼續播放餘下演示流程 · Continuing guided presentation.',
+        'info'
+      );
     }
 
-    async function toggleAutoDemoDirector() {
+    // Pause-aware timer so user can pause mid-recording at any moment!
+    async function waitMs(ms, runId) {
+      let elapsed = 0;
+      const tick = 120;
+      while (elapsed < ms) {
+        if (!autoPlayActive || runId !== autoPlayRunId) return false;
+        await new Promise(r => setTimeout(r, tick));
+        if (!autoPlayActive || runId !== autoPlayRunId) return false;
+        if (!autoPlayPaused) elapsed += tick;
+      }
+      return true;
+    }
+
+    async function startOrStopAutoDemo() {
       if (autoPlayActive) {
         stopAutoDemoDirector();
         clearAllSpotlights();
-        showSystemToast('⏹ 已暫停自動演示', '你現在可以自由點擊任何按鈕向評判互動示範。', 'info');
+        showSystemToast(
+          '⏹ 已停止自動演示 · Auto-Play Stopped',
+          '現在可自由手動點擊各個功能向評判示範 · You can now explore manually.',
+          'info'
+        );
         return;
       }
 
-      // Fresh clean start so video recording captures the complete transformation!
+      // Reset to clean pre-leave state at simulated 10:42
       appData = createDefaultRecords();
       selectedLeaveDay = 'DAY 2';
       currentTeacherCode = 'CKKU';
       const overdueBtn = document.getElementById('nav-overdue-btn');
-      if (overdueBtn) overdueBtn.textContent = '🔔 模擬未到班提示 Late Alert';
+      if (overdueBtn) overdueBtn.textContent = '🔔 模擬逾時提示 Late Alert';
       saveRecords();
 
       if (!pinnedDoorVisible) togglePinnedDoorPreview(true);
 
       autoPlayActive = true;
+      autoPlayPaused = false;
       const myRunId = ++autoPlayRunId;
-      updateAutoPlayButtonsUI(true);
+      updateAutoPlayButtonsUI();
 
-      // --- SCENE 1: CKKU Leave Application + Auto 40-Min Lesson Pack + Anonymous SEN ---
+      // ==================== SCENE 1: CKKU LEAVE + SEN + 40-MIN PACK ====================
+      setSimulatedClock('10:42', 'P4');
       loginAsRole('ckku');
-      updateDockText(1, '第一步｜科任請假、40 分鐘課業包及匿名 SEN 提示 (Leave & Lesson Pack)', 'CKKU 周嘉權老師免填課題，系統自動按周次生成 40 分鐘溫習卷連評分答案，並自動載入 3B 班不記名 SEN 照顧提示！', 16);
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      if (!(await waitMs(1400, myRunId))) return;
+      updateDock(
+        1,
+        '第一步 Step 1｜科任請假與自動備課 · Subject Teacher Leave & Lesson Pack (10:42)',
+        'CKKU 周嘉權老師於平板請假，無須校工派紙。系統自動對照 Week 10 教學進度 · Mr. Chau applies on tablet without paper forms; system matches Week 10 schedule.',
+        '即將高亮「💙 匿名 SEN 課堂照顧提示」· Highlighting Anonymous SEN Classroom Reminder next',
+        12
+      );
+      if (!(await waitMs(4800, myRunId))) return;
 
       spotlightElement('sen-preview-card', true);
-      if (!(await waitMs(2800, myRunId))) return;
+      updateDock(
+        1,
+        '第一步 Step 1｜匿名 SEN 課堂照顧提示 · Anonymous SEN Classroom Reminder',
+        '系統自動載入 3B 班不記名 SEN 支援提示（+5分鐘作答及黑板重點），絕不顯示學生姓名 · Loads anonymous Class 3B SEN care tips (+5 min & board cues) with strict privacy.',
+        '即將展示自動生成的「📄 40 分鐘溫習課業包連答案」· Showing auto-generated 40-min worksheet & answer key next',
+        20
+      );
+      if (!(await waitMs(5200, myRunId))) return;
 
       spotlightElement('worksheet-box-card', true);
-      if (!(await waitMs(2600, myRunId))) return;
+      updateDock(
+        1,
+        '第一步 Step 1｜40 分鐘溫習工作紙連答案 · 40-Min Worksheet & Answer Key',
+        '自動生成包含選擇題、填充題、問答題及教師評分答案的課業包 · Auto-generates MC, fill-in-the-blanks, structured questions & teacher marking key.',
+        '👉 即將自動點擊「📨 提交請假申請」· Auto-clicking "Submit Leave Application" next',
+        28
+      );
+      if (!(await waitMs(4800, myRunId))) return;
 
       spotlightElement('btn-submit-leave', true);
-      if (!(await waitMs(1200, myRunId))) return;
+      if (!(await waitMs(2200, myRunId))) return;
 
-      // Auto-Submit Leave!
+      // Auto-Submit Leave at 10:43
+      setSimulatedClock('10:43', 'P4');
       submitTeacherLeaveRequest();
       spotlightElement('pinned-door-wrapper', false);
-      updateDockText(1, '✅ 已提交請假申請｜右側門外螢幕即時顯示「審批中」', '請留意上方成功提示及右側 RM 207 課室門外小螢幕已同步轉為「⏳ 請假審批中」，等候副校長批核！', 28);
-      if (!(await waitMs(3200, myRunId))) return;
+      updateDock(
+        1,
+        '✅ 請假已提交 Leave Submitted (10:43)｜門外小螢幕同步為「審批中」',
+        '請留意右側 RM 207 課室門外螢幕已即時轉為「⏳ 請假審批中」，待副校長批核 · Notice RM 207 Door Display on the right turns "Pending VP Approval".',
+        '即將切換至「② 副校長批核與零衝突公平派課」· Switching to Vice Principal Approval & Fair Matching next',
+        36
+      );
+      if (!(await waitMs(5600, myRunId))) return;
 
-      // --- SCENE 2: Vice Principal Approval & Fair Conflict-Free Matching ---
+      // ==================== SCENE 2: VICE PRINCIPAL APPROVAL & FAIR MATCHING ====================
       loginAsRole('vp_admin');
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      updateDockText(2, '第二步｜副校長一鍵批核與零衝突公平派課 (VP Approval & Fair Matching)', '系統自動排除撞堂及請假中老師，按本月累計代課節數公平指派 TMCHAN 陳大文代課（Room 207 第 4 節）。', 42);
       spotlightElement('admin-quota-card', true);
-      if (!(await waitMs(2600, myRunId))) return;
+      updateDock(
+        2,
+        '第二步 Step 2｜零衝突公平派課演算法 · Conflict-Free Fair Matching (10:44)',
+        '系統即時比對全校空堂及本月累計代課節數，自動排除撞堂及請假教師，公平指派 TMCHAN 陳大文 · Checks free periods & monthly quota to fairly assign TMCHAN with zero clashes.',
+        '👉 即將自動點擊「✅ 一鍵確認批核 Approve」· Auto-clicking "Approve" button next',
+        46
+      );
+      if (!(await waitMs(5500, myRunId))) return;
 
       const pendingReq = appData.leaveRequests.find(r => r.approvalStatus === 'pending');
       if (pendingReq) {
         spotlightElement(`btn-approve-${pendingReq.id}`, true);
-        if (!(await waitMs(1600, myRunId))) return;
+        if (!(await waitMs(2600, myRunId))) return;
+        setSimulatedClock('10:44', 'P4');
         approveLeaveRequest(pendingReq.id);
       }
       spotlightElement('pinned-door-wrapper', false);
-      updateDockText(2, '✅ 副校長批核完成｜全校看板與門外小螢幕即時同步', '批核一刻，右側 RM 207 課室門外小螢幕即時亮起「CKKU 周嘉權 請假 ➔ TMCHAN 陳大文 代課」！', 54);
-      if (!(await waitMs(3400, myRunId))) return;
+      updateDock(
+        2,
+        '✅ 副校長批核完成 VP Approved (10:44)｜門外小螢幕即時更新代課',
+        '批核一刻，右側 RM 207 課室門外小螢幕立即亮起「CKKU 周嘉權 請假 ➔ TMCHAN 陳大文 代課」· RM 207 Door Screen immediately displays "CKKU Absent ➔ TMCHAN Cover".',
+        '即將切換至「③ 教員室實時看板」查看 10:50 上課鐘響時段 · Switching to Staffroom Live Board at 10:50 P4 bell next',
+        56
+      );
+      if (!(await waitMs(5800, myRunId))) return;
 
-      // --- SCENE 3: Staffroom Live Board + Overdue Late Alert ---
+      // ==================== SCENE 3 & 4: STAFFROOM BOARD + OVERDUE ALERT ====================
+      setSimulatedClock('10:50', 'P4');
       loginAsRole('staffroom_tv');
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      updateDockText(3, '第三步｜教員室實時看板（自動鎖定本節 P4 及下一節 P5）', '防止傳統大表太密看漏眼：教員室看板只顯示本節及下一節代課，左列清楚顯示今日全體請假老師。', 66);
       spotlightElement('tv-time-filtered-container', true);
-      if (!(await waitMs(2800, myRunId))) return;
+      updateDock(
+        3,
+        '第三步 Step 3｜教員室實時看板 · Staffroom Live Board (10:50 P4 Bell)',
+        '自動鎖定「本節 P4 及下一節 P5」，避免全日表格太密導致老師看漏眼 · Locks onto Current (P4) & Next (P5) periods so staff never misread crowded schedules.',
+        '👉 即將推進時間至 10:55（鐘響後 5 分鐘），觸發「🚨 防漏堂逾時警報」· Advancing to 10:55 (+5 min late) to trigger Overdue Alert next',
+        66
+      );
+      if (!(await waitMs(5500, myRunId))) return;
 
-      // Trigger Overdue Alert!
+      // Trigger Overdue Alert at 10:55!
+      setSimulatedClock('10:55', 'P4');
       if (!appData.overdueAlertActive) toggleOverdueSimulation();
-      updateDockText(4, '第四步｜防漏堂溫馨提示：上課鐘響後未到班警報 (Overdue Alert)', '模擬上課鐘響後代課老師尚未報到：教員室看板與右側 RM 207 課室門外螢幕同步閃動紅框警報，杜絕課室無人看管！', 76);
       spotlightElement('pinned-door-wrapper', false);
-      if (!(await waitMs(3800, myRunId))) return;
+      updateDock(
+        4,
+        '第四步 Step 4｜防漏堂逾時警報 · Overdue Late Alert (10:55 · +5 Min Late)',
+        '上課鐘響後 5 分鐘仍未報到：教員室看板及右側 RM 207 門外螢幕同步閃動紅框警報 · 5 minutes past bell with no check-in: both Staffroom Board & RM 207 Door flash red alerts!',
+        '即將切換至「④ 代課老師 TMCHAN 視角」進行兩步網上報到 · Switching to Cover Teacher TMCHAN for Two-Step Check-In next',
+        76
+      );
+      if (!(await waitMs(6000, myRunId))) return;
 
-      // --- SCENE 4: Substitute Teacher (TMCHAN) SEN Care + Two-Step Check-In ---
+      // ==================== SCENE 5: TMCHAN SEN CARE + TWO-STEP CHECK-IN ====================
       loginAsRole('tmchan');
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      updateDockText(5, '第五步｜代課老師查閱匿名 SEN 提示及兩步報到 (Two-Step Check-In)', 'TMCHAN 陳大文老師於平板查看 40 分鐘課業包及 3B 班匿名 SEN 照顧提示，先按「1. 簽收」，再按「2. 到班報到」！', 86);
       spotlightElement('cover-row-P4-207', true);
-      if (!(await waitMs(2600, myRunId))) return;
+      updateDock(
+        5,
+        '第五步 Step 5｜代課老師查閱 SEN 提示及兩步報到 · SEN Care & Two-Step Check-In',
+        'TMCHAN 陳大文老師於平板查看課業包及 3B 班匿名 SEN 提示（門外屏隱藏 SEN 以保私隱）· TMCHAN views lesson pack & anonymous 3B SEN care tip on tablet.',
+        '👉 即將執行兩步報到第 1 步：「1. 簽收 Ack」· Executing Step 1 of Two-Step Check-In: "1. Ack" next',
+        84
+      );
+      if (!(await waitMs(5200, myRunId))) return;
 
-      // Two-Step Check-In Step 1: Ack
+      // Two-Step Check-In: Step 1 Ack at 10:55
       const p4Match1 = findActiveSubLessonByRoom('207', 'DAY 2', 'P4');
       if (p4Match1) {
         updateLessonCheckinStatus(p4Match1.req.id, p4Match1.lessonIdx, 'ack');
       }
-      if (!(await waitMs(2200, myRunId))) return;
+      updateDock(
+        5,
+        '第五步 Step 5｜已完成第 1 步「簽收確認 Ack」 (10:55)',
+        '老師已確認知悉代課安排並取得課業包 · Teacher acknowledged duty and received lesson pack.',
+        '👉 抵達課室（10:56），即將執行第 2 步：「2. 📍 到班報到 Arrived」解除警報 · Arriving at RM 207 (10:56): clicking "2. Arrived" to clear alert next',
+        90
+      );
+      if (!(await waitMs(4200, myRunId))) return;
 
-      // Two-Step Check-In Step 2: Arrived -> Clears Overdue Alert!
+      // Two-Step Check-In: Step 2 Arrived at 10:56 -> Clears Alert!
+      setSimulatedClock('10:56', 'P4');
       appData.overdueAlertActive = false;
-      if (overdueBtn) overdueBtn.textContent = '🔔 模擬未到班提示 Late Alert';
+      if (overdueBtn) overdueBtn.textContent = '🔔 模擬逾時提示 Late Alert';
       const p4Match2 = findActiveSubLessonByRoom('207', 'DAY 2', 'P4');
       if (p4Match2) {
         updateLessonCheckinStatus(p4Match2.req.id, p4Match2.lessonIdx, 'arrived');
       }
       spotlightElement('pinned-door-wrapper', false);
-      updateDockText(5, '✅ 兩步報到完成｜紅框警報即時解除並轉為綠色「已報到」', '請留意右側 RM 207 課室門外螢幕在 0.1 秒內消除紅色警報，清晰顯示「● 已報到 Arrived」！', 94);
-      if (!(await waitMs(3400, myRunId))) return;
+      updateDock(
+        5,
+        '✅ 到班報到完成 Arrived (10:56)｜紅框警報即時解除並轉綠！',
+        '請留意右側 RM 207 課室門外螢幕即時消除紅框，轉為綠色「● 已報到 Arrived (10:56)」· RM 207 Door Screen clears red alert and turns green "Arrived (10:56)" instantly!',
+        '即將切換至「⑤ 課室門外顯示屏全屏總覽」作結尾展示 · Switching to Full-Screen Classroom Door Display finale next',
+        95
+      );
+      if (!(await waitMs(5500, myRunId))) return;
 
-      // --- SCENE 5: Full-Screen Classroom Door Display Finale ---
+      // ==================== SCENE 6: FULL-SCREEN DOOR DISPLAY FINALE ====================
       loginAsRole('door_monitor');
       window.scrollTo({ top: 0, behavior: 'smooth' });
       spotlightElement('small-monitor-frame', true);
-      updateDockText(6, '第六步｜課室門外顯示屏全屏總覽（完成完整閉環演示）', '零撞堂、零漏堂、即時 40 分鐘課業包連匿名 SEN 提示，全校數據保留校內！點擊「↺ 重置重錄」即可重新錄影。', 100);
-      showSystemToast('🏆 完整流程自動演示完成！', '所有 6 個步驟已流暢演繹完畢，歡迎評判親手點擊試玩。', 'success');
+      updateDock(
+        6,
+        '第六步 Step 6｜課室門外顯示屏全屏總覽 · Classroom Door Display Complete (10:56)',
+        'SmartSchool SLRS 實現「零衝突排課、即時 40 分鐘課業包連匿名 SEN 提示、全校實時同步」· Zero clashes, instant 40-min lesson packs with SEN care, and 100% live sync!',
+        '🏆 自動演示已完成！可點擊右上角「↺ 重置 Reset」重錄或自由試玩 · Demo complete! Click Reset to replay or explore freely.',
+        100
+      );
+      showSystemToast(
+        '🏆 完整 6 步自動演示完成 · Guided Auto-Demo Finished!',
+        '已流暢演示請假出卷、SEN 提示、副校長批核、逾時警報及兩步報到 · All 6 steps demonstrated smoothly.',
+        'success'
+      );
 
-      await waitMs(3500, myRunId);
+      await waitMs(4800, myRunId);
       clearAllSpotlights();
       stopAutoDemoDirector();
     }
@@ -1635,36 +1793,77 @@
 
     function applyManualStep(stepNum) {
       if (stepNum === 1) {
+        setSimulatedClock('10:42', 'P4');
         loginAsRole('ckku');
-        updateDockText(1, '第一步｜科任請假、40 分鐘課業包及匿名 SEN 提示', '點擊「📨 提交請假申請」查看成功提示及右側門外螢幕即時轉為審批中。', 16);
+        updateDock(
+          1,
+          '第一步 Step 1｜科任請假、40 分鐘課業包及匿名 SEN 提示 · Leave & Lesson Pack',
+          'CKKU 周嘉權老師於平板請假並自動生成 40 分鐘課業包連匿名 SEN 提示 · Apply for leave with auto 40-min worksheet & anonymous SEN care.',
+          '點擊「📨 提交請假申請」或按「下一步」檢視副校長批核 · Click Submit Leave or Next for VP Approval',
+          16
+        );
       } else if (stepNum === 2) {
+        setSimulatedClock('10:44', 'P4');
         if (!appData.leaveRequests.some(r => r.teacherCode === 'CKKU' && r.cycleDay === 'DAY 2')) {
-          submitTeacherLeaveRequest();
+          submitTeacherLeaveRequest(true);
         }
         loginAsRole('vp_admin');
-        updateDockText(2, '第二步｜副校長一鍵批核與零衝突公平派課', '點擊「✅ 一鍵確認批核 Approve」，右側門外螢幕即時同步代課資訊。', 34);
+        updateDock(
+          2,
+          '第二步 Step 2｜副校長一鍵批核與公平派課 · VP Approval & Fair Matching',
+          '查看每月累計代課配額及無衝突自動配對結果 · Review monthly substitution quota & conflict-free matching.',
+          '點擊「✅ 一鍵確認批核 Approve」同步至門外顯示屏 · Click Approve to sync with door screen',
+          34
+        );
       } else if (stepNum === 3) {
+        setSimulatedClock('10:50', 'P4');
         const pending = appData.leaveRequests.find(r => r.approvalStatus === 'pending');
         if (pending) approveLeaveRequest(pending.id);
         loginAsRole('staffroom_tv');
-        updateDockText(3, '第三步｜教員室實時看板（自動鎖定本節 P4 及下一節 P5）', '左列今日請假名單，右列按時間鎖定本節及下一節代課。', 52);
+        updateDock(
+          3,
+          '第三步 Step 3｜教員室實時看板 · Staffroom Live Board (10:50 P4)',
+          '左列已批核請假名單，右列鎖定本節 P4 及下一節 P5 · Absent staff on left; current (P4) & next (P5) lessons on right.',
+          '按「下一步」模擬 10:55 逾時未到班警報 · Click Next to simulate 10:55 Overdue Alert',
+          52
+        );
       } else if (stepNum === 4) {
+        setSimulatedClock('10:55', 'P4');
         const pending = appData.leaveRequests.find(r => r.approvalStatus === 'pending');
         if (pending) approveLeaveRequest(pending.id);
         loginAsRole('staffroom_tv');
         if (!appData.overdueAlertActive) toggleOverdueSimulation();
-        updateDockText(4, '第四步｜防漏堂溫馨提示：逾時未到班閃動警報', '教員室看板及右側 RM 207 課室門外螢幕同步閃動紅框警報。', 70);
+        updateDock(
+          4,
+          '第四步 Step 4｜防漏堂逾時警報 · Overdue Late Alert (10:55)',
+          '鐘響後 5 分鐘仍未到班：教員室及右側 RM 207 門外小螢幕同步閃動紅框 · Both staffroom & RM 207 door screen flash red alerts.',
+          '按「下一步」進入代課老師 TMCHAN 進行兩步報到 · Click Next for TMCHAN Two-Step Check-In',
+          70
+        );
       } else if (stepNum === 5) {
+        setSimulatedClock('10:56', 'P4');
         loginAsRole('tmchan');
-        updateDockText(5, '第五步｜代課老師查閱匿名 SEN 提示及兩步報到', '點擊「1. 簽收 Ack」及「2. 📍 到班報到 Arrived」即時解除警報。', 86);
+        updateDock(
+          5,
+          '第五步 Step 5｜代課老師查閱匿名 SEN 提示及兩步報到 · SEN Care & Two-Step Check-In',
+          '查看 3B 班匿名 SEN 提示並依次點擊「1. 簽收」及「2. 📍 到班報到」· View anonymous SEN reminder and click Ack ➔ Arrived.',
+          '完成報到後按「下一步」檢視門外顯示屏全屏 · Click Next for Full-Screen Door Display',
+          86
+        );
       } else if (stepNum === 6) {
         loginAsRole('door_monitor');
-        updateDockText(6, '第六步｜課室門外顯示屏全屏展示', '清晰顯示原任請假及代課老師姓名，並保障學生私隱不顯示 SEN 資料。', 100);
+        updateDock(
+          6,
+          '第六步 Step 6｜課室門外顯示屏全屏展示 · Classroom Door Display Full View',
+          '清晰顯示原任請假及代課老師，並隱藏學生 SEN 私隱資料 · Clearly shows Absent ➔ Cover while protecting student SEN privacy.',
+          '可按「↺ 重置 Reset」重頭再試或點擊「▶ 自動演示」· Click Reset or Auto-Play anytime',
+          100
+        );
       }
     }
 
     // =========================================================================
-    // 8. NAVIGATION, PINNED DOOR SCREEN & CLOCK SYNC
+    // 8. NAVIGATION, PINNED DOOR SCREEN & SIMULATED PERIOD SELECTOR
     // =========================================================================
     function manualSelectRole(roleKey) {
       stopAutoDemoDirector();
@@ -1687,10 +1886,10 @@
       };
       Object.values(navMap).forEach(id => {
         const el = document.getElementById(id);
-        if (el) el.className = 'px-2.5 py-1.5 rounded-lg text-xs font-bold transition bg-black/15 hover:bg-white/20 text-white whitespace-nowrap';
+        if (el) el.className = 'px-2.5 py-1 rounded-lg text-xs font-bold transition bg-black/15 hover:bg-white/20 text-white whitespace-nowrap';
       });
       if (navMap[roleKey]) {
-        document.getElementById(navMap[roleKey]).className = 'px-2.5 py-1.5 rounded-lg text-xs font-black transition bg-white text-[#2b5400] shadow-sm whitespace-nowrap';
+        document.getElementById(navMap[roleKey]).className = 'px-2.5 py-1 rounded-lg text-xs font-black transition bg-white text-[#2b5400] shadow-sm whitespace-nowrap';
       }
 
       if (roleKey === 'ckku') {
@@ -1711,6 +1910,7 @@
         document.getElementById('screen-door-monitor').classList.remove('hidden');
         renderSmallDoorMonitor();
       }
+      updateClockDisplays();
       renderSmallDoorMonitor();
     }
 
@@ -1721,16 +1921,16 @@
       const topBtn = document.getElementById('top-btn-pin-door');
 
       if (pinnedDoorVisible) {
-        mainCol.className = 'lg:col-span-8 space-y-4';
+        mainCol.className = 'lg:col-span-8 space-y-3.5';
         pinnedCol.classList.remove('hidden');
-        topBtn.className = 'px-2.5 py-1.5 rounded-xl text-xs font-black bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition flex items-center gap-1 whitespace-nowrap';
-        topBtn.innerHTML = '<span>🪟 門外小螢幕：開啟</span>';
+        topBtn.className = 'px-2.5 py-1 rounded-lg text-[11px] sm:text-xs font-black bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition whitespace-nowrap';
+        topBtn.innerHTML = '<span>🪟 門外屏 Door: ON</span>';
         renderSmallDoorMonitor();
       } else {
-        mainCol.className = 'lg:col-span-12 space-y-4';
+        mainCol.className = 'lg:col-span-12 space-y-3.5';
         pinnedCol.classList.add('hidden');
-        topBtn.className = 'px-2.5 py-1.5 rounded-xl text-xs font-black bg-slate-700 hover:bg-slate-800 text-white shadow-sm transition flex items-center gap-1 whitespace-nowrap';
-        topBtn.innerHTML = '<span>🪟 門外小螢幕：關閉</span>';
+        topBtn.className = 'px-2.5 py-1 rounded-lg text-[11px] sm:text-xs font-black bg-slate-700 hover:bg-slate-800 text-white shadow-sm transition whitespace-nowrap';
+        topBtn.innerHTML = '<span>🪟 門外屏 Door: OFF</span>';
       }
     }
 
@@ -1744,68 +1944,15 @@
       renderSmallDoorMonitor();
     }
 
-    function getNextPeriodId(currentPid) {
-      const idx = PERIOD_SLOTS.findIndex(p => p.id === currentPid);
-      return (idx === -1 || idx + 1 >= PERIOD_SLOTS.length) ? null : PERIOD_SLOTS[idx + 1].id;
-    }
-
-    function getPeriodMeta(pid) {
-      return PERIOD_SLOTS.find(p => p.id === pid) || PERIOD_SLOTS[0];
-    }
-
-    function syncWithHongKongTime() {
-      const hk = getHongKongTimeParts();
-      if (appData.clockMode !== 'manual') {
-        appData.activePeriodId = detectPeriodFromHKMinutes(hk.totalMinutes);
-      }
-
-      const pMeta = getPeriodMeta(appData.activePeriodId);
-      const nextPid = getNextPeriodId(appData.activePeriodId);
-
-      const dateEl = document.getElementById('auto-header-date');
-      const cycleEl = document.getElementById('auto-header-cycle');
-      const pBadgeEl = document.getElementById('auto-header-period-badge');
-      const clockEl = document.getElementById('auto-header-clock');
-      const tvClockEl = document.getElementById('tv-live-clock');
-      const doorClockEl = document.getElementById('door-live-clock');
-
-      if (dateEl) dateEl.textContent = hk.dateStr;
-      if (cycleEl) cycleEl.textContent = appData.currentCycleDay;
-      if (pBadgeEl) pBadgeEl.textContent = `本節 ${pMeta.short} (${pMeta.time})`;
-      if (clockEl) clockEl.textContent = hk.timeStr;
-      if (tvClockEl) tvClockEl.textContent = hk.timeStr;
-      if (doorClockEl) doorClockEl.textContent = hk.shortTimeStr;
-
-      const syncTextEl = document.getElementById('tv-auto-sync-status-text');
-      if (syncTextEl) {
-        if (appData.clockMode === 'manual') {
-          syncTextEl.innerHTML = `🏆 比賽演示時段：鎖定 <strong>本節 ${pMeta.short} (${pMeta.time})</strong> 及 <strong>下一節 ${nextPid || '放學'}</strong>`;
-        } else if (isAfterHoursDemoSlot(hk.totalMinutes)) {
-          syncTextEl.innerHTML = `🕒 課後自動保底展示 (${hk.shortTimeStr})：<strong>本節 ${pMeta.short} (${pMeta.time})</strong> 及 <strong>下一節 ${nextPid || '放學'}</strong>`;
-        } else {
-          syncTextEl.innerHTML = `🕒 香港時間 ${hk.shortTimeStr} 自動鎖定：<strong>本節 ${pMeta.short} (${pMeta.time})</strong> 及 <strong>下一節 ${nextPid || '放學'}</strong>`;
-        }
-      }
-    }
-
-    function setClockModeAuto() {
-      appData.clockMode = 'auto';
-      syncWithHongKongTime();
-      saveRecords();
-      refreshAllActiveViews();
-      showSystemToast('🕒 已切換為實時香港時間同步', '課後或午休時段將自動保底顯示 P4 課節，絕不出現空畫面。', 'info');
-    }
-
     function setManualDemoPeriod(pid) {
-      appData.clockMode = 'manual';
+      const pMeta = getPeriodMeta(pid);
       appData.activePeriodId = pid;
-      syncWithHongKongTime();
+      appData.simTimeStr = pMeta.defaultSim;
       saveRecords();
       refreshAllActiveViews();
     }
 
     function toggleOverdueSimulation() {
-      // Ensure CKKU's leave exists and is approved so Room 207 P4 can show the alert!
       let ckkuReq = appData.leaveRequests.find(r => r.teacherCode === 'CKKU' && r.cycleDay === appData.currentCycleDay);
       if (!ckkuReq && !appData.overdueAlertActive) {
         submitTeacherLeaveRequest(true);
@@ -1818,52 +1965,60 @@
       appData.overdueAlertActive = !appData.overdueAlertActive;
       const btn = document.getElementById('nav-overdue-btn');
       if (appData.overdueAlertActive) {
-        appData.clockMode = 'manual';
         appData.activePeriodId = 'P4';
+        appData.simTimeStr = '10:55';
         const match = findActiveSubLessonByRoom('207', appData.currentCycleDay, 'P4');
         if (match && match.les.checkinStatus === 'arrived') {
           match.les.checkinStatus = 'ack';
           match.les.arriveTime = '';
         }
-        if (btn) btn.textContent = '🚨 逾時警報開啟中 (點擊關閉)';
-        showSystemToast('🚨 防漏堂溫馨提示已觸發！', 'Room 207 (3B 電腦) 上課鐘已響但代課老師尚未到班，教員室看板及門外螢幕已閃動紅框提示！', 'warning');
+        if (btn) btn.textContent = '🚨 逾時警報中 Alert ON';
+        showSystemToast(
+          '🚨 防漏堂逾時警報觸發 · Overdue Late Alert (10:55)',
+          'Room 207 (3B CL_B1) 上課鐘響後 5 分鐘未報到，看板與門外螢幕同步閃動！· 5 min past P4 bell with no arrival check-in!',
+          'warning'
+        );
       } else {
-        if (btn) btn.textContent = '🔔 模擬未到班提示 Late Alert';
-        showSystemToast('✅ 逾時警報已關閉', '所有課室恢復正常監測狀態。', 'info');
+        if (btn) btn.textContent = '🔔 模擬逾時提示 Late Alert';
+        showSystemToast(
+          '✅ 逾時警報已關閉 · Late Alert Cleared',
+          '所有課室恢復正常監測狀態 · All classrooms back to normal monitoring.',
+          'info'
+        );
       }
       saveRecords();
       refreshAllActiveViews();
     }
 
     // =========================================================================
-    // 9. STATUS PILL HELPER
+    // 9. BILINGUAL STATUS PILL HELPER
     // =========================================================================
     function buildCleanStatusPill(status, ackTime, arriveTime, periodId = '', approvalStatus = 'approved') {
       if (approvalStatus === 'pending') {
-        return `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-black bg-amber-100 text-amber-900 border border-amber-400 whitespace-nowrap">
+        return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-black bg-amber-100 text-amber-900 border border-amber-400 whitespace-nowrap">
           <span class="w-2 h-2 rounded-full bg-amber-500 pulse-dot flex-shrink-0"></span>
           <span>⏳ 審批中 Pending VP</span>
         </span>`;
       }
       const isCurrentPeriod = (periodId && periodId === appData.activePeriodId);
       if (status === 'arrived') {
-        return `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-black bg-emerald-100 text-emerald-900 border border-emerald-300 whitespace-nowrap">
+        return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-black bg-emerald-100 text-emerald-900 border border-emerald-300 whitespace-nowrap">
           <span class="w-2 h-2 rounded-full bg-emerald-600 flex-shrink-0"></span>
           <span>已報到 Arrived ${arriveTime ? `(${arriveTime})` : ''}</span>
         </span>`;
       }
       if (appData.overdueAlertActive && isCurrentPeriod) {
-        return `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-black bg-rose-600 text-white border border-rose-700 shadow-sm pulse-dot whitespace-nowrap">
+        return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-black bg-rose-600 text-white border border-rose-700 shadow-sm pulse-dot whitespace-nowrap">
           <span>🚨 逾時未報到 Overdue</span>
         </span>`;
       }
       if (status === 'ack') {
-        return `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-black bg-amber-100 text-amber-900 border border-amber-300 whitespace-nowrap">
+        return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-black bg-amber-100 text-amber-900 border border-amber-300 whitespace-nowrap">
           <span class="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0"></span>
           <span>已簽收 Ack ${ackTime ? `(${ackTime})` : ''}</span>
         </span>`;
       }
-      return `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-black bg-rose-100 text-rose-800 border border-rose-300 whitespace-nowrap">
+      return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-black bg-rose-100 text-rose-800 border border-rose-300 whitespace-nowrap">
         <span class="w-2 h-2 rounded-full bg-rose-600 pulse-dot flex-shrink-0"></span>
         <span>待簽收 Pending</span>
       </span>`;
@@ -1881,12 +2036,12 @@
       const btnSub = document.getElementById('teacher-subtab-btn-sub');
       if (subTab === 'timetable-leave') {
         leaveView.classList.remove('hidden'); subView.classList.add('hidden');
-        btnLeave.className = 'px-3 py-1.5 rounded-lg text-xs font-black transition bg-[#68b800] text-white';
-        btnSub.className = 'px-3 py-1.5 rounded-lg text-xs font-black transition text-slate-700 hover:bg-lime-50 flex items-center gap-1.5';
+        btnLeave.className = 'px-3 py-1 rounded-lg text-xs font-black transition bg-[#68b800] text-white';
+        btnSub.className = 'px-3 py-1 rounded-lg text-xs font-black transition text-slate-700 hover:bg-lime-50 flex items-center gap-1.5';
       } else {
         leaveView.classList.add('hidden'); subView.classList.remove('hidden');
-        btnLeave.className = 'px-3 py-1.5 rounded-lg text-xs font-black transition text-slate-700 hover:bg-lime-50';
-        btnSub.className = 'px-3 py-1.5 rounded-lg text-xs font-black transition bg-[#68b800] text-white flex items-center gap-1.5';
+        btnLeave.className = 'px-3 py-1 rounded-lg text-xs font-black transition text-slate-700 hover:bg-lime-50';
+        btnSub.className = 'px-3 py-1 rounded-lg text-xs font-black transition bg-[#68b800] text-white flex items-center gap-1.5';
       }
       renderTeacherPortal();
     }
@@ -1901,23 +2056,22 @@
       document.getElementById('timetable-owner-title').textContent = `個人全日時間表 Full-Day Timetable: ${teacher.name}`;
       document.getElementById('timetable-day-pills').innerHTML = CYCLE_DAYS.map(d => `<button type="button" onclick="selectLeaveDay('${d}')" class="px-2 py-0.5 rounded text-[11px] font-black transition ${d === selectedLeaveDay ? 'bg-[#68b800] text-white' : 'bg-slate-100 text-slate-700 hover:bg-lime-100'}">${d.replace('DAY ', 'D')}</button>`).join('');
 
-      // Update Leave Application Status Badge clearly on the Leave Card
       const existingReq = appData.leaveRequests.find(r => r.teacherCode === teacher.code && r.cycleDay === selectedLeaveDay);
       const statusBadge = document.getElementById('ckku-leave-status-badge');
       const submitBtn = document.getElementById('btn-submit-leave');
       if (statusBadge && submitBtn) {
         if (existingReq && existingReq.approvalStatus === 'approved') {
-          statusBadge.className = 'text-[11px] font-black px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-900 border border-emerald-300 whitespace-nowrap';
-          statusBadge.textContent = '✅ 已批核並派課 Approved';
-          submitBtn.innerHTML = '<span>🔄 更新請假申請及課業包 Update Leave Application</span>';
+          statusBadge.className = 'text-[11px] font-black px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-900 border border-emerald-300 whitespace-nowrap';
+          statusBadge.textContent = '✅ 已批核 Approved';
+          submitBtn.innerHTML = '<span>🔄 更新請假申請及課業包 · Update Leave Application</span>';
         } else if (existingReq && existingReq.approvalStatus === 'pending') {
-          statusBadge.className = 'text-[11px] font-black px-2.5 py-1 rounded-full bg-amber-100 text-amber-900 border border-amber-400 whitespace-nowrap';
-          statusBadge.textContent = '⏳ 已提交，待副校長批核 Pending VP';
-          submitBtn.innerHTML = '<span>✅ 已提交申請（可重交更新） Submitted — Pending Approval</span>';
+          statusBadge.className = 'text-[11px] font-black px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-400 whitespace-nowrap';
+          statusBadge.textContent = '⏳ 待副校長批核 Pending VP';
+          submitBtn.innerHTML = '<span>✅ 已提交申請（可重交更新） · Submitted — Pending Approval</span>';
         } else {
-          statusBadge.className = 'text-[11px] font-black px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 border border-slate-300 whitespace-nowrap';
-          statusBadge.textContent = '📝 準備提交請假申請 Ready to Submit';
-          submitBtn.innerHTML = '<span>📨 提交請假申請並附上 40 分鐘課業包 Submit Leave Application</span>';
+          statusBadge.className = 'text-[11px] font-black px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-300 whitespace-nowrap';
+          statusBadge.textContent = '📝 準備提交 Ready to Submit';
+          submitBtn.innerHTML = '<span>📨 提交請假申請並附上 40 分鐘課業包 · Submit Leave Application</span>';
         }
       }
 
@@ -1945,7 +2099,7 @@
           if (!val) return `<td class="p-1.5 text-slate-300 ${isSelectedDay ? 'bg-lime-50/40' : ''}">—</td>`;
           return `<td onclick="selectLeaveDay('${day}')" class="p-1.5 cursor-pointer font-bold ${isSelectedDay ? 'bg-lime-100 text-[#2b5400]' : 'bg-white text-slate-800 hover:bg-lime-50'}">${val}</td>`;
         }).join('');
-        return `<tr class="${isCurrentNow ? 'bg-lime-50/60' : ''}"><td class="p-2 font-black text-slate-700 bg-slate-50 text-left whitespace-nowrap"><div>${slot.short} <span class="text-[10px] font-normal text-slate-500">${slot.time}</span></div>${isCurrentNow ? '<span class="text-[10px] bg-[#68b800] text-white px-1.5 py-0.2 rounded">本節 Now</span>' : ''}</td>${cells}</tr>`;
+        return `<tr class="${isCurrentNow ? 'bg-lime-50/60' : ''}"><td class="p-1.5 font-black text-slate-700 bg-slate-50 text-left whitespace-nowrap"><div>${slot.short} <span class="text-[10px] font-normal text-slate-500">${slot.time}</span></div>${isCurrentNow ? '<span class="text-[10px] bg-[#68b800] text-white px-1.5 py-0.2 rounded">本節 Now</span>' : ''}</td>${cells}</tr>`;
       }).join('');
 
       renderLeaveAffectedLessons();
@@ -1977,16 +2131,16 @@
           const room = parseRoomFromCell(cell);
           const sen = getSenReminderByCell(cell);
           items.push(`
-            <label class="flex items-start p-2 rounded-lg border border-lime-300 bg-lime-50/70 hover:bg-lime-100 cursor-pointer transition gap-2">
+            <label class="flex items-start p-1.5 rounded-lg border border-lime-300 bg-lime-50/70 hover:bg-lime-100 cursor-pointer transition gap-1.5">
               <input type="checkbox" name="affected-lesson-chk" value="${slot.id}" data-label="${slot.label}" data-cell="${cell}" data-room="${room}" checked onchange="refreshWorksheetPreviewFromForm()" class="rounded text-[#68b800] w-3.5 h-3.5 mt-0.5 flex-shrink-0" />
               <div class="min-w-0">
-                <div class="text-xs font-black text-slate-900 truncate">${slot.short} · <span class="text-[#2b5400]">${cell}</span></div>
-                <div class="text-[10px] font-bold text-indigo-800 truncate">💙 ${sen.badge}</div>
+                <div class="text-[11px] font-black text-slate-900 truncate">${slot.short} · <span class="text-[#2b5400]">${cell}</span></div>
+                <div class="text-[9px] font-bold text-indigo-800 truncate">💙 ${sen.badge}</div>
               </div>
             </label>`);
         }
       });
-      container.innerHTML = items.length > 0 ? items.join('') : `<div class="col-span-2 p-2.5 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-500 font-bold">此循環日 (${selectedLeaveDay}) 沒有常規課節。</div>`;
+      container.innerHTML = items.length > 0 ? items.join('') : `<div class="col-span-3 p-2 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-500 font-bold">此循環日 (${selectedLeaveDay}) 沒有常規課節 · No regular lessons.</div>`;
     }
 
     function getSelectedPaperMode() {
@@ -2013,11 +2167,14 @@
       const scopeMode = getSelectedScopeMode();
       const teacher = appData.teachers[currentTeacherCode] || appData.teachers.CKKU;
 
-      if (senTextEl) senTextEl.textContent = getSenReminderByCell(targetCell).zh;
+      const senInfo = getSenReminderByCell(targetCell);
+      if (senTextEl) {
+        senTextEl.innerHTML = `${senInfo.zh}<br/><span class="text-indigo-700 font-semibold">${senInfo.en}</span>`;
+      }
       if (badgeEl) {
-        if (customVal) badgeEl.textContent = '✨ 自訂課題模式 Custom Topic';
-        else if (scopeMode === 'prior') badgeEl.textContent = '🔄 已對照 Week 1–8 溫習題庫';
-        else badgeEl.textContent = '⚡ 已對照 Week 10 教學進度';
+        if (customVal) badgeEl.textContent = '✨ 自訂課題 Custom Topic';
+        else if (scopeMode === 'prior') badgeEl.textContent = '🔄 Weeks 1–8 溫習 Prior';
+        else badgeEl.textContent = '⚡ Week 10 進度 Current Week';
       }
       outputArea.value = generateWorksheetAndAnswerKeyText(targetCell, customVal, getSelectedPaperMode(), teacher.shortName, scopeMode);
     }
@@ -2039,7 +2196,7 @@
       const scopeMode = getSelectedScopeMode();
       const paperMode = getSelectedPaperMode();
 
-      let checkedBoxes = Array.from(document.querySelectorAll('input[name="affected-lesson-chk"]:checked'));
+      const checkedBoxes = Array.from(document.querySelectorAll('input[name="affected-lesson-chk"]:checked'));
       let lessonsSource = [];
       if (checkedBoxes.length > 0) {
         lessonsSource = checkedBoxes.map(cb => ({
@@ -2059,11 +2216,10 @@
       }
 
       if (lessonsSource.length === 0) {
-        showSystemToast('未能提交申請', '請至少勾選一節受影響之課堂！', 'warning');
+        showSystemToast('未能提交申請 · Cannot Submit', '請至少勾選一節受影響之課堂！· Please select at least one lesson.', 'warning');
         return;
       }
 
-      // Remove existing request for same teacher & day so quota calculation is clean
       appData.leaveRequests = appData.leaveRequests.filter(r => !(r.teacherCode === teacher.code && r.cycleDay === cycleDay));
 
       const tempBatchCounts = {};
@@ -2093,7 +2249,7 @@
         scopeMode,
         paperMode,
         approvalStatus: 'pending',
-        submittedAt: getHongKongTimeParts().shortTimeStr,
+        submittedAt: appData.simTimeStr || '10:43',
         lessons: lessonsArr
       });
 
@@ -2101,8 +2257,8 @@
       refreshAllActiveViews();
       if (!silent) {
         showSystemToast(
-          '✅ 請假申請提交成功 Leave Submitted!',
-          `已為 ${teacher.shortName} (${lessonsArr.length} 節課) 自動配對無衝突代課老師及 40 分鐘 SEN 課業包，並傳送至副校長審批！`,
+          '✅ 請假申請提交成功 · Leave Submitted Successfully!',
+          `已為 ${teacher.shortName} (${lessonsArr.length} 節) 自動配對無衝突代課老師及 40 分鐘 SEN 課業包，正待副校長批核 · Sent to VP with lesson packs & SEN care.`,
           'success'
         );
       }
@@ -2124,7 +2280,7 @@
 
       const filtered = onlyMine ? allLessons.filter(item => item.les.assignedSubCode === currentTeacherCode) : allLessons;
       if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="p-5 text-center text-slate-500 font-bold">目前沒有已批核之代課課節（請先於「① 科任請假」提交並於「② 副校長批核」確認）。</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" class="p-5 text-center text-slate-500 font-bold">目前沒有已批核之代課課節 · No approved substitution duties yet.</td></tr>`;
         return;
       }
 
@@ -2149,19 +2305,19 @@
             <td class="p-2.5 font-black text-[#2b5400] whitespace-nowrap">${les.assignedSubName}</td>
             <td class="p-2.5 space-y-1">
               <div class="text-[11px] font-bold text-slate-800 truncate max-w-[200px]">${topicLabel}</div>
-              <div class="text-[10px] font-bold text-indigo-900 bg-indigo-50 border border-indigo-200 px-2 py-0.5 rounded leading-snug max-w-[240px]">
-                💙 SEN 提示 (匿名): ${sen.badge}
+              <div class="text-[10px] font-bold text-indigo-900 bg-indigo-50 border border-indigo-200 px-2 py-0.5 rounded leading-snug max-w-[250px]">
+                💙 SEN 匿名提示 Anonymous: ${sen.badge}
               </div>
               <div class="flex items-center gap-1.5 pt-0.5">
-                <button type="button" onclick="openWorksheetModal('${les.rawCell}', '${(req.customTopic || '').replace(/'/g, '')}', '${req.paperMode}', '${req.teacherName}', '${req.scopeMode || 'current'}')" class="px-2 py-0.5 rounded bg-white hover:bg-lime-100 text-[#2b5400] border border-[#68b800] text-[10px] font-bold whitespace-nowrap">預覽課業包</button>
-                <button type="button" onclick="exportWordLessonPack('${les.rawCell}', '${(req.customTopic || '').replace(/'/g, '')}', '${req.paperMode}', '${req.teacherName}')" class="px-2 py-0.5 rounded bg-blue-700 hover:bg-blue-800 text-white text-[10px] font-bold whitespace-nowrap">📄 匯出課業包</button>
+                <button type="button" onclick="openWorksheetModal('${les.rawCell}', '${(req.customTopic || '').replace(/'/g, '')}', '${req.paperMode}', '${req.teacherName}', '${req.scopeMode || 'current'}')" class="px-2 py-0.5 rounded bg-white hover:bg-lime-100 text-[#2b5400] border border-[#68b800] text-[10px] font-bold whitespace-nowrap">預覽 Preview</button>
+                <button type="button" onclick="exportWordLessonPack('${les.rawCell}', '${(req.customTopic || '').replace(/'/g, '')}', '${req.paperMode}', '${req.teacherName}')" class="px-2 py-0.5 rounded bg-blue-700 hover:bg-blue-800 text-white text-[10px] font-bold whitespace-nowrap">📄 匯出 Export</button>
               </div>
             </td>
             <td class="p-2.5 text-center whitespace-nowrap space-y-1">
               <div>${buildCleanStatusPill(les.checkinStatus, les.ackTime, les.arriveTime, les.periodId, req.approvalStatus)}</div>
               <div class="flex items-center justify-center gap-1">
                 <button onclick="updateLessonCheckinStatus('${req.id}', ${lessonIdx}, 'ack')" class="px-2 py-0.5 rounded bg-amber-500 hover:bg-amber-600 text-white text-[10px] font-black">1. 簽收 Ack</button>
-                <button onclick="appData.overdueAlertActive = false; updateLessonCheckinStatus('${req.id}', ${lessonIdx}, 'arrived')" class="px-2.5 py-0.5 rounded bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-black shadow-sm">2. 📍 到班報到</button>
+                <button onclick="appData.overdueAlertActive = false; updateLessonCheckinStatus('${req.id}', ${lessonIdx}, 'arrived')" class="px-2.5 py-0.5 rounded bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-black shadow-sm">2. 📍 報到 Arrived</button>
               </div>
             </td>
           </tr>`;
@@ -2171,43 +2327,43 @@
     function updateLessonCheckinStatus(reqId, lessonIdx, newStatus) {
       const req = appData.leaveRequests.find(r => r.id === reqId);
       if (!req || !req.lessons[lessonIdx]) return;
-      const nowStr = getHongKongTimeParts().shortTimeStr;
+      const simNow = appData.simTimeStr || '10:56';
       const les = req.lessons[lessonIdx];
       les.checkinStatus = newStatus;
-      if (newStatus === 'ack') les.ackTime = nowStr;
+      if (newStatus === 'ack') les.ackTime = simNow;
       if (newStatus === 'arrived') {
-        if (!les.ackTime) les.ackTime = nowStr;
-        les.arriveTime = nowStr;
+        if (!les.ackTime) les.ackTime = simNow;
+        les.arriveTime = simNow;
         const overdueBtn = document.getElementById('nav-overdue-btn');
-        if (overdueBtn && !appData.overdueAlertActive) overdueBtn.textContent = '🔔 模擬未到班提示 Late Alert';
+        if (overdueBtn && !appData.overdueAlertActive) overdueBtn.textContent = '🔔 模擬逾時提示 Late Alert';
       }
       saveRecords();
       refreshAllActiveViews();
       if (newStatus === 'arrived') {
         showSystemToast(
-          `✅ Room ${les.room} 代課老師已到班報到 Arrived!`,
-          `${les.assignedSubName} 已完成兩步報到 (${nowStr})，教員室看板及課室門外顯示屏已即時更新為綠色！`,
+          `✅ Room ${les.room} 代課老師已報到 · Arrived (${simNow})`,
+          `${les.assignedSubName} 已完成兩步報到，教員室看板及課室門外顯示屏已同步轉綠 · All live displays updated to Arrived!`,
           'success'
         );
       } else {
         showSystemToast(
-          `🔔 Room ${les.room} 代課老師已簽收確認 Ack`,
-          `${les.assignedSubName} 已確認收到課業包及匿名 SEN 照顧提示 (${nowStr})。`,
+          `🔔 Room ${les.room} 代課老師已簽收 · Acknowledged (${simNow})`,
+          `${les.assignedSubName} 已確認收到課業包及匿名 SEN 提示 · Teacher acknowledged duty & SEN reminder.`,
           'info'
         );
       }
     }
 
     // =========================================================================
-    // 11. VICE PRINCIPAL / GENERAL OFFICE PORTAL
+    // 11. VICE PRINCIPAL APPROVAL PORTAL
     // =========================================================================
     function switchAdminSubTab(tabName) {
       ['approval', 'schedule_table', 'timetables'].forEach(t => {
         document.getElementById(`admin-subview-${t}`).classList.add('hidden');
-        document.getElementById(`admin-subtab-btn-${t}`).className = 'px-3 py-1.5 rounded-lg text-xs font-black transition text-slate-700 hover:bg-lime-50';
+        document.getElementById(`admin-subtab-btn-${t}`).className = 'px-3 py-1 rounded-lg text-xs font-black transition text-slate-700 hover:bg-lime-50';
       });
       document.getElementById(`admin-subview-${tabName}`).classList.remove('hidden');
-      document.getElementById(`admin-subtab-btn-${tabName}`).className = 'px-3 py-1.5 rounded-lg text-xs font-black transition bg-[#68b800] text-white';
+      document.getElementById(`admin-subtab-btn-${tabName}`).className = 'px-3 py-1 rounded-lg text-xs font-black transition bg-[#68b800] text-white';
       if (tabName === 'approval') renderAdminApprovalList();
       if (tabName === 'schedule_table') renderScheduleTable();
       if (tabName === 'timetables') renderAdminTimetableInspector();
@@ -2220,8 +2376,8 @@
       saveRecords();
       refreshAllActiveViews();
       showSystemToast(
-        '✅ 副校長已一鍵批核請假申請 Approved!',
-        `${req.teacherName} 之代課編排已生效，教員室實時看板及課室門外小螢幕已同步更新！`,
+        '✅ 副校長已一鍵批核 · VP Approved & Synced!',
+        `${req.teacherName} 之代課安排已生效，教員室看板與課室門外小螢幕已同步更新 · Staffroom & Door Screens updated!`,
         'success'
       );
     }
@@ -2234,13 +2390,13 @@
           const freeCount = PERIOD_SLOTS.filter(p => !daySched[p.id] || daySched[p.id].trim() === '').length;
           const isAbsent = isTeacherAbsentOnDay(t.code, appData.currentCycleDay);
           return `
-            <div class="p-2.5 rounded-lg ${isAbsent ? 'bg-rose-50 border border-rose-200' : 'bg-[#f4fae8] border border-lime-300'}">
+            <div class="p-2 rounded-lg ${isAbsent ? 'bg-rose-50 border border-rose-200' : 'bg-[#f4fae8] border border-lime-300'}">
               <div class="flex items-center justify-between gap-1">
                 <span class="text-xs font-black text-slate-900 truncate">${t.shortName}</span>
-                ${isAbsent ? '<span class="text-[9px] font-black bg-rose-600 text-white px-1.5 rounded">請假</span>' : ''}
+                ${isAbsent ? '<span class="text-[9px] font-black bg-rose-600 text-white px-1.5 rounded">請假 Absent</span>' : ''}
               </div>
-              <div class="text-[11px] text-slate-600 mt-0.5">本月累計代課: <strong class="text-[#2b5400]">${getTeacherLiveQuota(t.code)} 節</strong></div>
-              <div class="text-[10px] text-emerald-800 font-bold">常規空堂: ${freeCount} 節</div>
+              <div class="text-[11px] text-slate-600 mt-0.5">本月代課 Quota: <strong class="text-[#2b5400]">${getTeacherLiveQuota(t.code)} 節</strong></div>
+              <div class="text-[10px] text-emerald-800 font-bold">空堂 Free: ${freeCount} 節</div>
             </div>`;
         }).join('');
       }
@@ -2267,22 +2423,22 @@
 
           return `
             <tr class="border-b border-slate-200">
-              <td class="p-2.5 font-black text-[#2b5400] whitespace-nowrap">${les.periodId} (${getPeriodMeta(les.periodId).time})</td>
-              <td class="p-2.5 font-bold text-slate-900 whitespace-nowrap">${les.rawCell}</td>
-              <td class="p-2.5"><select onchange="changeAssignedCoverTeacher('${req.id}', ${idx}, this.value)" class="w-full px-2 py-1 rounded border border-lime-500 bg-white text-xs font-bold text-slate-900">${optionsHtml}</select></td>
-              <td class="p-2.5 text-[11px] space-y-0.5">
-                <div class="font-bold text-emerald-900 truncate max-w-[180px]">${req.customTopic || sched.currentWeekTopic}</div>
+              <td class="p-2 font-black text-[#2b5400] whitespace-nowrap">${les.periodId} (${getPeriodMeta(les.periodId).time})</td>
+              <td class="p-2 font-bold text-slate-900 whitespace-nowrap">${les.rawCell}</td>
+              <td class="p-2"><select onchange="changeAssignedCoverTeacher('${req.id}', ${idx}, this.value)" class="w-full px-2 py-1 rounded border border-lime-500 bg-white text-xs font-bold text-slate-900">${optionsHtml}</select></td>
+              <td class="p-2 text-[11px] space-y-0.5">
+                <div class="font-bold text-emerald-900 truncate max-w-[175px]">${req.customTopic || sched.currentWeekTopic}</div>
                 <div class="flex items-center gap-1.5">
-                  <span class="text-[10px] font-bold bg-indigo-50 text-indigo-800 border border-indigo-200 px-1.5 rounded">💙 附匿名 SEN</span>
-                  <button type="button" onclick="openWorksheetModal('${les.rawCell}', '${(req.customTopic || '').replace(/'/g, '')}', '${req.paperMode}', '${req.teacherName}', '${req.scopeMode || 'current'}')" class="text-blue-700 font-black hover:underline">預覽</button>
+                  <span class="text-[10px] font-bold bg-indigo-50 text-indigo-800 border border-indigo-200 px-1.5 rounded">💙 SEN 提示</span>
+                  <button type="button" onclick="openWorksheetModal('${les.rawCell}', '${(req.customTopic || '').replace(/'/g, '')}', '${req.paperMode}', '${req.teacherName}', '${req.scopeMode || 'current'}')" class="text-blue-700 font-black hover:underline">預覽 Preview</button>
                 </div>
               </td>
-              <td class="p-2.5 text-center whitespace-nowrap">${buildCleanStatusPill(les.checkinStatus, les.ackTime, les.arriveTime, les.periodId, req.approvalStatus)}</td>
+              <td class="p-2 text-center whitespace-nowrap">${buildCleanStatusPill(les.checkinStatus, les.ackTime, les.arriveTime, les.periodId, req.approvalStatus)}</td>
             </tr>`;
         }).join('');
 
         return `
-          <div id="admin-req-card-${req.id}" class="bg-white rounded-xl p-4 shadow-sm border-2 ${isPendingApproval ? 'border-amber-500 bg-amber-50/20' : 'border-[#68b800]'} space-y-3">
+          <div id="admin-req-card-${req.id}" class="bg-white rounded-xl p-3.5 shadow-sm border-2 ${isPendingApproval ? 'border-amber-500 bg-amber-50/20' : 'border-[#68b800]'} space-y-2.5">
             <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2">
               <div>
                 <span class="text-xs font-mono bg-lime-100 text-[#2b5400] font-black px-2 py-0.5 rounded">${req.id}</span>
@@ -2292,12 +2448,12 @@
               </div>
               <div class="flex items-center gap-2">
                 ${isPendingApproval ? `
-                  <span class="px-2.5 py-0.5 rounded-full text-xs font-black bg-amber-100 text-amber-900 border border-amber-300">⏳ 待副校長批核</span>
+                  <span class="px-2.5 py-0.5 rounded-full text-xs font-black bg-amber-100 text-amber-900 border border-amber-300">⏳ 待批核 Pending VP</span>
                   <button type="button" id="btn-approve-${req.id}" onclick="approveLeaveRequest('${req.id}')" class="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black shadow-md transition">
-                    ✅ 一鍵確認批核 Approve
+                    ✅ 一鍵批核 Approve
                   </button>
                 ` : `
-                  <span class="px-2.5 py-0.5 rounded-full text-xs font-black bg-emerald-100 text-emerald-900 border border-emerald-300">✅ 已批核並同步 Approved</span>
+                  <span class="px-2.5 py-0.5 rounded-full text-xs font-black bg-emerald-100 text-emerald-900 border border-emerald-300">✅ 已批核 Approved</span>
                 `}
               </div>
             </div>
@@ -2305,11 +2461,11 @@
               <table class="w-full text-left border-collapse school-table text-xs">
                 <thead>
                   <tr class="bg-[#eef8dc] text-[#2b5400] font-black whitespace-nowrap">
-                    <th class="p-2.5">課節 Period</th>
-                    <th class="p-2.5">班別及課室</th>
-                    <th class="p-2.5">零衝突代課配對 Assignment</th>
-                    <th class="p-2.5">40分鐘課業包及 SEN</th>
-                    <th class="p-2.5 text-center">狀態 Status</th>
+                    <th class="p-2">課節 Period</th>
+                    <th class="p-2">班別及課室 Class</th>
+                    <th class="p-2">零衝突代課配對 Assignment</th>
+                    <th class="p-2">課業包及 SEN Pack</th>
+                    <th class="p-2 text-center">狀態 Status</th>
                   </tr>
                 </thead>
                 <tbody>${rows}</tbody>
@@ -2327,7 +2483,11 @@
       req.lessons[lessonIdx].assignedSubName = t.shortName;
       saveRecords();
       refreshAllActiveViews();
-      showSystemToast('✅ 代課人選已更新', `已改派 ${t.shortName} 代課，累計節數及課室門外顯示屏已同步更新。`, 'info');
+      showSystemToast(
+        '✅ 代課人選已更新 · Cover Updated',
+        `已改派 ${t.shortName} 代課，配額及課室門外顯示屏已同步更新 · Quota & Door Screen updated.`,
+        'info'
+      );
     }
 
     function renderScheduleTable() {
@@ -2340,7 +2500,7 @@
           <td class="p-2.5 text-slate-600">${item.priorTopics}</td>
           <td class="p-2.5 font-bold text-emerald-900 bg-emerald-50/50">${item.currentWeekTopic}</td>
           <td class="p-2.5 text-center whitespace-nowrap">
-            <button type="button" onclick="openWorksheetModal('${item.classes.split(',')[0].trim()} ${item.key.split('_')[1]} 207', '', 'Revision Worksheet & Short Quiz', 'Subject Panel', 'current')" class="px-2.5 py-1 rounded bg-blue-700 hover:bg-blue-800 text-white text-[11px] font-black">📄 預覽</button>
+            <button type="button" onclick="openWorksheetModal('${item.classes.split(',')[0].trim()} ${item.key.split('_')[1]} 207', '', 'Revision Worksheet & Short Quiz', 'Subject Panel', 'current')" class="px-2.5 py-1 rounded bg-blue-700 hover:bg-blue-800 text-white text-[11px] font-black">📄 預覽 Preview</button>
           </td>
         </tr>`).join('');
     }
@@ -2355,7 +2515,7 @@
       tbody.innerHTML = PERIOD_SLOTS.map(slot => {
         const cells = CYCLE_DAYS.map(day => {
           const val = (selectedTeacher.timetable[day] && selectedTeacher.timetable[day][slot.id]) || '';
-          return `<td class="p-1"><input type="text" value="${val}" placeholder="空堂" onchange="updateTeacherTimetableCell('${selectedTeacher.code}', '${day}', '${slot.id}', this.value)" class="w-full px-1.5 py-1 text-center text-xs font-bold rounded border ${val ? 'border-lime-400 bg-lime-50 text-[#2b5400]' : 'border-slate-200 bg-white text-slate-400'}" /></td>`;
+          return `<td class="p-1"><input type="text" value="${val}" placeholder="空堂 Free" onchange="updateTeacherTimetableCell('${selectedTeacher.code}', '${day}', '${slot.id}', this.value)" class="w-full px-1.5 py-1 text-center text-xs font-bold rounded border ${val ? 'border-lime-400 bg-lime-50 text-[#2b5400]' : 'border-slate-200 bg-white text-slate-400'}" /></td>`;
         }).join('');
         return `<tr><td class="p-2 font-black text-slate-700 bg-slate-50 text-left whitespace-nowrap">${slot.short}</td>${cells}</tr>`;
       }).join('');
@@ -2366,7 +2526,7 @@
       appData.teachers[teacherCode].timetable[day][periodId] = newValue.trim();
       saveRecords();
       renderAdminTimetableInspector();
-      showSystemToast('✅ 課表已儲存', `已更新 ${teacherCode} (${day} ${periodId}) 時間表。`, 'success');
+      showSystemToast('✅ 課表已儲存 · Timetable Saved', `已更新 ${teacherCode} (${day} ${periodId}) 時間表。`, 'success');
     }
 
     // =========================================================================
@@ -2378,21 +2538,21 @@
       const cycleEl = document.getElementById('tv-cycle-day-label');
       if (cycleEl) cycleEl.textContent = appData.currentCycleDay;
       const toggleBtn = document.getElementById('tv-mode-toggle-btn');
-      if (toggleBtn) toggleBtn.textContent = appData.tvShowFullDay ? '⏱️ 只顯示本節及下一節' : '🔍 展開全日 (Full Day)';
+      if (toggleBtn) toggleBtn.textContent = appData.tvShowFullDay ? '⏱️ 只看本節+下節 Current+Next' : '🔍 展開全日 Full Day';
       const pillsEl = document.getElementById('tv-period-quick-pills');
       if (pillsEl) {
-        pillsEl.innerHTML = PERIOD_SLOTS.map(p => `<button type="button" onclick="setManualDemoPeriod('${p.id}')" class="px-2 py-0.5 rounded text-[11px] font-black transition ${(appData.clockMode === 'manual' && p.id === appData.activePeriodId) ? 'bg-amber-600 text-white' : 'bg-white text-slate-700 border border-amber-300 hover:bg-amber-100'}">${p.short}</button>`).join('');
+        pillsEl.innerHTML = PERIOD_SLOTS.map(p => `<button type="button" onclick="setManualDemoPeriod('${p.id}')" class="px-2 py-0.5 rounded text-[11px] font-black transition ${(p.id === appData.activePeriodId) ? 'bg-amber-600 text-white' : 'bg-white text-slate-700 border border-amber-300 hover:bg-amber-100'}">${p.short}</button>`).join('');
       }
 
       const approvedToday = appData.leaveRequests.filter(r => r.cycleDay === appData.currentCycleDay && r.approvalStatus === 'approved');
       const absentCountEl = document.getElementById('tv-absent-teacher-count');
-      if (absentCountEl) absentCountEl.textContent = `${approvedToday.length} 位請假`;
+      if (absentCountEl) absentCountEl.textContent = `${approvedToday.length} 位 Staff`;
 
       const absentListEl = document.getElementById('tv-absent-teachers-list');
       if (absentListEl) {
         absentListEl.innerHTML = approvedToday.map(req => {
           const pList = req.lessons.map(l => `${l.periodId}(${l.rawCell.split(' ')[0]})`).join(', ');
-          return `<div class="p-2.5 rounded-xl bg-[#f4fae8] border border-lime-300 space-y-1"><div class="flex items-center justify-between gap-1"><span class="text-xs font-black text-slate-900">${req.teacherName}</span><span class="text-[10px] font-black bg-white text-[#2b5400] px-1.5 py-0.2 rounded border border-lime-400 whitespace-nowrap">${req.lessons.length} 節</span></div><div class="text-[11px] font-bold text-amber-900 truncate">${req.leaveType}</div><div class="text-[11px] text-slate-600 font-mono">課節: <strong class="text-[#2b5400]">${pList}</strong></div></div>`;
+          return `<div class="p-2.5 rounded-xl bg-[#f4fae8] border border-lime-300 space-y-1"><div class="flex items-center justify-between gap-1"><span class="text-xs font-black text-slate-900">${req.teacherName}</span><span class="text-[10px] font-black bg-white text-[#2b5400] px-1.5 py-0.2 rounded border border-lime-400 whitespace-nowrap">${req.lessons.length} 節</span></div><div class="text-[11px] font-bold text-amber-900 truncate">${req.leaveType}</div><div class="text-[11px] text-slate-600 font-mono">課節 Periods: <strong class="text-[#2b5400]">${pList}</strong></div></div>`;
         }).join('');
       }
 
@@ -2426,11 +2586,12 @@
         }
         rightContainer.innerHTML = html;
       }
+      updateClockDisplays();
     }
 
     function buildTvPeriodBlockHtml(headerTitle, headerBgClass, lessonItems, showPeriodCol) {
       if (lessonItems.length === 0) {
-        return `<div class="bg-white rounded-xl border border-lime-300 shadow-sm overflow-hidden"><div class="${headerBgClass} px-3.5 py-2 text-xs sm:text-sm font-black flex items-center justify-between"><span>${headerTitle}</span><span class="text-[11px] bg-white/20 px-2 py-0.5 rounded">0 班代課</span></div><div class="p-4 text-center text-xs font-bold text-slate-500">✅ 本節無須代課調動 No substitution required.</div></div>`;
+        return `<div class="bg-white rounded-xl border border-lime-300 shadow-sm overflow-hidden"><div class="${headerBgClass} px-3.5 py-2 text-xs sm:text-sm font-black flex items-center justify-between"><span>${headerTitle}</span><span class="text-[11px] bg-white/20 px-2 py-0.5 rounded">0 班</span></div><div class="p-4 text-center text-xs font-bold text-slate-500">✅ 本節無須代課調動 · No substitution required.</div></div>`;
       }
       const rows = lessonItems.map(({ req, les }) => {
         const classSubjectOnly = les.rawCell.split(' ').slice(0, 2).join(' ');
@@ -2443,17 +2604,16 @@
           <td class="p-2.5 text-center whitespace-nowrap">${buildCleanStatusPill(les.checkinStatus, les.ackTime, les.arriveTime, les.periodId, req.approvalStatus)}</td>
         </tr>`;
       }).join('');
-      return `<div class="bg-white rounded-xl border-2 border-[#68b800] shadow-sm overflow-hidden"><div class="${headerBgClass} px-3.5 py-2 text-xs sm:text-sm font-black flex items-center justify-between"><span>${headerTitle}</span><span class="text-[11px] bg-white/20 px-2 py-0.5 rounded whitespace-nowrap">共 ${lessonItems.length} 班代課</span></div><div class="overflow-x-auto"><table class="w-full text-left border-collapse school-table text-xs"><thead><tr class="bg-[#eef8dc] text-[#2b5400] font-black whitespace-nowrap">${showPeriodCol ? '<th class="p-2.5">節數</th>' : ''}<th class="p-2.5">班別及課室</th><th class="p-2.5">請假原任</th><th class="p-2.5">指派代課</th><th class="p-2.5 text-center">狀態 Status</th></tr></thead><tbody class="divide-y divide-slate-200 bg-white">${rows}</tbody></table></div></div>`;
+      return `<div class="bg-white rounded-xl border-2 border-[#68b800] shadow-sm overflow-hidden"><div class="${headerBgClass} px-3.5 py-2 text-xs sm:text-sm font-black flex items-center justify-between"><span>${headerTitle}</span><span class="text-[11px] bg-white/20 px-2 py-0.5 rounded whitespace-nowrap">共 ${lessonItems.length} 班 Classes</span></div><div class="overflow-x-auto"><table class="w-full text-left border-collapse school-table text-xs"><thead><tr class="bg-[#eef8dc] text-[#2b5400] font-black whitespace-nowrap">${showPeriodCol ? '<th class="p-2.5">節數</th>' : ''}<th class="p-2.5">班別及課室 Class</th><th class="p-2.5">請假原任 Absent</th><th class="p-2.5">指派代課 Cover</th><th class="p-2.5 text-center">狀態 Status</th></tr></thead><tbody class="divide-y divide-slate-200 bg-white">${rows}</tbody></table></div></div>`;
     }
 
     // =========================================================================
-    // 13. CLASSROOM DOOR DISPLAY (Strict Approval Transition: Normal -> Pending VP -> Sub -> Arrived)
+    // 13. CLASSROOM DOOR DISPLAY (Bilingual, Product-Only Branding, Compact Next Bar)
     // =========================================================================
     function findRoomLessonInfo(roomNum, cycleDay, periodId) {
       if (!periodId) return { mode: 'after_school', periodMeta: { short: '-', time: '放學 After School' } };
       const periodMeta = getPeriodMeta(periodId);
 
-      // Check leave requests (distinguish pending approval vs approved!)
       for (const req of appData.leaveRequests) {
         if (req.cycleDay === cycleDay) {
           for (let i = 0; i < req.lessons.length; i++) {
@@ -2468,7 +2628,6 @@
         }
       }
 
-      // Otherwise check regular timetable
       for (const t of Object.values(appData.teachers)) {
         const cell = t.timetable[cycleDay] && t.timetable[cycleDay][periodId];
         if (cell && parseRoomFromCell(cell) === String(roomNum)) {
@@ -2485,23 +2644,27 @@
       if (sel1) sel1.value = roomNum;
       if (sel2) sel2.value = roomNum;
 
-      const hk = getHongKongTimeParts();
+      const simT = appData.simTimeStr || '10:42';
       const currentPid = appData.activePeriodId || 'P4';
       const nextPid = getNextPeriodId(currentPid);
       const currentInfo = findRoomLessonInfo(roomNum, appData.currentCycleDay, currentPid);
       const nextInfo = findRoomLessonInfo(roomNum, appData.currentCycleDay, nextPid);
 
+      // 1. Full-Screen Door Monitor Tab (No School Name — SmartSchool SLRS Only)
       const frame = document.getElementById('small-monitor-frame');
       if (frame) {
         frame.innerHTML = `
           <div class="bg-[#68b800] text-white px-5 py-3 flex items-center justify-between gap-2 flex-wrap">
             <div class="flex items-center gap-3">
               <span class="bg-white text-[#2b5400] font-black text-xl sm:text-2xl px-3.5 py-1 rounded-xl shadow-sm">RM ${roomNum}</span>
-              <div><div class="text-sm sm:text-base font-black">仁濟醫院靚次伯紀念中學</div><div class="text-xs text-lime-100 font-bold">課室門外顯示屏 Classroom Door Display</div></div>
+              <div>
+                <div class="text-sm sm:text-base font-black">SmartSchool SLRS</div>
+                <div class="text-xs text-lime-100 font-bold">課室門外顯示屏 · Classroom Door Display</div>
+              </div>
             </div>
             <div class="flex items-center gap-2">
               <span class="bg-black/20 px-3 py-1 rounded-lg text-sm font-black text-yellow-200">${appData.currentCycleDay}</span>
-              <span id="door-live-clock" class="bg-white text-[#2b5400] px-3 py-1 rounded-lg text-base sm:text-lg font-mono font-black">${hk.shortTimeStr}</span>
+              <span id="door-live-clock" class="bg-white text-[#2b5400] px-3 py-1 rounded-lg text-base sm:text-lg font-mono font-black">${simT}</span>
             </div>
           </div>
           <div class="p-4 sm:p-5 bg-[#f4fae8] grid grid-cols-1 sm:grid-cols-2 gap-4 items-stretch">
@@ -2510,18 +2673,45 @@
           </div>`;
       }
 
+      // 2. Pinned Side-by-Side Door Monitor (Current = Big Card, Next = Compact Zero-Scroll Bar!)
       const pinnedBody = document.getElementById('pinned-door-monitor-body');
       if (pinnedBody) {
         pinnedBody.innerHTML = `
-          <div class="bg-[#68b800] text-white px-3 py-2 flex items-center justify-between">
+          <div class="bg-[#68b800] text-white px-3 py-1.5 flex items-center justify-between">
             <span class="bg-white text-[#2b5400] font-black text-sm px-2 py-0.5 rounded">RM ${roomNum}</span>
-            <span class="text-xs font-black">${appData.currentCycleDay} · ${hk.shortTimeStr}</span>
+            <span class="text-xs font-black flex items-center gap-1.5">
+              <span>${appData.currentCycleDay}</span>
+              <span>·</span>
+              <span id="pinned-door-clock" class="font-mono bg-black/20 px-1.5 py-0.5 rounded">${simT}</span>
+            </span>
           </div>
-          <div class="p-2.5 bg-[#f4fae8] space-y-2.5">
+          <div class="p-2.5 bg-[#f4fae8] space-y-2">
             ${buildDoorCardHtml('本節 THIS LESSON', currentInfo, true, true)}
-            ${buildDoorCardHtml('下一節 NEXT LESSON', nextInfo, false, true)}
+            ${buildCompactNextLessonBarHtml(nextInfo)}
           </div>`;
       }
+    }
+
+    function buildCompactNextLessonBarHtml(info) {
+      let detail = `<span class="text-slate-400">空堂 Free Room</span>`;
+      if (info.mode === 'regular') {
+        const cls = info.rawCell.split(' ').slice(0, 2).join(' ');
+        detail = `<span class="font-black text-slate-900">${cls}</span> · <span class="text-emerald-800 font-bold">${info.teacherShortName} (常規 Regular)</span>`;
+      } else if (info.mode === 'pending_approval') {
+        const cls = info.les.rawCell.split(' ').slice(0, 2).join(' ');
+        detail = `<span class="font-black text-slate-900">${cls}</span> · <span class="text-amber-800 font-bold">⏳ 審批中 Pending VP</span>`;
+      } else if (info.mode === 'substitution') {
+        const cls = info.les.rawCell.split(' ').slice(0, 2).join(' ');
+        detail = `<span class="font-black text-slate-900">${cls}</span> · <span class="text-[#2b5400] font-black">${info.les.assignedSubName} 代課 Cover</span>`;
+      }
+      return `
+        <div class="bg-white rounded-xl border-2 border-[#68b800] px-3 py-2 flex flex-col gap-0.5">
+          <div class="flex items-center justify-between text-[10px] font-black text-[#2b5400]">
+            <span class="bg-[#eef8dc] px-1.5 py-0.2 rounded">下一節 NEXT LESSON</span>
+            <span class="font-mono text-slate-600">${info.periodMeta.short} (${info.periodMeta.time})</span>
+          </div>
+          <div class="text-xs truncate pt-0.5">${detail}</div>
+        </div>`;
     }
 
     function buildDoorCardHtml(cardHeader, info, isCurrent, isCompact = false) {
@@ -2535,7 +2725,20 @@
 
       if (info.mode === 'regular') {
         const classSubject = info.rawCell.split(' ').slice(0, 2).join(' ');
-        return `<div class="bg-white rounded-xl ${borderClass} ${padClass} flex flex-col justify-between"><div class="flex items-center justify-between border-b border-slate-100 pb-2"><span class="px-2 py-0.5 rounded text-[11px] font-black ${headerBadgeClass}">${cardHeader}</span><span class="text-xs font-mono font-black text-slate-700">${info.periodMeta.short} (${info.periodMeta.time})</span></div><div class="my-auto py-3 space-y-2 text-center"><div class="${isCompact ? 'text-xl' : 'text-3xl'} font-black text-slate-900">${classSubject}</div><div class="inline-block px-3 py-1 rounded-lg bg-emerald-50 border border-emerald-200 text-xs sm:text-sm font-black text-emerald-900">${info.teacherShortName} (常規上課)</div></div></div>`;
+        return `
+          <div class="bg-white rounded-xl ${borderClass} ${padClass} flex flex-col justify-between">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+              <span class="px-2 py-0.5 rounded text-[11px] font-black ${headerBadgeClass}">${cardHeader}</span>
+              <span class="text-xs font-mono font-black text-slate-700">${info.periodMeta.short} (${info.periodMeta.time})</span>
+            </div>
+            <div class="my-auto py-3 space-y-2 text-center">
+              <div class="${isCompact ? 'text-2xl' : 'text-3xl'} font-black text-slate-900">${classSubject}</div>
+              <div class="inline-block px-3 py-1.5 rounded-lg bg-emerald-50 border border-emerald-200 text-xs sm:text-sm font-black text-emerald-900">
+                ${info.teacherShortName}<br/>
+                <span class="text-[11px] font-bold text-emerald-700">常規上課 · Regular Lesson</span>
+              </div>
+            </div>
+          </div>`;
       }
 
       if (info.mode === 'pending_approval') {
@@ -2549,48 +2752,52 @@
               <span class="text-xs font-mono font-black text-amber-900">${info.periodMeta.short} (${info.periodMeta.time})</span>
             </div>
             <div class="my-auto space-y-2 text-center py-2">
-              <div class="${isCompact ? 'text-xl' : 'text-3xl'} font-black text-slate-900">${classSubject}</div>
+              <div class="${isCompact ? 'text-2xl' : 'text-3xl'} font-black text-slate-900">${classSubject}</div>
               <div class="px-3 py-2 rounded-xl bg-white border border-amber-300 text-xs font-black text-amber-900">
                 ⏳ ${absentShort} 請假審批中<br/>
-                <span class="text-[10px] font-bold text-slate-500">等候副校長批核及派課 Pending VP Approval</span>
+                <span class="text-[10px] font-bold text-slate-500">等候副校長批核 · Pending VP Approval</span>
               </div>
             </div>
           </div>`;
       }
 
-      // Approved Substitution Display
       const { req, les, lessonIdx } = info;
       const classSubject = les.rawCell.split(' ').slice(0, 2).join(' ');
       const absentShort = req.teacherName.replace('老師', '');
       const isOverdueNow = isCurrent && appData.overdueAlertActive && les.checkinStatus !== 'arrived';
 
       return `
-        <div class="bg-white rounded-xl ${isOverdueNow ? 'border-4 overdue-alert-card' : borderClass} ${padClass} flex flex-col justify-between space-y-2.5">
-          <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+        <div class="bg-white rounded-xl ${isOverdueNow ? 'border-4 overdue-alert-card' : borderClass} ${padClass} flex flex-col justify-between space-y-2">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-1.5">
             <span class="px-2 py-0.5 rounded text-[11px] font-black ${headerBadgeClass}">${cardHeader}</span>
             <span class="text-xs font-mono font-black text-slate-800">${info.periodMeta.short} (${info.periodMeta.time})</span>
           </div>
-          ${isOverdueNow ? `<div class="bg-rose-600 text-white px-2.5 py-1.5 rounded-lg text-[11px] font-black flex items-center justify-between gap-1 shadow-sm"><span>⚠️ 防漏堂提示：請代課老師於網站報到！</span><span class="text-[10px] bg-white text-rose-700 px-1 rounded font-mono">LATE</span></div>` : ''}
+          ${isOverdueNow ? `
+            <div class="bg-rose-600 text-white px-2.5 py-1.5 rounded-lg text-[11px] font-black flex items-center justify-between gap-1 shadow-sm">
+              <span>⚠️ 逾時未報到！請代課老師報到 · Overdue Check-In!</span>
+              <span class="text-[10px] bg-white text-rose-700 px-1 rounded font-mono">LATE</span>
+            </div>
+          ` : ''}
           <div class="space-y-2 my-auto">
             <div class="flex items-center justify-between gap-1 flex-wrap">
               <span class="${isCompact ? 'text-xl' : 'text-2xl sm:text-3xl'} font-black text-slate-900">${classSubject}</span>
               ${buildCleanStatusPill(les.checkinStatus, les.ackTime, les.arriveTime, isCurrent ? les.periodId : '', req.approvalStatus)}
             </div>
             <div class="rounded-xl border-2 border-slate-200 overflow-hidden bg-white">
-              <div class="bg-rose-50 px-3 py-2 flex items-center justify-between border-b border-rose-200">
-                <span class="text-[11px] font-black text-rose-800 uppercase">請假 Absent</span>
-                <span class="${isCompact ? 'text-sm' : 'text-base sm:text-lg'} font-black text-rose-900">${absentShort} 請假</span>
+              <div class="bg-rose-50 px-3 py-1.5 flex items-center justify-between border-b border-rose-200">
+                <span class="text-[10px] font-black text-rose-800 uppercase">請假 Absent</span>
+                <span class="${isCompact ? 'text-sm' : 'text-base sm:text-lg'} font-black text-rose-900">${absentShort}</span>
               </div>
-              <div class="bg-[#eef8dc] px-3 py-2.5 flex items-center justify-between">
-                <span class="text-[11px] font-black text-[#2b5400] uppercase">代課 Cover</span>
-                <span class="${isCompact ? 'text-base' : 'text-lg sm:text-xl'} font-black text-[#2b5400]">${les.assignedSubName} 代課</span>
+              <div class="bg-[#eef8dc] px-3 py-2 flex items-center justify-between">
+                <span class="text-[10px] font-black text-[#2b5400] uppercase">代課 Cover</span>
+                <span class="${isCompact ? 'text-base' : 'text-lg sm:text-xl'} font-black text-[#2b5400]">${les.assignedSubName}</span>
               </div>
             </div>
           </div>
           ${!isCompact ? `
             <div class="pt-1.5 border-t border-slate-100">
-              <button type="button" onclick="appData.overdueAlertActive = false; updateLessonCheckinStatus('${req.id}', ${lessonIdx}, 'arrived')" class="w-full py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black shadow-sm transition">
-                📍 代課老師網上到班報到 (Web Check-In)
+              <button type="button" onclick="appData.overdueAlertActive = false; setSimulatedClock('10:56', 'P4'); updateLessonCheckinStatus('${req.id}', ${lessonIdx}, 'arrived')" class="w-full py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black shadow-sm transition">
+                📍 代課老師網上到班報到 · Web Report Arrival
               </button>
             </div>
           ` : ''}
@@ -2609,8 +2816,8 @@
       const sched = matchScheduleByCell(rawCell);
       const sen = getSenReminderByCell(rawCell);
       document.getElementById('modal-worksheet-title').textContent = `${rawCell} — ${paperMode}`;
-      document.getElementById('modal-worksheet-subtitle').textContent = `對應教學進度: ${customTopic || sched.currentWeekTopic}`;
-      document.getElementById('modal-sen-banner').textContent = `💙 匿名 SEN 課堂照顧提示：${sen.zh}`;
+      document.getElementById('modal-worksheet-subtitle').textContent = `對應進度 Schedule: ${customTopic || sched.currentWeekTopic}`;
+      document.getElementById('modal-sen-banner').innerHTML = `💙 匿名 SEN 課堂照顧提示 (Anonymous SEN Reminder)：${sen.zh}<br/><span class="text-indigo-700">${sen.en}</span>`;
       document.getElementById('modal-worksheet-body').textContent = generateWorksheetAndAnswerKeyText(rawCell, customTopic, paperMode, absentTeacherName, scopeMode);
       document.getElementById('modal-print-btn').onclick = () => exportWordLessonPack(rawCell, customTopic, paperMode, absentTeacherName);
       document.getElementById('worksheet-modal').classList.remove('hidden');
@@ -2623,14 +2830,13 @@
       else if (currentUserRole === 'vp_admin') { renderAdminApprovalList(); renderScheduleTable(); renderAdminTimetableInspector(); }
       else if (currentUserRole === 'staffroom_tv') renderStaffroomTvBoard();
       else if (currentUserRole === 'door_monitor') renderSmallDoorMonitor();
+      updateClockDisplays();
       renderSmallDoorMonitor();
     }
 
-    setInterval(syncWithHongKongTime, 1000);
-
     window.onload = function() {
-      // Start directly in Competition Mode with CKKU Leave View + Pinned Room 207 Door Screen
-      syncWithHongKongTime();
+      // Launch directly in clean SmartSchool SLRS Competition Mode at simulated 10:42 before P4
+      updateClockDisplays();
       togglePinnedDoorPreview(true);
       loginAsRole('ckku');
     };
